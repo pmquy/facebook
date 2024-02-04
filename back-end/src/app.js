@@ -1,0 +1,26 @@
+const express = require('express')
+const app = express()
+
+// connect database
+require('./v1/configs/init.mongo')()
+
+// init socket server
+require('./v1/configs/init.socket')(app)
+
+// handle cors
+app.use(require('cors')({
+    origin : 'http://localhost:5173',
+}))
+
+// parse cookie
+app.use(require('cookie-parser')())
+
+// parse body request
+const bodyParser = require('body-parser')
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended : true}))
+
+// log request 
+app.use(require('morgan')('tiny'))
+
+module.exports = app
