@@ -4,11 +4,18 @@ import Home from './pages/Home'
 import './index.css'
 import {RouterProvider, createBrowserRouter} from 'react-router-dom'
 import {QueryClient, QueryClientProvider} from 'react-query'
+import Layout from './layouts/Layout'
 
 const router = createBrowserRouter([
   {
     path : '/',
-    element : <Home/>
+    element : <Layout/>,
+    children : [
+      {
+        path : '/',
+        element : <Home/>
+      }
+    ]
   }
 ])
 
