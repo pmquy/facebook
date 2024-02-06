@@ -1,20 +1,20 @@
 const getIndexFromPathName = pathName => {
-  if(!pathName.indexOf('/')) {
+  if(pathName == '/') {
     return 1
   }
-  if(!pathName.indexOf('/watch')) {
+  if(pathName == '/watch') {
     return 2
   }
-  if(!pathName.indexOf('/market')) {
+  if(pathName == '/market') {
     return 3
   }
-  if(!pathName.indexOf('/group')) {
+  if(pathName == '/group') {
     return 4
   }
-  if(!pathName.indexOf('/game')) {
+  if(pathName == '/game') {
     return 5
   }
-  return 1
+  return 0
 }
 
 export {getIndexFromPathName}

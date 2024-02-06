@@ -5,6 +5,9 @@ import './index.css'
 import {RouterProvider, createBrowserRouter} from 'react-router-dom'
 import {QueryClient, QueryClientProvider} from 'react-query'
 import Layout from './layouts/Layout'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import Account from './pages/Account'
 
 const router = createBrowserRouter([
   {
@@ -14,6 +17,18 @@ const router = createBrowserRouter([
       {
         path : '/',
         element : <Home/>
+      },
+      {
+        path : '/login',
+        element : <Login/>
+      },
+      {
+        path : '/register',
+        element : <Register/>
+      },
+      {
+        path : '/user/:id',
+        element : <Account/>
       }
     ]
   }

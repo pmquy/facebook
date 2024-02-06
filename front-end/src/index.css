@@ -27,4 +27,16 @@ html {
   .box-shadow {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   }
+
+  .text-1 {
+    @apply uppercase font-semibold
+  }
+
+  .btn-1 {
+    @apply bg-red_0 text-white_0 rounded-lg p-2 hover:bg-red_1 w-max
+  }
+
+  .card {
+    @apply p-5 rounded-lg bg-white_0 box-shadow
+  }
 }

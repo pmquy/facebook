@@ -7,9 +7,13 @@ require('./v1/configs/init.mongo')()
 // init socket server
 require('./v1/configs/init.socket')(app)
 
+// log request 
+app.use(require('morgan')('tiny'))
+
 // handle cors
 app.use(require('cors')({
     origin : 'http://localhost:5173',
+    credentials : true
 }))
 
 // parse cookie
@@ -20,7 +24,11 @@ const bodyParser = require('body-parser')
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended : true}))
 
-// log request 
-app.use(require('morgan')('tiny'))
+
+// route app
+app.use(require('./v1/routers'))
+app.use(require('./v1/middlewares/handle-404'))
+app.use(require('./v1/middlewares/handle-error'))
+
 
 module.exports = app
