@@ -1,11 +1,11 @@
 import { useQueries } from 'react-query'
 import api from '../services/api'
 import { useContext } from 'react'
-import UserContext from '../store/userContext'
+import CommonContext from '../../../store/CommonContext'
 import {Button} from '../../../components/ui'
 
 export default function ({userId}) {  
-  const {user} = useContext(UserContext)
+  const {user} = useContext(CommonContext)
 
   const query = useQueries([
     {
@@ -19,6 +19,6 @@ export default function ({userId}) {
 
   return <div className='card flex flex-col gap-5'>
     <div>Name : {user1.firstName + ' ' + user1.lastName}</div>
-    {user && user1._id != user._id && <Button/>}
+    {user && user1._id != user._id && <Button>Kết bạn</Button>}
   </div>
 }

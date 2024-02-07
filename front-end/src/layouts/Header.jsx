@@ -12,11 +12,11 @@ import { MdAccountCircle } from "react-icons/md";
 import { Link, useLocation } from "react-router-dom";
 import { getIndexFromPathName } from "../utils/path";
 import { useContext } from "react";
-import {UserContext} from "../features/account";
+import CommonContext from '../store/CommonContext'
 
 
 export default function () {
-  const { user } = useContext(UserContext)
+  const { user } = useContext(CommonContext)
   const location = useLocation()
   const index = getIndexFromPathName(location.pathname)
 

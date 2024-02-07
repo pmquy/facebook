@@ -2,6 +2,7 @@ const router = require('express').Router()
 const controller = require('../controllers/user')
 const auth = require('../middlewares/authentication')
 
+router.get('/', controller.get)
 router.post('/create', controller.create)
 router.post('/login', controller.login)
 router.post('/changePassword', auth, controller.changePasswordById)

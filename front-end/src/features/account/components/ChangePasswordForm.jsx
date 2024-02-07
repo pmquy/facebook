@@ -2,10 +2,10 @@ import { Input, Button } from '../../../components/ui'
 import { useContext, useRef } from 'react'
 import api from '../services/api'
 import { toast } from 'react-toastify'
-import UserContext from '../store/userContext'
+import CommonContext from '../../../store/CommonContext'
 
 export default function () {
-  const { user, setUser } = useContext(UserContext)
+  const { user, setUser } = useContext(CommonContext)
   const oldPasswordRef = useRef(),
     passwordRef = useRef(),
     repeatPasswordRef = useRef()
