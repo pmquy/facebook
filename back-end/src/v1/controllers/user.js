@@ -35,6 +35,12 @@ const changePasswordPattern = Joi.object({
 
 class Controller {
 
+  get = async(req, res, next) => {
+    User.find(req.query).select('-password -phoneNumber -email')
+      .then(val => res.status(200).send(val))
+      .catch(err => next(err.message))
+  }
+
   getMe = (req, res, next) => {
     if (req.user) {
       res.status(200).send(req.user)

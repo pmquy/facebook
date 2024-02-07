@@ -1,10 +1,13 @@
 import { Input, Button } from '../../../components/ui'
-import { useRef } from 'react'
+import { useContext, useRef } from 'react'
 import api from '../services/api'
 import { toast } from 'react-toastify'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import CommonContext from '../../../store/CommonContext'
 
 export default function () {
+  const navigate = useNavigate()
+  const {setUser} = useContext(CommonContext)
 
   const phoneNumberRef = useRef(),
     emailRef = useRef(),

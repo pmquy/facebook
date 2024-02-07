@@ -6,4 +6,6 @@ const Friend = new mongoose.Schema({
   status : Number,
 }, {timestamps : true})
 
+Friend.index({sender : 1, receiver : 1}, {unique : true})
+
 module.exports = mongoose.model('Friends', Friend)

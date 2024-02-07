@@ -1,14 +1,5 @@
 class Api {
-
-  getMe = async () =>
-    fetch('http://localhost:3000/users/me', {
-      credentials: 'include'
-    })
-      .then(async res => {
-        if (res.ok) return res.json()
-        return res.json().then(res => { throw new Error(res.error.message) })
-      })
-
+  
   login = async data =>
     fetch('http://localhost:3000/users/login', {
       method: 'POST',

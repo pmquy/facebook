@@ -21,24 +21,21 @@ class Controller {
     Friend.findOneAndUpdate({
       sender: req.params.id,
       receiver: req.user._id,
+      status: 0,
     }, { status: 1 })
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
 
-  decline = async (req, res, next) => {
+  cancel = async (req, res, next) => {
     Friend.deleteOne({
-      sender: req.params.id,
-      receiver: req.user._id,
-    })
-      .then(val => res.status(200).send(val))
-      .catch(err => next(err))
-  }
-
-  delete = async (req, res, next) => {
-    Friend.deleteOne({
-      sender: req.user._id,
-      receiver: req.params.id,
+      $or: [{
+        sender: req.user._id,
+        receiver: req.params.id,
+      }, {
+        sender: req.params.id,
+        receiver: req.user._id,
+      }]
     })
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
