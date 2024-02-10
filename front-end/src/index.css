@@ -39,4 +39,8 @@ html {
   .card {
     @apply p-5 rounded-lg bg-white_0 box-shadow
   }
+
+  .card_1 {
+    @apply p-5 rounded-lg bg-red_0 box-shadow text-white_0
+  }
 }

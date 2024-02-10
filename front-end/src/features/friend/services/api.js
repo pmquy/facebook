@@ -2,7 +2,7 @@ import { parseQuery } from '../../../utils/parseQuery'
 
 class Api {
   get = async query =>
-    fetch(`http://localhost:3000/friends${query ? parseQuery(query) : ''}`, {
+    fetch(`http://localhost:3000/friends${parseQuery(query)}`, {
       credentials: 'include',
     })
       .then(async res => {

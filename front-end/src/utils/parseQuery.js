@@ -1,8 +1,9 @@
 const parseQuery = query => {
   let res = "?"
-  for(let x in query) {
-    res += x + '=' + query[x] + '&'
-  }
+  if (query)
+    for (let x in query) {
+      res += x + '=' + query[x] + '&'
+    }
   return res
 }
-export {parseQuery}
+export { parseQuery }
