@@ -38,7 +38,7 @@ class Controller {
   get = async(req, res, next) => {
     User.find(req.query).select('-password -phoneNumber -email')
       .then(val => res.status(200).send(val))
-      .catch(err => next(err.message))
+      .catch(err => next(err))
   }
 
   getMe = (req, res, next) => {
@@ -58,7 +58,7 @@ class Controller {
   getById = async (req, res, next) => {
     User.findById(req.params.id).select('-password -phoneNumber -email')
       .then(val => res.status(200).send(val))
-      .catch(err => next(new Error(err.message)))
+      .catch(err => next(err))
   }
 
   create = async (req, res, next) => {
@@ -70,14 +70,14 @@ class Controller {
         })
         res.status(200).send(val)
       })
-      .catch(err => next(new Error(err.message)))
+      .catch(err => next(err))
   }
 
   updateById = async (req, res, next) => {
     updatingPattern.validateAsync(req.body)
       .then(val => User.findByIdAndUpdate(req.params.id, val, { new: true }))
       .then(val => res.status(200).send(val))
-      .catch(err => next(new Error(err.message)))
+      .catch(err => next(err))
   }
   
   changePasswordById = async (req, res, next) => {    
@@ -89,7 +89,7 @@ class Controller {
         throw new Error()
       })      
       .then(val => res.status(200).send(val))
-      .catch(err => next(new Error(err.message)))
+      .catch(err => next(err))
   }
 
   
@@ -107,13 +107,13 @@ class Controller {
         })
         res.status(200).send(val)
       })
-      .catch(err => next(new Error(err.message)))
+      .catch(err => next(err))
   }
 
   deleteById = (req, res, next) => {
     User.findByIdAndDelete(req.params.id)
       .then(val => res.status(200).send(val))
-      .catch(err => next(new Error(err.message)))
+      .catch(err => next(err))
   }
 }
 

@@ -1,13 +1,13 @@
 const Friend = require('../models/Friend')
 
 class Controller {
-  get = async (req, res, next) => {
+  get = (req, res, next) => {
     Friend.find({ ...req.query, $or: [{ sender: req.user._id }, { receiver: req.user._id }] })
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
 
-  create = async (req, res, next) => {
+  create = (req, res, next) => {
     Friend.create({
       sender: req.user._id,
       receiver: req.params.id,
@@ -17,7 +17,7 @@ class Controller {
       .catch(err => next(err))
   }
 
-  accept = async (req, res, next) => {
+  accept = (req, res, next) => {
     Friend.findOneAndUpdate({
       sender: req.params.id,
       receiver: req.user._id,
@@ -27,8 +27,8 @@ class Controller {
       .catch(err => next(err))
   }
 
-  cancel = async (req, res, next) => {
-    Friend.deleteOne({
+  cancel = (req, res, next) => {
+    Friend.deleteMany({
       $or: [{
         sender: req.user._id,
         receiver: req.params.id,

@@ -4,7 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CommonContext from "../store/CommonContext";
 import { useQueries } from "react-query";
-import api from "../services/api";
+import UserApi from '../services/user'
 import { useState } from "react";
 
 export default function () {
@@ -13,11 +13,11 @@ export default function () {
   const query = useQueries([
     {
       queryKey: ['me'],
-      queryFn: () => api.getMe().then(user => setUser(user)),
+      queryFn: () => UserApi.getMe().then(user => setUser(user)),
     },
     {
       queryKey: ['users'],
-      queryFn: () => api.get()
+      queryFn: () => UserApi.get()
     }
   ])
 
