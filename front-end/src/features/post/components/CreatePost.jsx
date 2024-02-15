@@ -35,18 +35,13 @@ export default function () {
       .catch(err => toast(err.message, { type: 'error' }))
   }  
 
-  const handleChange = e => {
-    if(e.target.files[0])
-      setImage(URL.createObjectURL(e.target.files[0]))
-  }
-
   return <div className='flex gap-5 items-center p-5 bg-white_0 box-shadow rounded-lg'>
     <div onClick={e => setOpen(ref.current.contains(e.target))} className={`${open ? 'block' : 'hidden'} z-20 top-0 left-0 w-screen h-screen fixed bg-black_trans`}>
       <div ref={ref} className='left-1/2 -translate-x-1/2 top-1/2 absolute -translate-y-1/2 card w-[90%] max-h-[90%] overflow-y-auto max-w-[500px] flex flex-col gap-5'>
         <IoCloseCircle onClick={(e) => {e.stopPropagation(); setOpen(false)}} className='w-8 h-8 absolute right-5 top-5'/>
         <UserAccount id={user._id}/>
         <Textarea autoFocus={true} ref={contentRef} />
-        <FileInput onChange={handleChange} ref={fileRef} accept={'image/*'}>Tải ảnh lên</FileInput>
+        <FileInput onChange={e => setImage(URL.createObjectURL(e.target.files[0]))} ref={fileRef} accept={'image/*'}>Tải ảnh lên</FileInput>
         {image && <img src={image} className='rounded-xl'></img>}
         <Button onClick={handleCreatePost} className={'m-auto'}>Đăng</Button>        
       </div>

@@ -36,7 +36,7 @@ export default function ({id}) {
     <UserAccount id={post.user}/>
     <div>Vào {parseDate(post.createdAt)}</div>
     <div className=" card_1 flex flex-col gap-5">
-      <div>{post.content}</div>
+      <div className=" whitespace-pre-line">{post.content}</div>
       {post.image && <Image id={post.image}/>}
     </div>
     <PostAction id={post._id}/>

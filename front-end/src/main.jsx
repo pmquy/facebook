@@ -9,6 +9,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Account from './pages/Account'
 import Friends from './pages/Friends'
+import Messenger from './pages/Messenger'
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path : '/friends',
         element : <Friends/>
+      },
+      {
+        path : '/messages',
+        element : <Messenger/>
       }
     ]
   }

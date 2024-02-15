@@ -18,7 +18,7 @@ export default function ({ comment }) {
     <UserAccount id={comment.user} />
     <div className="flex items-center gap-5">
       <div className="flex flex-col gap-2">
-        <div>{comment.content}</div>
+        <div className=" whitespace-pre-line">{comment.content}</div>
         {comment.image && <Image id={comment.image} className={'w-64'} />}
       </div>
       <div className="group relative">

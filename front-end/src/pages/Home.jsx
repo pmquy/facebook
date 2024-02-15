@@ -6,7 +6,7 @@ export default function () {
   return <div className='overflow-hidden'>
     <LeftBar className={' max-lg:hidden'}/>
     <RightBar className={'max-md:hidden'}/>
-    <div className=' w-full max-w-[500px] xl:max-w-[700px] lg:m-auto max-md:m-auto flex flex-col gap-5'>            
+    <div className=' w-full max-w-[500px] xl:max-w-[700px] lg:m-auto max-md:m-auto flex flex-col gap-5 my-5'>            
       <CreatePost/>
       <Posts/>
     </div>

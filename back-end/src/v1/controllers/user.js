@@ -92,13 +92,11 @@ class Controller {
       .catch(err => next(err))
   }
 
-  
-
-  login = async (req, res, next) => {
+  login = async (req, res, next) => {    
     loginPattern.validateAsync(req.body)
       .then(async val => {
         const user = await User.findOne({ phoneNumber: val.phoneNumber })
-        if (bcrypt.compareSync(val.password, user.password)) return user
+        if (bcrypt.compareSync(val.password, user.password)) return user        
         throw new Error()
       })
       .then(val => {
