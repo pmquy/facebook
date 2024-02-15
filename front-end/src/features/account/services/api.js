@@ -2,7 +2,7 @@ class Api {
   
   login = async data =>
     fetch('http://localhost:3000/users/login', {
-      method: 'POST',
+      method: 'POST',      
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
