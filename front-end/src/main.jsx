@@ -4,17 +4,51 @@ import Home from './pages/Home'
 import './index.css'
 import {RouterProvider, createBrowserRouter} from 'react-router-dom'
 import {QueryClient, QueryClientProvider} from 'react-query'
+import Layout from './layouts/Layout'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import Account from './pages/Account'
+import Friends from './pages/Friends'
+import Messenger from './pages/Messenger'
 
 const router = createBrowserRouter([
   {
     path : '/',
-    element : <Home/>
+    element : <Layout/>,
+    children : [
+      {
+        path : '/',
+        element : <Home/>
+      },
+      {
+        path : '/login',
+        element : <Login/>
+      },
+      {
+        path : '/register',
+        element : <Register/>
+      },
+      {
+        path : '/user/:id',
+        element : <Account/>
+      },
+      {
+        path : '/friends',
+        element : <Friends/>
+      },
+      {
+        path : '/messages',
+        element : <Messenger/>
+      }
+    ]
   }
 ])
 
+const queryClient = new QueryClient()
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <QueryClientProvider client={new QueryClient()}>
+    <QueryClientProvider client={queryClient}>
       <RouterProvider router={router}>
       </RouterProvider>    
     </QueryClientProvider>
