@@ -2,7 +2,7 @@ import { parseQuery } from "../utils/parseQuery"
 
 class Api {
   getMe = async () =>
-    fetch('http://localhost:3000/users/me', {
+    fetch(`${import.meta.env.VITE_SERVER_URL}users/me`, {
       credentials: 'include'
     })
       .then(async res => {
@@ -11,7 +11,7 @@ class Api {
       })
 
   get = async query =>
-    fetch(`http://localhost:3000/users${parseQuery(query)}`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}users${parseQuery(query)}`, {
       credentials: 'include'
     })
       .then(async res => {

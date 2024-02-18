@@ -3,7 +3,7 @@ import { parseQuery } from "../../../utils/parseQuery"
 class Api {
 
   get = async query =>
-    fetch(`http://localhost:3000/likeposts${parseQuery(query)}`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}likeposts${parseQuery(query)}`, {
       credentials: 'include'
     })
       .then(async res => {
@@ -13,7 +13,7 @@ class Api {
 
 
   create = async data =>
-    fetch('http://localhost:3000/likeposts/create', {
+    fetch('${import.meta.env.VITE_SERVER_URL}likeposts/create', {
       method: 'POST',
       credentials: 'include',
       body: JSON.stringify(data),
@@ -27,7 +27,7 @@ class Api {
       })
 
   delete = async data =>
-    fetch(`http://localhost:3000/likeposts/`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}likeposts/`, {
       method: 'DELETE',
       credentials: 'include',
       body: JSON.stringify(data),

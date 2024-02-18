@@ -21,7 +21,7 @@ export default function () {
       .catch(err => toast(err.message, { type: 'error' }))
   }
 
-  return <div className="flex flex-col gap-5 card w-full max-w-[500px]">
+  return <div className="flex flex-col gap-5 card p-5 w-full max-w-[500px]">
     <div className="flex gap-5 items-center justify-between">
       <div className='text-1'>Mật khẩu cũ</div>
       <Input autoFocus={true} ref={oldPasswordRef} />

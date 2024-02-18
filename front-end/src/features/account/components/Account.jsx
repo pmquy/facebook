@@ -17,7 +17,7 @@ export default function ({userId}) {
 
   const user1 = query[0].data
 
-  return <div className='card flex flex-col gap-5'>
+  return <div className='card p-5 flex flex-col gap-5'>
     <div>Name : {user1.firstName + ' ' + user1.lastName}</div>
     {user && user1._id != user._id && <Button>Kết bạn</Button>}
   </div>

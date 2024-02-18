@@ -18,9 +18,9 @@ export default function ({id}) {
   return <div className="flex flex-col gap-10">
     {query[0].data.map(e => <div className={`flex flex-col gap-2 ${e.user == user._id ? 'items-end' : 'items-start'}`} key={e._id}>
       <UserAccount id={e.user}/>
-      <div className="card_1 flex flex-col gap-5">
+      <div className="card_1 p-5 flex flex-col gap-5">
         {e.content}
-        {e.image && <Image className={' w-96'} id={e.image}/>}
+        {e.image && <Image className={'w-96'} id={e.image}/>}
       </div>     
     </div>)}    
   </div>

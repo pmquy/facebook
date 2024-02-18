@@ -30,7 +30,7 @@ export default function ({ id }) {
     {image && <img src={image} className='rounded-xl w-64'></img>}
     <div className="flex gap-5 items-center">
       <Input placeholder={'Viết bình luận'} className={'flex-grow'} ref={contentRef} />
-      <FileInput onChange={e => setImage(URL.createObjectURL(e.target.files[0]))} ref={fileRef} />
+      <FileInput onChange={e => setImage(e.target.files[0] ? URL.createObjectURL(e.target.files[0]) : null)} ref={fileRef} />
       <Button onClick={handleComment}>Bình luận</Button>
     </div>
   </div>

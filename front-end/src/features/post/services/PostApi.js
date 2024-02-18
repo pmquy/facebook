@@ -2,7 +2,7 @@ import { parseQuery } from "../../../utils/parseQuery"
 class Api {
 
   get = async query =>
-    fetch(`http://localhost:3000/posts${parseQuery(query)}`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}posts${parseQuery(query)}`, {
       credentials: 'include'
     })
       .then(async res => {
@@ -12,7 +12,7 @@ class Api {
   
 
   create = async data =>
-    fetch('http://localhost:3000/posts/create', {
+    fetch(`${import.meta.env.VITE_SERVER_URL}posts/create`, {
       method: 'POST',
       credentials: 'include',
       body: data
@@ -23,7 +23,7 @@ class Api {
       })
 
   updateById = async (id, data) =>
-    fetch(`http://localhost:3000/posts/${id}`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}posts/${id}`, {
       method: 'PUT',
       credentials: 'include',
       body: data
@@ -34,7 +34,7 @@ class Api {
       })
 
   getById = async id =>
-    fetch(`http://localhost:3000/posts/${id}`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}posts/${id}`, {
       credentials: 'include'
     })
       .then(async res => {
@@ -43,7 +43,7 @@ class Api {
       })
 
   deleteById = async id =>
-    fetch(`http://localhost:3000/posts/${id}`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}posts/${id}`, {
       method: 'DELETE',
       credentials: 'include'
     })

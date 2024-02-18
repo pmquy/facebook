@@ -2,7 +2,7 @@ import { parseQuery } from "../../../utils/parseQuery"
 class Api {
 
   get = async query =>
-    fetch(`http://localhost:3000/commentposts${parseQuery(query)}`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}commentposts${parseQuery(query)}`, {
       credentials: 'include'
     })
       .then(async res => {
@@ -12,7 +12,7 @@ class Api {
   
 
   create = async data =>
-    fetch('http://localhost:3000/commentposts/create', {
+    fetch('${import.meta.env.VITE_SERVER_URL}commentposts/create', {
       method: 'POST',
       credentials: 'include',
       body: data
@@ -23,7 +23,7 @@ class Api {
       })
 
   updateById = async (id, data) =>
-    fetch(`http://localhost:3000/commentposts/${id}`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}commentposts/${id}`, {
       method: 'PUT',
       credentials: 'include',
       body: data
@@ -34,7 +34,7 @@ class Api {
       })
 
   getById = async id =>
-    fetch(`http://localhost:3000/commentposts/${id}`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}commentposts/${id}`, {
       credentials: 'include'
     })
       .then(async res => {
@@ -43,7 +43,7 @@ class Api {
       })
 
   deleteById = async id =>
-    fetch(`http://localhost:3000/commentposts/${id}`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}commentposts/${id}`, {
       method: 'DELETE',
       credentials: 'include'
     })

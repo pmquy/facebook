@@ -20,22 +20,18 @@ export default function ({id}) {
       queryFn : () => PostApi.getById(id)
     }
   ])
-  
   if(query.some(e => e.isError || e.isLoading)) return <></>
-  
-  const post = query[0].data  
-  
+  const post = query[0].data    
   const handleDelete = () => {
     PostApi.deleteById(id)
       .then(() => queryClient.invalidateQueries(['posts', user._id]))
       .catch(err => toast(err.message, {type : 'error'}))
   }
-
-  return <div className="card flex flex-col gap-5 relative"> 
+  return <div className="card p-5 flex flex-col gap-5 relative"> 
     {user._id == post.user && <Button onClick={handleDelete} className={'absolute right-5 top-5'}>Xóa</Button>}    
     <UserAccount id={post.user}/>
     <div>Vào {parseDate(post.createdAt)}</div>
-    <div className=" card_1 flex flex-col gap-5">
+    <div className=" card_1 p-5 flex flex-col gap-5">
       <div className=" whitespace-pre-line">{post.content}</div>
       {post.image && <Image id={post.image}/>}
     </div>

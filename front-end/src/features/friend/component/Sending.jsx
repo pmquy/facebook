@@ -35,7 +35,7 @@ export default function () {
   }
 
   return <div>
-    <div className='card flex flex-col gap-5'>
+    <div className='card p-5 flex flex-col gap-5'>
       <div className='text-1 text-xl'>Các yêu cầu gửi đi</div>
       {arr.map((e, i) => <div key={e} className='flex gap-5 items-center justify-between'>
         <Link to={'/user/' + e}>{fr[i].firstName + ' ' + fr[i].lastName}</Link>

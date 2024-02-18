@@ -16,7 +16,7 @@ const creatingPattern = Joi.object({
 
 const updatingPattern = Joi.object({
   phoneNumber: Joi.string().trim().pattern(/^\d*$/),
-  email: Joi.string().email().trim(),  
+  email: Joi.string().email().trim(),
   firstName: Joi.string().trim(),
   lastName: Joi.string().trim(),
 }).unknown(false).required()
@@ -33,9 +33,21 @@ const changePasswordPattern = Joi.object({
   }).custom((value, helpers) => bcrypt.hashSync(value, Number.parseInt(process.env.SALT_ROUNDS))),
 }).unknown(false).required()
 
+const opt1 = {
+  maxAge: 1000 * 60 * 60 * 24 * 10,
+  httpOnly: true
+}
+
+const opt2 = {
+  maxAge: 1000 * 60 * 60 * 24 * 10,          
+  httpOnly : true,
+  sameSite : 'None',
+  secure : true,
+}
+
 class Controller {
 
-  get = async(req, res, next) => {
+  get = async (req, res, next) => {
     User.find(req.query).select('-password -phoneNumber -email')
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
@@ -65,9 +77,7 @@ class Controller {
     creatingPattern.validateAsync(req.body)
       .then(val => User.create(val))
       .then(val => {
-        res.cookie('access_token', this.getToken(val._id), {
-          maxAge: 1000 * 60 * 60 * 24 * 10,
-        })
+        res.cookie('access_token', this.getToken(val._id), process.env.ENV == "DEV" ? opt1 : opt2)
         res.status(200).send(val)
       })
       .catch(err => next(err))
@@ -79,30 +89,28 @@ class Controller {
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
-  
-  changePasswordById = async (req, res, next) => {    
+
+  changePasswordById = async (req, res, next) => {
     changePasswordPattern.validateAsync(req.body)
       .then(async val => {
         const user = await User.findById(req.params.id)
-        if(bcrypt.compareSync(val.oldPassword, user.password))
-          return user.updateOne({password : val.password}, {new : true})
+        if (bcrypt.compareSync(val.oldPassword, user.password))
+          return user.updateOne({ password: val.password }, { new: true })
         throw new Error()
-      })      
+      })
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
 
-  login = async (req, res, next) => {    
+  login = async (req, res, next) => {
     loginPattern.validateAsync(req.body)
       .then(async val => {
         const user = await User.findOne({ phoneNumber: val.phoneNumber })
-        if (bcrypt.compareSync(val.password, user.password)) return user        
+        if (bcrypt.compareSync(val.password, user.password)) return user
         throw new Error()
       })
       .then(val => {
-        res.cookie('access_token', this.getToken(val.toObject()), {
-          maxAge: 1000 * 60 * 60 * 24 * 10,
-        })
+        res.cookie('access_token', this.getToken(val.toObject()), process.env.ENV == "DEV" ? opt1 : opt2)
         res.status(200).send(val)
       })
       .catch(err => next(err))

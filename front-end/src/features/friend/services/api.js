@@ -2,7 +2,7 @@ import { parseQuery } from '../../../utils/parseQuery'
 
 class Api {
   get = async query =>
-    fetch(`http://localhost:3000/friends${parseQuery(query)}`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}friends${parseQuery(query)}`, {
       credentials: 'include',
     })
       .then(async res => {
@@ -11,7 +11,7 @@ class Api {
       })
 
   create = async id =>
-    fetch(`http://localhost:3000/friends/${id}/create`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}friends/${id}/create`, {
       method: 'POST',
       credentials: 'include',
     })
@@ -21,7 +21,7 @@ class Api {
       })
 
   accept = async id =>
-    fetch(`http://localhost:3000/friends/${id}/accept`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}friends/${id}/accept`, {
       method: 'POST',
       credentials: 'include',
     })
@@ -31,7 +31,7 @@ class Api {
       })
 
   cancel = async id =>
-    fetch(`http://localhost:3000/friends/${id}/cancel`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}friends/${id}/cancel`, {
       method: 'POST',
       credentials: 'include',
     })

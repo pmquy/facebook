@@ -1,6 +1,6 @@
 class Api {
   getImageById = id =>
-    fetch(`http://localhost:3000/images/${id}`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}images/${id}`, {
       credentials: 'include'
     })
       .then(async res => {

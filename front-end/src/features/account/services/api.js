@@ -1,7 +1,7 @@
 class Api {
   
   login = async data =>
-    fetch('http://localhost:3000/users/login', {
+    fetch(`${import.meta.env.VITE_SERVER_URL}users/login`, {
       method: 'POST',      
       credentials: 'include',
       headers: {
@@ -15,7 +15,7 @@ class Api {
       })
 
   create = async data =>
-    fetch('http://localhost:3000/users/create', {
+    fetch(`${import.meta.env.VITE_SERVER_URL}users/create`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -29,7 +29,7 @@ class Api {
       })
 
   updateById = async (id, data) =>
-    fetch(`http://localhost:3000/users/${id}`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}users/${id}`, {
       method: 'PUT',
       credentials: 'include',
       headers: {
@@ -43,7 +43,7 @@ class Api {
       })
 
   changePasswordById = async (id, data) =>
-    fetch(`http://localhost:3000/users/${id}/changePassword`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}users/${id}/changePassword`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -57,7 +57,7 @@ class Api {
       })
 
   getById = async id =>
-    fetch(`http://localhost:3000/users/${id}`)
+    fetch(`${import.meta.env.VITE_SERVER_URL}users/${id}`)
       .then(async res => {
         if (res.ok) return res.json()
         return res.json().then(res => { throw new Error(res.error.message) })

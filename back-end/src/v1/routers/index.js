@@ -10,4 +10,5 @@ router.use('/commentposts', auth, require('./commentPost'))
 router.use('/shareposts', auth, require('./sharePost'))
 router.use('/groupchats', auth, require('./groupChat'))
 router.use('/messages', auth, require('./message'))
+router.use('/notifications', auth, require('./notification'))
 module.exports = router

@@ -36,9 +36,9 @@ export default function ({className}) {
         <IoGameController className="w-8 h-8"/>
         <div className="text-1">Game</div>
       </div>
-      <div className="flex gap-5 p-2 rounded-lg items-center hover:bg-white_0">
+      <Link to={'/messages'} className="flex gap-5 p-2 rounded-lg items-center hover:bg-white_0">
         <FaFacebookMessenger className="w-8 h-8"/>
         <div className="text-1">Messenger</div>
-      </div>
+      </Link>
   </div>
 }
