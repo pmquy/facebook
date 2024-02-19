@@ -12,7 +12,7 @@ class Api {
   
 
   create = async data =>
-    fetch('${import.meta.env.VITE_SERVER_URL}commentposts/create', {
+    fetch(`${import.meta.env.VITE_SERVER_URL}commentposts/create`, {
       method: 'POST',
       credentials: 'include',
       body: data

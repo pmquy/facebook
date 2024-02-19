@@ -1,11 +1,12 @@
 const express = require('express')
 const app = express()
+const server = require('http').Server(app)
 
 // connect database
 require('./v1/configs/init.mongo')()
 
 // init socket server
-require('./v1/configs/init.socket')(app)
+require('./v1/configs/init.socket')(server)
 
 // log request 
 app.use(require('morgan')('tiny'))
@@ -30,5 +31,4 @@ app.use(require('./v1/routers'))
 app.use(require('./v1/middlewares/handle-404'))
 app.use(require('./v1/middlewares/handle-error'))
 
-
-module.exports = app
+module.exports = server

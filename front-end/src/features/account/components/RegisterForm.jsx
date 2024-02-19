@@ -3,11 +3,11 @@ import { useContext, useRef } from 'react'
 import api from '../services/api'
 import { toast } from 'react-toastify'
 import { Link, useNavigate } from 'react-router-dom'
-import CommonContext from '../../../store/CommonContext'
+import { useQueryClient } from 'react-query'
 
 export default function () {
   const navigate = useNavigate()
-  const {setUser} = useContext(CommonContext)
+  const queryClient = useQueryClient()
 
   const phoneNumberRef = useRef(),
     emailRef = useRef(),
@@ -26,11 +26,10 @@ export default function () {
       firstName: firstNameRef.current.value,
       lastName: lastNameRef.current.value,
     })
-      .then(user => {
-        setUser(user)
-        navigate('/')
-      })
-      .catch(err => toast(err.message, { type: 'error' }))
+    .then(() => queryClient.invalidateQueries(['me']))
+    .then(() => queryClient.invalidateQueries(['users']))     
+    .then(() => navigate('/'))
+    .catch(err => toast(err.message, { type: 'error' }))
   }
 
   return <div className="flex flex-col gap-5 card p-5 m-auto w-full max-w-[500px]">

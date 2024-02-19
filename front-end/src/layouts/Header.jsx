@@ -63,8 +63,8 @@ export default function () {
         <div className=" absolute w-max p-2 left-1/2 -translate-x-1/2 bottom-0 hidden group-hover:block rounded-lg bg-red_0 text-white_0 translate-y-[150%] z-20">Menu</div>
         <IoMdMenu className="w-8 h-8" />
       </div>
-      <Messenger/>
-      <Notification/>
+      {user ? <Messenger/> : <Link to={'/login'}/>}
+      {user ? <Notification/> : <Link to={'/login'}/>}
       <Link to={user ? '/user/' + user._id : '/login'} className="p-2 rounded-full hover:bg-white_0 relative group">
         <div className=" absolute w-max p-2 right-0 bottom-0 hidden group-hover:block rounded-lg bg-red_0 text-white_0 translate-y-[150%]">{user ? user.firstName + ' ' + user.lastName : 'Đăng nhập'}</div>
         <MdAccountCircle className="w-8 h-8" />

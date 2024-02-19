@@ -12,21 +12,9 @@ export default function () {
     queryKey: ['posts', user._id],
     queryFn: () => PostApi.get()
   })
-  useEffect(() => {
-    if(query.isError || query.isLoading) return
-    const observer = new IntersectionObserver(entries => {
-      if(entries[0].isIntersecting) {        
-        setIds(ids => [...ids, ...query.data.slice(ids.length, ids.length + 3)])
-      }
-    })
-    if(ref.current) observer.observe(ref.current)
-    return () => {
-      if(ref.current) observer.unobserve(ref.current)
-    }
-  }, [query.isError , query.isLoading])
   if (query.isError || query.isLoading) return <></>
   return <div className='flex flex-col gap-5 my-5'>
-    {ids.map(e => <Post id={e._id} />)}
+    {query.data.map(e => <Post id={e._id} />)}
     <div ref={ref}>Loading more posts</div>
   </div>
 }
