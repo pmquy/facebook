@@ -13,7 +13,7 @@ class Api {
 
 
   create = async data =>
-    fetch('${import.meta.env.VITE_SERVER_URL}likeposts/create', {
+    fetch(`${import.meta.env.VITE_SERVER_URL}likeposts/create`, {
       method: 'POST',
       credentials: 'include',
       body: JSON.stringify(data),
