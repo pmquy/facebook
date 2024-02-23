@@ -10,6 +10,8 @@ import Register from './pages/Register'
 import Account from './pages/Account'
 import Friends from './pages/Friends'
 import Messenger from './pages/Messenger'
+import CaroGame from './pages/CaroGame'
+import CaroGames from './pages/CaroGames'
 
 const router = createBrowserRouter([
   {
@@ -39,6 +41,14 @@ const router = createBrowserRouter([
       {
         path : '/messages',
         element : <Messenger/>
+      },
+      {
+        path : '/carogames',
+        element : <CaroGames/>
+      },
+      {
+        path : '/carogames/:id',
+        element : <CaroGame/>
       }
     ]
   }

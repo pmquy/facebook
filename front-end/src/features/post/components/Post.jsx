@@ -6,38 +6,70 @@ import Comments from "./Comments";
 import CreateComment from "./CommentForm";
 import UserAccount from "../../../components/UserAccount";
 import { toast } from "react-toastify";
-import { useContext } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import CommonContext from "../../../store/CommonContext";
 import { Button } from "../../../components/ui";
-import {parseDate} from '../../../utils/parseDate'
+import { parseDate } from '../../../utils/parseDate'
+import { IoCloseCircle } from "react-icons/io5";
 
-export default function ({id}) {
-  const {user} = useContext(CommonContext)
+export default function ({ id }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef()
+  const { user } = useContext(CommonContext)
+
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : 'auto'
+    return () => {
+      document.body.style.overflow = 'auto'
+    }
+  }, [open])
+
   const queryClient = useQueryClient()
   const query = useQueries([
     {
-      queryKey : ['post', id],
-      queryFn : () => PostApi.getById(id)
+      queryKey: ['post', id],
+      queryFn: () => PostApi.getById(id)
     }
   ])
-  if(query.some(e => e.isError || e.isLoading)) return <></>
-  const post = query[0].data    
+  if (query.some(e => e.isError || e.isLoading)) return <></>
+  const post = query[0].data
   const handleDelete = () => {
     PostApi.deleteById(id)
       .then(() => queryClient.invalidateQueries(['posts', user._id]))
-      .catch(err => toast(err.message, {type : 'error'}))
+      .catch(err => toast(err.message, { type: 'error' }))
   }
-  return <div className="card p-5 flex flex-col gap-5 relative"> 
-    {user._id == post.user && <Button onClick={handleDelete} className={'absolute right-5 top-5'}>Xóa</Button>}    
-    <UserAccount id={post.user}/>
-    <div>Vào {parseDate(post.createdAt)}</div>
-    <div className=" card_1 p-5 flex flex-col gap-5">
-      <div className=" whitespace-pre-line">{post.content}</div>
-      {post.image && <Image id={post.image}/>}
+
+  return <div>
+    {open && <div onClick={e => { if (!ref.current.contains(e.target)) setOpen(false) }} className="fixed left-0 top-0 bg-black_trans w-screen h-screen z-20"></div>}
+    <div ref={ref} className={`max-w-[90%] max-h-[80%] max-sm:min-w-full max-sm:min-h-full fixed left-1/2 -translate-x-1/2 top-1/2 ${open ? '-translate-y-1/2' : 'translate-y-[1000px]'} transition-all duration-500 z-20  overflow-x-auto card`}>
+      <div className="card flex flex-col gap-5 relative">
+        <div className="flex gap-5 p-5 items-center justify-between sticky top-0 z-20 card_1">
+          <UserAccount id={post.user} />
+          <div>Vào {parseDate(post.createdAt)}</div>
+          <IoCloseCircle onClick={() => setOpen(false)} className="w-8 h-8" />
+        </div>
+        <div className="p-5 flex flex-col gap-5">
+          <div className=" card_1 p-5 flex flex-col gap-5">
+            <div className=" whitespace-pre-line">{post.content}</div>
+            {post.image && <Image id={post.image} />}
+          </div>
+          <PostAction id={id} />
+          <CreateComment id={id} />
+          <hr />
+          <Comments id={id} />
+        </div>
+      </div>
     </div>
-    <PostAction id={post._id}/>
-    <CreateComment id={post._id}/>
-    <hr />
-    <Comments id={post._id}/>
+
+    <div className="card p-5 flex flex-col gap-5 relative">
+      {user._id == post.user && <Button onClick={handleDelete} className={'absolute right-5 top-5'}>Xóa</Button>}
+      <UserAccount id={post.user} />
+      <div>Vào {parseDate(post.createdAt)}</div>
+      <div onClick={() => setOpen(true)} className=" card_1 p-5 flex flex-col gap-5">
+        <div className=" whitespace-pre-line">{post.content}</div>
+        {post.image && <Image id={post.image} />}
+      </div>
+      <PostAction id={id} />
+    </div>
   </div>
 }  
