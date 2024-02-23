@@ -51,11 +51,11 @@ export default function () {
         <div className=" absolute w-max p-2 left-1/2 -translate-x-1/2 bottom-0 hidden group-hover:block rounded-lg bg-red_0 text-white_0 translate-y-[150%] z-20">Group</div>
         <GrGroup className="w-8 h-8" color={index == 4 ? 'red' : ''} />
       </div>
-      <div className="py-2 px-10 group relative hover:bg-white_0 rounded-lg">
+      <Link to={'/carogames'} className="py-2 px-10 group relative hover:bg-white_0 rounded-lg">
         {index == 5 && <div className="absolute h-1 bg-red_0 left-0 bottom-0 w-full" />}
         <div className=" absolute w-max p-2 left-1/2 -translate-x-1/2 bottom-0 hidden group-hover:block rounded-lg bg-red_0 text-white_0 translate-y-[150%] z-20">Gaming</div>
         <IoGameController className="w-8 h-8" color={index == 5 ? 'red' : ''} />
-      </div>
+      </Link>
     </div>
 
     <div className="flex gap-2 basis-1/3 justify-end">
@@ -63,8 +63,8 @@ export default function () {
         <div className=" absolute w-max p-2 left-1/2 -translate-x-1/2 bottom-0 hidden group-hover:block rounded-lg bg-red_0 text-white_0 translate-y-[150%] z-20">Menu</div>
         <IoMdMenu className="w-8 h-8" />
       </div>
-      {user ? <Messenger/> : <Link to={'/login'}/>}
-      {user ? <Notification/> : <Link to={'/login'}/>}
+      <Messenger/>
+      <Notification/>
       <Link to={user ? '/user/' + user._id : '/login'} className="p-2 rounded-full hover:bg-white_0 relative group">
         <div className=" absolute w-max p-2 right-0 bottom-0 hidden group-hover:block rounded-lg bg-red_0 text-white_0 translate-y-[150%]">{user ? user.firstName + ' ' + user.lastName : 'Đăng nhập'}</div>
         <MdAccountCircle className="w-8 h-8" />
