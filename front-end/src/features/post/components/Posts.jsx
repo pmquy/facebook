@@ -6,7 +6,6 @@ import Post from './Post'
 
 export default function () {
   const { user } = useContext(CommonContext)
-  const [ids, setIds] = useState([])
   const ref = useRef()
   const query = useQuery({
     queryKey: ['posts', user._id],

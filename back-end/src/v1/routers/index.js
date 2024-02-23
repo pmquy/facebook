@@ -11,5 +11,5 @@ router.use('/shareposts', auth, require('./sharePost'))
 router.use('/groupchats', auth, require('./groupChat'))
 router.use('/messages', auth, require('./message'))
 router.use('/notifications', auth, require('./notification'))
-router.use('/socket.io', (req, res, next) => res.status(200).send({}))
+router.use('/carogames', auth, require('./caroGame'))
 module.exports = router

@@ -16,7 +16,7 @@ export default function () {
       </div>
     </button>
 
-    {id && <div className="fixed card flex flex-col gap-5 right-5 bottom-12 max-h-[50%] max-w-[50%] overflow-y-auto">
+    {id && <div className="fixed card flex flex-col gap-5 right-5 bottom-12 max-h-[70%] w-[90%] max-w-[500px] overflow-y-auto">
       <div className=" sticky bg-red_0 p-5 top-0 flex justify-end"><IoCloseCircle onClick={() => setId(null)} className=" w-8 h-8" /></div>
       <div className="p-5 flex flex-col gap-5">
         <Messages id={id} />

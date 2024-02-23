@@ -4,10 +4,11 @@ import api from '../services/api'
 import {toast} from 'react-toastify'
 import { Link, useNavigate } from 'react-router-dom'
 import { useQueryClient } from 'react-query'
+import CommonContext from '../../../store/CommonContext'
 
 export default function () {
+  const {setUser} = useContext(CommonContext)
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
   const phoneNumberRef = useRef(),
     passwordRef = useRef()
 
@@ -17,8 +18,7 @@ export default function () {
       phoneNumber: phoneNumberRef.current.value,
       password: passwordRef.current.value,
     })
-      .then(() => queryClient.invalidateQueries(['me']))     
-      .then(() => navigate('/'))
+      .then(user => {setUser(user); navigate('/')})           
       .catch(err => toast(err.message, {type : 'error'}))
   }
 
