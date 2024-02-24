@@ -1,14 +1,11 @@
 import { FaShare } from 'react-icons/fa'
 import { useQuery } from 'react-query'
 import ShareApi from '../services/ShareApi'
-import { useContext } from 'react'
-import CommonContext from '../../../store/CommonContext'
 
-export default function ({ id }) {
-  const { users } = useContext(CommonContext)
+export default function ({ post }) {  
   const query = useQuery({
-    queryKey: ['shareposts', id],
-    queryFn: () => ShareApi.get({ post: id }),
+    queryKey: ['shareposts', {post : post}],
+    queryFn: () => ShareApi.get({ post: post }),
   })
 
   if (query.isLoading || query.isError) return <></>

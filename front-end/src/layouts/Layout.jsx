@@ -20,9 +20,9 @@ export default function () {
 
   return <CommonContext.Provider value={{ user: user, setUser: setUser, users: query[0].data, socket : socket}}>
     <ToastContainer />
-    <div className="overflow-x-hidden min-h-screen bg-white_1">
+    <div className=" bg-white_1 min-h-screen">
       {user && <Header/>}
-      <div className="mt-16"><Outlet /></div>
+      <Outlet />
     </div>
   </CommonContext.Provider>
 }

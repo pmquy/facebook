@@ -1,16 +1,16 @@
 import { AiFillLike } from "react-icons/ai"
-import LikeApi from '../services/LikeApi'
+import LikePostApi from '../services/LikePostApi'
 import { useQuery, useQueryClient } from 'react-query'
 import { useContext, useMemo } from "react"
 import CommonContext from '../../../store/CommonContext'
 
-export default function ({ id }) {
+export default function ({ post }) {
   const { user } = useContext(CommonContext)
   const queryClient = useQueryClient()
 
   const query = useQuery({
-    queryKey: ['likeposts', id],
-    queryFn: () => LikeApi.get({ post: id })
+    queryKey: ['likeposts', {post : post}],
+    queryFn: () => LikePostApi.get({ post: post })
   })
 
   const like = useMemo(() => {
@@ -22,20 +22,20 @@ export default function ({ id }) {
 
   const handleLike = () => {
     if (like) {
-      LikeApi.delete({
-        post: id,
+      LikePostApi.delete({
+        post: post,
       })
-        .then(() => queryClient.invalidateQueries(['likeposts', id]))
+        .then(() => queryClient.invalidateQueries(['likeposts', {post : post}]))
     } else {
-      LikeApi.create({
-        post: id,
+      LikePostApi.create({
+        post: post,
       })
-        .then(() => queryClient.invalidateQueries(['likeposts', id]))
+        .then(() => queryClient.invalidateQueries(['likeposts', {post : post}]))
     }
   }
 
   return <div onClick={handleLike} className="flex gap-2 items-center p-2 cursor-pointer rounded-lg hover:bg-white_1">
-    <AiFillLike className="w-6 h-6" color={`${like ? 'red' : 'gray'}`} />
+    <AiFillLike className={`w-6 h-6 ${like ? ' animate-like' : ''}`} color={`${like ? 'red' : 'gray'}`} />
     <div className={`${like ? 'text-red_0 font-semibold' : ''}`}>{like ? 'Đã thích' : 'Thích'} ({query.data.length})</div>
   </div>
 }

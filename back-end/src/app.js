@@ -6,7 +6,8 @@ const server = require('http').Server(app)
 require('./v1/configs/init.mongo')()
 
 // init socket server
-require('./v1/configs/init.socket')(server)
+const io = require('./v1/configs/init.socket')(server)
+module.exports = {io}
 
 // log request 
 app.use(require('morgan')('tiny'))
