@@ -10,7 +10,8 @@ const init = server => {
         socket.on('invalidate', keys => {
             io.emit('invalidate', keys)
         })
-    });    
+    }); 
+    return io   
 }
 
 module.exports = init

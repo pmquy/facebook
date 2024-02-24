@@ -5,7 +5,8 @@ const Image = require('../models/Image')
 const creatingPattern = Joi.object({
   content: Joi.string().required(),
   image: Joi.string(),
-  post: Joi.string().required()
+  post: Joi.string().required(),
+  comment: Joi.string().default(''),
 }).unknown(false).required()
 
 const updatingPattern = Joi.object({
@@ -15,10 +16,11 @@ const updatingPattern = Joi.object({
 
 class Controller {
 
-  get = (req, res, next) =>
-    CommentPost.find(req.query)
+  get = (req, res, next) => {
+    CommentPost.find(req.query)      
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
+  }
 
   getById = (req, res, next) =>
     CommentPost.findById(req.params.id)

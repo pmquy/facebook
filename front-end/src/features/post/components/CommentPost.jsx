@@ -2,10 +2,10 @@ import { FaComment } from "react-icons/fa"
 import CommentApi from '../services/CommentApi'
 import { useQuery } from "react-query"
 
-export default function ({ id }) {
+export default function ({ post }) {
   const query = useQuery({
-    queryKey: ['commentposts', id],
-    queryFn: () => CommentApi.get({ post: id })
+    queryKey: ['comments', {post : post}],
+    queryFn: () => CommentApi.get({post : post})
   })
 
   if (query.isError || query.isLoading) return <></>

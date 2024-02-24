@@ -13,7 +13,7 @@ export default function () {
   
   const handleCreate = (id) => {
     GameApi.create({to : id})      
-      .then(val => navigate('/games/' + val._id))
+      .then(val => navigate('/carogames/' + val._id))
       .catch(err => toast(err.message, {type : 'error'})) 
   }
 

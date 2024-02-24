@@ -1,9 +1,8 @@
 import { useQueries, useQueryClient } from "react-query";
 import PostApi from "../services/PostApi";
 import Image from "../../../components/Image";
-import PostAction from "./PostAction";
 import Comments from "./Comments";
-import CreateComment from "./CommentForm";
+import CreateComment from "./CreateComment";
 import UserAccount from "../../../components/UserAccount";
 import { toast } from "react-toastify";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -11,6 +10,9 @@ import CommonContext from "../../../store/CommonContext";
 import { Button } from "../../../components/ui";
 import { parseDate } from '../../../utils/parseDate'
 import { IoCloseCircle } from "react-icons/io5";
+import LikePost from "./LikePost";
+import CommentPost from "./CommentPost";
+import SharePost from "./SharePost";
 
 export default function ({ id }) {
   const [open, setOpen] = useState(false)
@@ -41,9 +43,9 @@ export default function ({ id }) {
 
   return <div>
     {open && <div onClick={e => { if (!ref.current.contains(e.target)) setOpen(false) }} className="fixed left-0 top-0 bg-black_trans w-screen h-screen z-20"></div>}
-    <div ref={ref} className={`max-w-[90%] max-h-[80%] max-sm:min-w-full max-sm:min-h-full fixed left-1/2 -translate-x-1/2 top-1/2 ${open ? '-translate-y-1/2' : 'translate-y-[1000px]'} transition-all duration-500 z-20  overflow-x-auto card`}>
+    <div ref={ref} className={`max-w-[90%] max-h-[80%] max-sm:min-w-full max-sm:min-h-full fixed left-1/2 -translate-x-1/2 top-1/2 ${open ? '-translate-y-1/2' : 'translate-y-[1000px]'} transition-all duration-500 z-20  overflow-x-auto`}>
       <div className="card flex flex-col gap-5 relative">
-        <div className="flex gap-5 p-5 items-center justify-between sticky top-0 z-20 card_1">
+        <div className="flex gap-5 p-5 items-center justify-between sticky -top-1 z-20 card_1">
           <UserAccount id={post.user} />
           <div>Vào {parseDate(post.createdAt)}</div>
           <IoCloseCircle onClick={() => setOpen(false)} className="w-8 h-8" />
@@ -53,10 +55,14 @@ export default function ({ id }) {
             <div className=" whitespace-pre-line">{post.content}</div>
             {post.image && <Image id={post.image} />}
           </div>
-          <PostAction id={id} />
-          <CreateComment id={id} />
+          <div className="flex justify-between">
+            <LikePost post={id} />
+            <CommentPost post={id} />
+            <SharePost post={id} />
+          </div>
+          <CreateComment post={id} />
           <hr />
-          <Comments id={id} />
+          <Comments post={id} comment={''} />
         </div>
       </div>
     </div>
@@ -69,7 +75,11 @@ export default function ({ id }) {
         <div className=" whitespace-pre-line">{post.content}</div>
         {post.image && <Image id={post.image} />}
       </div>
-      <PostAction id={id} />
+      <div className="flex justify-between">
+        <LikePost post={id} />
+        <CommentPost post={id} />
+        <SharePost post={id} />
+      </div>
     </div>
   </div>
 }  

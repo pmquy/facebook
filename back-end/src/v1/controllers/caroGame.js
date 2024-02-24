@@ -1,6 +1,6 @@
+const {io} = require('../../app')
 const CaroGame = require('../models/CaroGame')
 const Joi = require('joi')
-
 const m = 30, n = 30, w = 5;
 
 
@@ -105,7 +105,8 @@ class Controller {
         if (val.result.length) throw new Error('Trò chơi đã kết thúc')
         if (val.turn != req.user._id) throw new Error('Lượt của đối thủ')
         if (val.content[req.body.i][req.body.j]) throw new Error('Nước đi không hợp lệ')
-        val.content[req.body.i][req.body.j] = req.user._id == val.from ? 'x' : 'o'        
+        val.content[req.body.i][req.body.j] = req.user._id == val.from ? 'x' : 'o'
+        io.emit('invalidate', ['carogame', val._id.toString()])        
         return val.updateOne({
           content: val.content,
           turn: req.user._id == val.from ? val.to : val.from,

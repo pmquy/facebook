@@ -42,5 +42,5 @@ class Api {
 
 }
 
-const LikeApi = new Api()
-export default LikeApi
+const LikePostApi = new Api()
+export default LikePostApi
