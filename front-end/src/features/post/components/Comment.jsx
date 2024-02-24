@@ -1,21 +1,30 @@
 import UserAccount from "../../../components/UserAccount";
 import Image from '../../../components/Image'
 import { BsThreeDots } from "react-icons/bs";
-import { useState } from "react";
 import { Button } from "../../../components/ui";
 import CommentApi from '../services/CommentApi'
 import { useQueryClient } from "react-query";
+import { useState } from "react";
+import CreateComment from './CreateComment'
+import Comments from './Comments'
+import { toast } from "react-toastify";
+import LikeComment from "./LikeComment";
 
 export default function ({ comment }) {
+  const [open, setOpen] = useState(false)
   const queryClient = useQueryClient()
-
+  
   const handleDelete = () => {
     CommentApi.deleteById(comment._id)
-      .then(() => queryClient.invalidateQueries(['commentposts', comment.post]))    
+      .then(() => queryClient.invalidateQueries(['comments', {post : comment.post, comment : comment.comment}]))
+      .catch(err => toast(err.message, {type : 'error'}))      
   }
 
-  return <div className="flex flex-col gap-2 ">
-    <UserAccount id={comment.user} />
+  return <div className={`flex flex-col gap-2`}>    
+    <div className="relative">
+      <UserAccount id={comment.user} />
+      {comment.comment && <div className=" absolute left-0 top-1/2 -tranlsate-y-1/2 border-red_0 -translate-x-full w-8 border-t-2"></div>}
+    </div>
     <div className="flex items-center gap-5">
       <div className="flex flex-col gap-2">
         <div className=" whitespace-pre-line">{comment.content}</div>
@@ -31,5 +40,11 @@ export default function ({ comment }) {
         </div>
       </div>
     </div>
+    <div className="flex gap-5">
+      <LikeComment comment={comment._id}/>
+      <div onClick={() => setOpen(true)}>Phản hồi</div>
+    </div>
+    <Comments post={comment.post} comment={comment._id}/>    
+    {open && <CreateComment post={comment.post} comment={comment._id}/>}
   </div>
 }
