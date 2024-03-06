@@ -3,6 +3,8 @@ const Joi = require('joi')
 const bcrypt = require('bcrypt')
 const CustomError = require('../utils/CustomError')
 const jwt = require('jsonwebtoken')
+const {redisClient} = require('../../app')
+const UserService = require('../services/user')
 
 const creatingPattern = Joi.object({
   phoneNumber: Joi.string().trim().required().pattern(/^\d*$/),
@@ -39,16 +41,16 @@ const opt1 = {
 }
 
 const opt2 = {
-  maxAge: 1000 * 60 * 60 * 24 * 10,          
-  httpOnly : true,
-  sameSite : 'None',
-  secure : true,
+  maxAge: 1000 * 60 * 60 * 24 * 10,
+  httpOnly: true,
+  sameSite: 'None',
+  secure: true,
 }
 
 class Controller {
 
   get = async (req, res, next) => {
-    User.find(req.query).select('-password -phoneNumber -email')
+    UserService.get(req.query)
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
@@ -68,47 +70,35 @@ class Controller {
   }
 
   getById = async (req, res, next) => {
-    User.findById(req.params.id).select('-password -phoneNumber -email')
+    UserService.getById(req.params.id)
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
 
   create = async (req, res, next) => {
     creatingPattern.validateAsync(req.body)
-      .then(val => User.create(val))
-      .then(val => {
-        res.cookie('access_token', this.getToken(val._id), process.env.ENV == "DEV" ? opt1 : opt2)
-        res.status(200).send(val)
-      })
+      .then(val => UserService.create(val))
+      .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
 
   updateById = async (req, res, next) => {
     updatingPattern.validateAsync(req.body)
-      .then(val => User.findByIdAndUpdate(req.params.id, val, { new: true }))
+      .then(val => UserService.updateById(req.user, id, val))
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
 
   changePasswordById = async (req, res, next) => {
     changePasswordPattern.validateAsync(req.body)
-      .then(async val => {
-        const user = await User.findById(req.params.id)
-        if (bcrypt.compareSync(val.oldPassword, user.password))
-          return user.updateOne({ password: val.password }, { new: true })
-        throw new Error()
-      })
+      .then(async val => UserService.changePasswordById(req.user, req.params.id, val))
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
 
   login = async (req, res, next) => {
     loginPattern.validateAsync(req.body)
-      .then(async val => {
-        const user = await User.findOne({ phoneNumber: val.phoneNumber })
-        if (bcrypt.compareSync(val.password, user.password)) return user
-        throw new Error()
-      })
+      .then(val => UserService.login(val.phoneNumber, val.password))
       .then(val => {
         res.cookie('access_token', this.getToken(val.toObject()), process.env.ENV == "DEV" ? opt1 : opt2)
         res.status(200).send(val)
@@ -117,7 +107,7 @@ class Controller {
   }
 
   deleteById = (req, res, next) => {
-    User.findByIdAndDelete(req.params.id)
+    UserService.deleteById(req.user, req.params.id)
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }

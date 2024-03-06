@@ -7,7 +7,8 @@ require('./v1/configs/init.mongo')()
 
 // init socket server
 const io = require('./v1/configs/init.socket')(server)
-module.exports = {io}
+const redisClient = require('./v1/configs/init.redis')()
+module.exports = {io, redisClient}
 
 // log request 
 app.use(require('morgan')('tiny'))

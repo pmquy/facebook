@@ -2,7 +2,7 @@ const Notifaction = require('../models/Notification')
 
 class Controller {
   get = (req, res, next) => 
-    Notifaction.find({...req.query, user : req.user._id})
+    Notifaction.find({...req.query, user : req.user._id}).sort({createdAt : -1})
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
 

@@ -1,6 +1,7 @@
 const Joi = require('joi')
 const Message = require('../models/Message')
 const GroupChat = require('../models/GroupChat')
+const {io} = require('../../app')
 
 const creatingPattern = Joi.object({
   content : Joi.string().required(),
@@ -26,7 +27,10 @@ class Controller {
         if(val.users.includes(req.user._id)) return Message.create({...req.body, user : req.user._id})
         throw new Error()
       })
-      .then(val => res.status(200).send(val))
+      .then(val => {
+        res.status(200).send(val)
+        io.emit('invalidate', ['messages', {groupChat : req.body.groupChat}])
+      })
       .catch(err => next(err))
   }
 

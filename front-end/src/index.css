@@ -33,7 +33,7 @@ html {
   }
 
   .btn-1 {
-    @apply bg-red_0 text-white_0 rounded-lg p-2 hover:bg-red_1 w-max
+    @apply bg-red_0 text-white_0 rounded-lg p-2 hover:bg-red_1 w-max cursor-pointer select-none
   }
 
   .card {

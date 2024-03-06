@@ -17,9 +17,6 @@ export default function ({ id }) {
       formData.append('image', imageRef.current.files[0])
     }
     MessageApi.create(formData)
-      .then(() => {
-        socket.emit('invalidate', ['messages', id])
-      })
       .catch(err => toast(err.message, { type: 'error' }))
   }
 

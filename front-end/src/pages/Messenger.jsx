@@ -1,8 +1,9 @@
 import { useSearchParams } from 'react-router-dom'
-import { GroupChats, CreateGroupChat, Messages, CreateMessage } from '../features/chat'
-import { FaCircleArrowLeft, FaCircleInfo } from "react-icons/fa6";
+import { GroupChats, CreateGroupChat, Messages, CreateMessage, GroupHeader } from '../features/chat'
+import { FaCircleArrowLeft } from "react-icons/fa6";
 import { useContext } from 'react';
 import CommonContext from '../store/CommonContext';
+
 export default function () {
   const {user} = useContext(CommonContext)
   if(!user) return <></>
@@ -14,8 +15,8 @@ export default function () {
     </div>
     {param.get('id') && <div className={`${param.get('id') ? '' : 'max-md:hidden'} flex-grow overflow-y-auto flex flex-col gap-5 card `}>
       <div className=" sticky bg-red_0 p-5 top-0 flex justify-between">
-        <FaCircleArrowLeft className='w-8 h-8' onClick={() => { param.delete('id'); setParam(param) }} />
-        <FaCircleInfo className='w-8 h-8' />
+        <FaCircleArrowLeft className='w-8 h-8' color='white' onClick={() => { param.delete('id'); setParam(param) }} />
+        <GroupHeader id={param.get('id')}/>
       </div>
       <div className="p-5 flex flex-col gap-5">
         <Messages id={param.get('id')} />

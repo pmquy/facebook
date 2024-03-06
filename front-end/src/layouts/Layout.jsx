@@ -9,7 +9,7 @@ import {useUser, useSocket} from '../hooks'
 
 export default function () {
   const socket = useSocket()
-  const [user, setUser, isLoading] = useUser()
+  const [user, setUser, isLoading] = useUser(socket)
   const query = useQueries([
     {
       queryKey: ['users'],
@@ -17,7 +17,6 @@ export default function () {
     }
   ])  
   if (isLoading || query.some(e => e.isLoading || e.isError)) return <div></div>
-
   return <CommonContext.Provider value={{ user: user, setUser: setUser, users: query[0].data, socket : socket}}>
     <ToastContainer />
     <div className=" bg-white_1 min-h-screen">
