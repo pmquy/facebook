@@ -2,11 +2,13 @@ import { Input, Button } from '../../../components/ui'
 import { useContext, useRef } from 'react'
 import api from '../services/api'
 import { toast } from 'react-toastify'
+import {useQueryClient} from 'react-query'
 import { Link, useNavigate } from 'react-router-dom'
 import CommonContext from '../../../store/CommonContext'
 
 export default function () {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const {setUser} = useContext(CommonContext)
   const phoneNumberRef = useRef(),
     emailRef = useRef(),
@@ -25,7 +27,7 @@ export default function () {
       firstName: firstNameRef.current.value,
       lastName: lastNameRef.current.value,
     })
-    .then((user) => {setUser(user); queryClient.invalidateQueries(['users']); navigate('/')})    
+    .then( (user) => {setUser(user); queryClient.invalidateQueries(['users']); navigate('/login')})    
     .catch(err => toast(err.message, { type: 'error' }))
   }
 

@@ -19,7 +19,7 @@ export default function () {
   const location = useLocation()
   const index = getIndexFromPathName(location.pathname)
 
-  return <div className="z-10 sticky top-0 w-full flex justify-between p-2 bg-white_1 border-b-2">
+  return <div className="sticky z-10 top-0 w-full flex justify-between p-2 bg-white_1 border-b-2">
     <div className="flex gap-2 basis-1/3">
       <Link to={'/'}>
         <FaFacebook color="red" className="w-12 h-12" />

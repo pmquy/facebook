@@ -1,4 +1,4 @@
-const {io} = require('../../app')
+const {io, redisClient} = require('../../app')
 const CaroGame = require('../models/CaroGame')
 const Joi = require('joi')
 const m = 30, n = 30, w = 5;
