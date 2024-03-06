@@ -10,6 +10,11 @@ const init = server => {
         socket.on('invalidate', keys => {
             io.emit('invalidate', keys)
         })
+        socket.on('call', payload => {
+            if(payload.type == 'join') socket.join(payload.group)
+            if(payload.type == 'left') socket.leave(payload.group)
+            socket.broadcast.to(payload.group).emit('call', payload)
+        })       
     }); 
     return io   
 }

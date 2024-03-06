@@ -1,5 +1,4 @@
-const Image = require('../models/Image')
-const Post = require('../models/Post')
+const PostService = require('../services/post')
 const Joi = require('joi')
 
 const creatingPattern = Joi.object({
@@ -14,46 +13,33 @@ const updatingPattern = Joi.object({
 
 class Controller {
   get = async (req, res, next) => {
-    Post.find(req.query)
+    PostService.get(req.query)
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
 
   create = async (req, res, next) => {
     creatingPattern.validateAsync(req.body)
-      .then(async val => Post.create({...val, user : req.user._id}))
+      .then(async val => PostService.create({...val, user : req.user._id}))
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
 
   getById = async (req, res, next) => {
-    Post.findById(req.params.id)
+    PostService.getById(req.params.id)
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
 
   deleteById = async (req, res, next) => {
-    Post.findById(req.params.id)
-      .then(val => {
-        if (val.user == req.user._id) {
-          if(val.image) Image.findByIdAndDelete(val.image)
-          return val.deleteOne()
-        }
-        throw new Error()
-      })
+    PostService.deleteById(req.user, req.params.id)
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
 
   updateById = async (req, res, next) => {
     updatingPattern.validateAsync(req.body)
-      .then(val => Post.findById(req.params.id)
-        .then(data => {
-          if(val.image) Image.findByIdAndDelete(data.image)
-          if (data.user == req.user._id) return data.updateOne(val, { new: true })
-          throw new Error()
-        })
-      )
+      .then(val => PostService.updateById(req.user, req.params.id, val))
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }

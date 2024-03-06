@@ -18,6 +18,14 @@ class Controller {
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
 
+  getById = (req, res, next) =>
+    GroupChat.findById(req.params.id)
+      .then(val => {
+        if(val.users.includes(req.user._id)) return res.status(200).send(val)
+        throw new Error()
+      })      
+      .catch(err => next(err))
+
   create = (req, res, next) =>
     creatingPattern.validateAsync(req.body)
       .then(val => GroupChat.create(val))

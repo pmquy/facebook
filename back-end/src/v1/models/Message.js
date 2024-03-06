@@ -5,6 +5,6 @@ const Message = new mongoose.Schema({
   image : String,
   user : String,
   groupChat : String,
-})
+}, {timestamps : true})
 
 module.exports = mongoose.model('Messages', Message)

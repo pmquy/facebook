@@ -45,7 +45,7 @@ export default function ({ id }) {
     {open && <div onClick={e => { if (!ref.current.contains(e.target)) setOpen(false) }} className="fixed left-0 top-0 bg-black_trans w-screen h-screen z-20"></div>}
     <div ref={ref} className={`max-w-[90%] max-h-[80%] max-sm:min-w-full max-sm:min-h-full fixed left-1/2 -translate-x-1/2 top-1/2 ${open ? '-translate-y-1/2' : 'translate-y-[1000px]'} transition-all duration-500 z-20  overflow-x-auto`}>
       <div className="card flex flex-col gap-5 relative">
-        <div className="flex gap-5 p-5 items-center justify-between sticky -top-1 z-20 card_1">
+        <div className="flex gap-5 p-5 items-center justify-between sticky top-0 z-20 card_1">
           <UserAccount id={post.user} />
           <div>Vào {parseDate(post.createdAt)}</div>
           <IoCloseCircle onClick={() => setOpen(false)} className="w-8 h-8" />
@@ -67,9 +67,11 @@ export default function ({ id }) {
       </div>
     </div>
 
-    <div className="card p-5 flex flex-col gap-5 relative">
-      {user._id == post.user && <Button onClick={handleDelete} className={'absolute right-5 top-5'}>Xóa</Button>}
-      <UserAccount id={post.user} />
+    <div className="card p-5 flex flex-col gap-5">
+      <div className="flex justify-between items-center">
+        <UserAccount id={post.user} />
+        {user._id == post.user && <Button onClick={handleDelete}>Xóa</Button>}
+      </div>
       <div>Vào {parseDate(post.createdAt)}</div>
       <div onClick={() => setOpen(true)} className=" card_1 p-5 flex flex-col gap-5">
         <div className=" whitespace-pre-line">{post.content}</div>
