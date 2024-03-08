@@ -31,7 +31,7 @@ export default function () {
     .catch(err => toast(err.message, { type: 'error' }))
   }
 
-  return <div className="flex flex-col gap-5 card p-5 m-auto w-full max-w-[500px]">
+  return <div className="flex flex-col gap-5 card p-5 m-auto">
     <div className="flex gap-5 items-center justify-between">
       <div className='text-1'>Số điện thoại</div>
       <Input ref={phoneNumberRef} />

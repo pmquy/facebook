@@ -8,7 +8,7 @@ export default function () {
   const {user} = useContext(CommonContext)
   if(!user) return <></>
   const [param, setParam] = useSearchParams()
-  return <div className='flex gap-10 fixed left-0 h-[90%] w-full p-5'>
+  return <div className='flex gap-10 fixed z-10 left-0 h-[90%] w-full'>
     <div className={`card p-5 flex flex-col gap-5 ${param.get('id') ? 'max-md:hidden' : 'flex-grow'}`}>
       <CreateGroupChat />
       <GroupChats cb={e => <div className={`text-1 ${param.get('id') == e._id ? 'bg-white_2' : 'hover:bg-white_1'} px-5 py-2 rounded-lg`} onClick={() => { param.set('id', e._id); setParam(param) }} key={e._id}>{e.name}</div>} />
