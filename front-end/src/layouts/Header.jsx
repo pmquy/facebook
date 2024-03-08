@@ -5,7 +5,6 @@ import { CgShoppingCart } from "react-icons/cg";
 import { MdOutlineOndemandVideo } from "react-icons/md";
 import { GrGroup } from "react-icons/gr";
 import { IoGameController } from "react-icons/io5";
-import { IoMdMenu } from "react-icons/io";
 import { MdAccountCircle } from "react-icons/md";
 import { Link, useLocation } from "react-router-dom";
 import { getIndexFromPathName } from "../utils/path";
@@ -13,6 +12,7 @@ import { useContext } from "react";
 import CommonContext from '../store/CommonContext'
 import Notification from './Notification'
 import Messenger from './Messenger'
+import Menu from './Menu'
 
 export default function () {
   const { user } = useContext(CommonContext)
@@ -59,10 +59,7 @@ export default function () {
     </div>
 
     <div className="flex gap-2 basis-1/3 justify-end">
-      <div className="p-2 rounded-full hover:bg-white_0 relative group">
-        <div className=" absolute w-max p-2 left-1/2 -translate-x-1/2 bottom-0 hidden group-hover:block rounded-lg bg-red_0 text-white_0 translate-y-[150%] z-20">Menu</div>
-        <IoMdMenu className="w-8 h-8" />
-      </div>
+      <Menu/>
       <Messenger/>
       <Notification/>
       <Link to={user ? '/user/' + user._id : '/login'} className="p-2 rounded-full hover:bg-white_0 relative group">
