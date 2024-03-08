@@ -19,9 +19,11 @@ export default function () {
   if (isLoading || query.some(e => e.isLoading || e.isError)) return <div></div>
   return <CommonContext.Provider value={{ user: user, setUser: setUser, users: query[0].data, socket : socket}}>
     <ToastContainer />
-    <div className=" bg-white_1 min-h-screen">
+    <div className=" bg-white_1 flex flex-col min-h-screen">
       {user && <Header/>}
-      <Outlet />
+      <div className=" flex-grow">
+        <Outlet />
+      </div>
     </div>
   </CommonContext.Provider>
 }

@@ -22,7 +22,7 @@ export default function () {
       .catch(err => toast(err.message, {type : 'error'}))
   }
 
-  return <form onSubmit={handleLogin} className="flex flex-col p-5 gap-5 card m-auto w-full max-w-[400px]">
+  return <form onSubmit={handleLogin} className="flex flex-col p-5 gap-5 card m-auto">
     <div className="flex gap-5 items-center justify-between">
       <div className='text-1'>Số điện thoại</div>
       <Input autoFocus={true} ref={phoneNumberRef}/>

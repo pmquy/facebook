@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 
 export default function ({className}) {
   const {user} = useContext(CommonContext)
-  return <div className={`fixed left-0 overflow-y-auto flex flex-col gap-5 px-5 max-h-screen ${className}`}>
+  return <div className={`fixed left-0 overflow-y-auto flex flex-col gap-5 max-h-screen ${className}`}>
       <Link to={'/user/' + user._id} className="flex gap-5 p-2 rounded-lg items-center hover:bg-white_0">
         <MdAccountCircle className="w-8 h-8"/>
         <div className="text-1">{user.firstName + ' ' + user.lastName}</div>

@@ -24,10 +24,9 @@ export default function () {
       .catch(err => toast(err.message, {type : 'error'}))
   }
 
-  return <div>
-    <Button onClick={() => setOpen(true)}>Tạo nhóm mới</Button>
-    <div onClick={(e) => setOpen(ref.current.contains(e.target))} className={`${open ? 'block' : 'hidden'} z-2  0 fixed left-0 top-0 w-screen h-screen bg-black_trans`}>
-      <div ref={ref} className=" flex flex-col gap-5 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 max-h-[80%] w-[90%] max-w-[400px] overflow-y-auto card p-5">
+  return <div>    
+    {open && <div onClick={(e) => {if(!ref.current.contains(e.target)) setOpen(false)}} className='fixed z-10 left-0 top-0 w-screen h-screen bg-black_trans'>
+      <div ref={ref} className=" flex flex-col gap-5 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 max-h-screen w-[90%] max-sm:w-screen overflow-y-auto card p-5">
         <div className="flex gap-5 items-center">
           <div className="text-1">Tên nhóm</div>          
           <Input className={'flex-grow'} ref={nameRef} placeHolder={'Tên nhóm'}/>
@@ -46,7 +45,9 @@ export default function () {
           </div>
         </div>)}
         <Button onClick={handleCreate} className={'m-auto'}>Tạo nhóm chat</Button>
+        <Button onClick={() => setOpen(false)} className={'m-auto'}>Thoát</Button>
       </div>
-    </div>
+    </div>}
+    <Button onClick={() => setOpen(true)}>Tạo nhóm mới</Button>
   </div>
 }
