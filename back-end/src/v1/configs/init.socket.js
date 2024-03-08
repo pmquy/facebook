@@ -11,9 +11,10 @@ const init = server => {
             io.emit('invalidate', keys)
         })
         socket.on('call', payload => {
-            if(payload.type == 'join') socket.join(payload.group)
-            if(payload.type == 'left') socket.leave(payload.group)
-            socket.broadcast.to(payload.group).emit('call', payload)
+            const t = JSON.parse(payload)            
+            if(t.type == 'join') socket.join(t.group)
+            if(t.type == 'left') socket.leave(t.group)
+            socket.broadcast.to(t.group).emit('call', payload)
         })       
     }); 
     return io   
