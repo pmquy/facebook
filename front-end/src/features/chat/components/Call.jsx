@@ -7,10 +7,31 @@ import api from '../services/call'
 import { toast } from 'react-toastify'
 
 const servers = {
-  'iceServers': [
-    { 'urls': 'stun:stun.services.mozilla.com' },
-    { 'urls': 'stun:stun.l.google.com:19302' }
-  ]
+  iceServers: [
+      {
+        urls: "stun:stun.relay.metered.ca:80",
+      },
+      {
+        urls: "turn:asia.relay.metered.ca:80",
+        username: "5177322f9615b2eb2249488c",
+        credential: "k1G5No+LjyPmRKK4",
+      },
+      {
+        urls: "turn:asia.relay.metered.ca:80?transport=tcp",
+        username: "5177322f9615b2eb2249488c",
+        credential: "k1G5No+LjyPmRKK4",
+      },
+      {
+        urls: "turn:asia.relay.metered.ca:443",
+        username: "5177322f9615b2eb2249488c",
+        credential: "k1G5No+LjyPmRKK4",
+      },
+      {
+        urls: "turns:asia.relay.metered.ca:443?transport=tcp",
+        username: "5177322f9615b2eb2249488c",
+        credential: "k1G5No+LjyPmRKK4",
+      },
+  ],
 }
 
 export default function ({ id }) {
@@ -24,6 +45,7 @@ export default function ({ id }) {
   })
 
   useEffect(() => {
+    console.log(others)
     Object.keys(others).forEach((e, i) => {
       ref.current.childNodes[i + 1].childNodes[0].srcObject = others[e].stream
     })
@@ -38,6 +60,7 @@ export default function ({ id }) {
       myVideoRef.current.srcObject = stream
       listener = async payload => {
         payload = JSON.parse(payload)
+        console.log(payload)
         switch (payload.type) {
           case 'join': {
             const pc = new RTCPeerConnection(servers)
