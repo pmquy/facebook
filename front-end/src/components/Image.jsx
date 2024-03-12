@@ -10,5 +10,5 @@ export default function ({id, className, ...props}) {
     })
   })  
   if(query.isError || query.isLoading) return <></>      
-  return <img className={`${className} rounded-xl`} {...props} src={query.data} alt="fdkj"/>
+  return <img key={id} className={`${className} rounded-xl`} {...props} src={query.data} alt="fdkj"/>
 }
