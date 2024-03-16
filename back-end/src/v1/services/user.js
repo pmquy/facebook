@@ -1,37 +1,27 @@
 const User = require('../models/User')
 const { redisClient } = require('../../app')
 const bcrypt = require('bcrypt')
+const Image = require('../models/Image')
 
 class Service {
   get = async query => {
-    // let val = await redisClient.get('users')
-    // if (val) return JSON.parse(val)
-    let val = await User.find(query).select('-password -phoneNumber -email')
-    // redisClient.set('users', JSON.stringify(val))
+    const val = await User.find(query).select('-password -phoneNumber -email')
     return val
   }
 
   getById = async id => {
-    let val = await redisClient.get('users' + id)
-    if (val) return JSON.parse(val)
-    val = await User.findById(id).select('-password -phoneNumber -email')
-    // redisClient.set('users' + id, JSON.stringify(val))
+    const val = await User.findById(id).select('-password -phoneNumber -email')
     return val
   }
 
   create = async data => {
     const val = await User.create(data)
-    // redisClient.get('users')
-    //   .then(t => {
-    //     t = JSON.parse(t)
-    //     redisClient.set('users', [...t, val])
-    //   })
     return val
   }
 
   deleteById = async (user, id) => {
     if (user._id != id) throw new Error()
-    redisClient.del('users' + id)
+    if(user.avatar) await Image.findByIdAndDelete(user.avatar)
     return User.findByIdAndDelete(id)
   }
 
@@ -43,8 +33,8 @@ class Service {
 
   updateById = async (user, id, data) => {
     if (user._id != id) throw new Error()
-    const val = await User.findByIdAndUpdate(id, data)
-    // redisClient.set('users' + id, JSON.stringify(val))
+    if(user.avatar) await Image.findByIdAndDelete(user.avatar)
+    const val = await User.findByIdAndUpdate(id, data, {new : true})
     return val
   }
 

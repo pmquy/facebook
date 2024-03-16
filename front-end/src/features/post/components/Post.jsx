@@ -14,16 +14,16 @@ import SharePost from "./SharePost";
 import PostContext from '../store/PostContext'
 import DeletePost from "./DeletePost";
 import UpdatePost from "./UpdatePost";
+import { BsThreeDots } from "react-icons/bs";
+import { useSearchParams } from "react-router-dom";
 
 export default function ({ id }) {
-  const [create, setCreate] = useState(false)
+  const [params, setParams] = useSearchParams()
+  const [create, setCreate] = useState(params.get('open') == id)
   const ref = useRef()
   const { user } = useContext(CommonContext)
   useEffect(() => {
     document.body.style.overflow = (create) ? 'hidden' : 'auto'
-    return () => {
-      document.body.style.overflow = 'auto'
-    }
   }, [create])
   const query = useQueries([
     {
@@ -61,8 +61,17 @@ export default function ({ id }) {
     <div className="card p-5 flex flex-col gap-5">
       <div className="flex justify-between items-center">
         <UserAccount id={post.user} />
-        {user._id == post.user && <DeletePost/>}
-        {user._id == post.user && <UpdatePost/>}
+        {user._id == post.user &&
+          <div className="group relative">
+            <BsThreeDots className="w-8 h-8"/>
+            <div className=" absolute rounded-lg right-0 transition-all duration-500 w-max max-h-0 overflow-hidden bg-white_1 group-hover:max-h-screen">
+              <div className="flex flex-col">
+                <DeletePost />
+                <UpdatePost />
+              </div>
+            </div>
+          </div>
+        }
       </div>
       <div>Vào {parseDate(post.createdAt)}</div>
       <div onClick={() => setCreate(true)} className=" card_1 p-5 flex flex-col gap-2">

@@ -18,10 +18,7 @@ class Api {
     fetch(`${import.meta.env.VITE_SERVER_URL}users/create`, {
       method: 'POST',
       credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
+      body: data
     })
       .then(async res => {
         if (res.ok) return res.json()
@@ -32,10 +29,7 @@ class Api {
     fetch(`${import.meta.env.VITE_SERVER_URL}users/${id}`, {
       method: 'PUT',
       credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
+      body: data
     })
       .then(async res => {
         if (res.ok) return res.json()

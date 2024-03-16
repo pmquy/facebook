@@ -4,13 +4,17 @@ const Image = require('../models/Image')
 
 const creatingPattern = Joi.object({
   content: Joi.string().required(),
-  image: Joi.string(),
+  images: Joi.when('content', {
+    is : Joi.exist(),
+    then : Joi.array().items(Joi.string()).default([]),
+    otherwise : Joi.array().items(Joi.string()).min(1)
+  }),
   post: Joi.string().required()
 }).unknown(false).required()
 
 const updatingPattern = Joi.object({
   content: Joi.string(),
-  image: Joi.string(),
+  images : Joi.array().items(Joi.string())
 }).unknown(false).required()
 
 

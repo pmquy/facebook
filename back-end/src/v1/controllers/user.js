@@ -14,6 +14,7 @@ const creatingPattern = Joi.object({
   }).custom((value, helpers) => bcrypt.hashSync(value, Number.parseInt(process.env.SALT_ROUNDS))),
   firstName: Joi.string().trim().required(),
   lastName: Joi.string().trim().required(),
+  avatar: Joi.string(),
 }).unknown(false).required()
 
 const updatingPattern = Joi.object({
@@ -21,6 +22,7 @@ const updatingPattern = Joi.object({
   email: Joi.string().email().trim(),
   firstName: Joi.string().trim(),
   lastName: Joi.string().trim(),
+  avatar: Joi.string(),
 }).unknown(false).required()
 
 const loginPattern = Joi.object({
@@ -84,7 +86,7 @@ class Controller {
 
   updateById = async (req, res, next) => {
     updatingPattern.validateAsync(req.body)
-      .then(val => UserService.updateById(req.user, id, val))
+      .then(val => UserService.updateById(req.user, req.params.id, val))
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }

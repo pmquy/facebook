@@ -7,6 +7,7 @@ import UserAccount from '../../../components/UserAccount'
 import CommonContext from '../../../store/CommonContext'
 import { IoCloseCircle } from "react-icons/io5";
 import { useQueryClient } from 'react-query'
+import Image from '../../../components/Image'
 
 export default function () {
   const { user } = useContext(CommonContext)
@@ -44,7 +45,7 @@ export default function () {
       {images.map((e, i) => <img key={i} src={e} className='rounded-xl'></img>)}
       <Button onClick={handleCreatePost} className={'m-auto'}>Đăng</Button>
     </div>
-    <MdAccountCircle className='w-8 h-8' />
+    {user.avatar ? <Image id={user.avatar} className={'min-w-8 min-h-8 max-w-8 max-h-8 object-cover rounded-full'} /> : <MdAccountCircle className='w-8 h-8' />}
     <div onClick={() => setOpen(true)} className=' bg-white_1 p-2 rounded-xl flex-grow hover:bg-white_2'>Bạn đang nghĩ gì thế</div>
   </div>
 }

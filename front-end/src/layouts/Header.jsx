@@ -13,6 +13,7 @@ import CommonContext from '../store/CommonContext'
 import Notification from './Notification'
 import Messenger from './Messenger'
 import Menu from './Menu'
+import Image from "../components/Image";
 
 export default function () {
   const { user } = useContext(CommonContext)
@@ -58,13 +59,13 @@ export default function () {
       </Link>
     </div>
 
-    <div className="flex gap-2 basis-1/3 justify-end">
-      <Menu/>
-      <Messenger/>
-      <Notification/>
-      <Link to={user ? '/user/' + user._id : '/login'} className="p-2 rounded-full hover:bg-white_0 relative group">
-        <div className=" absolute w-max p-2 right-0 bottom-0 hidden group-hover:block rounded-lg bg-red_0 text-white_0 translate-y-[150%]">{user ? user.firstName + ' ' + user.lastName : 'Đăng nhập'}</div>
-        <MdAccountCircle className="w-8 h-8" />
+    <div className="flex gap-2 items-center basis-1/3 justify-end">
+      <Menu />
+      <Messenger />
+      <Notification />
+      <Link to={'/user/' + user._id} className={`p-2 rounded-full hover:bg-white_0 relative group`}>
+        <div className=" absolute w-max p-2 right-0 bottom-0 hidden group-hover:block rounded-lg bg-red_0 text-white_0 translate-y-[150%] z-20">{user.firstName + ' ' + user.lastName}</div>
+        {user.avatar && <Image id={user.avatar} className={'min-w-8 min-h-8 max-w-8 max-h-8 object-cover rounded-full'} />}
       </Link>
     </div >
   </div >
