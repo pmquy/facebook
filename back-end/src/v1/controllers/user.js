@@ -37,7 +37,7 @@ const changePasswordPattern = Joi.object({
 
 const opt1 = {
   maxAge: 1000 * 60 * 60 * 24 * 10,
-  httpOnly: true
+  httpOnly: false
 }
 
 const opt2 = {

@@ -8,12 +8,12 @@ export default function () {
   const { user } = useContext(CommonContext)
   const ref = useRef()
   const query = useQuery({
-    queryKey: ['posts', user._id],
+    queryKey: ['posts'],
     queryFn: () => PostApi.get()
   })
   if (query.isError || query.isLoading) return <></>
   return <div className='flex flex-col gap-5 my-5'>
-    {query.data.map(e => <Post id={e._id} />)}
+    {query.data.map(e => <div key={e._id}><Post id={e._id} /></div>)}
     <div ref={ref}>Loading more posts</div>
   </div>
 }

@@ -3,21 +3,25 @@ const Joi = require('joi')
 const Image = require('../models/Image')
 
 const creatingPattern = Joi.object({
-  content: Joi.string().required(),
-  image: Joi.string(),
+  content: Joi.string(),
+  images: Joi.when('content', {
+    is: Joi.exist(),
+    then: Joi.array().items(Joi.string()).default([]),
+    otherwise: Joi.array().items(Joi.string()).min(1)
+  }),
   post: Joi.string().required(),
   comment: Joi.string().default(''),
 }).unknown(false).required()
 
 const updatingPattern = Joi.object({
   content: Joi.string(),
-  image: Joi.string(),
+  images: Joi.array().items(Joi.string()),
 }).unknown(false).required()
 
 class Controller {
 
   get = (req, res, next) => {
-    CommentPost.find(req.query)      
+    CommentPost.find(req.query)
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
@@ -36,12 +40,10 @@ class Controller {
 
   deleteById = (req, res, next) =>
     CommentPost.findById(req.params.id)
-      .then(val => {
-        if (val.user == req.user._id) {
-          if (val.image) Image.findByIdAndDelete(val.image)
-          return val.deleteOne()
-        }
-        throw new Error()
+      .then(async val => {
+        if (val.user != req.user._id) throw new Error()
+        await Promise.all(val.images.map(e => Image.findByIdAndDelete(e)))
+        return val.deleteOne()
       })
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
@@ -49,8 +51,8 @@ class Controller {
   updateById = (req, res, next) =>
     updatingPattern.validateAsync(req.body)
       .then(val => CommentPost.findById(req.params.id)
-        .then(data => {
-          if (val.image) Image.findByIdAndDelete(data.image)
+        .then(async data => {
+          await Promise.all(data.images.map(e => Image.findByIdAndDelete(e)))
           if (data.user == req.user._id) return data.updateOne(val, { new: true })
           throw new Error()
         }))

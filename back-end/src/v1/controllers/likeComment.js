@@ -11,7 +11,6 @@ class Controller {
     creatingPattern.validateAsync(req.body)
       .then(val => LikeComment.create({ ...val, user: req.user._id }))
       .then(val => res.status(200).send(val))
-      .then(() => io.emit('invalidate', ['likecomments', {comment : req.body.comment}]))
       .catch(err => next(err))
 
   delete = (req, res, next) =>

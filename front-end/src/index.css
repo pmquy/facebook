@@ -20,7 +20,7 @@ html {
 /* Change the scrollbar thumb */
 ::-webkit-scrollbar-thumb {
   background: black;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 @layer utilities {
@@ -30,6 +30,10 @@ html {
 
   .text-1 {
     @apply uppercase font-semibold
+  }
+
+  .btn {
+    @apply select-none cursor-pointer
   }
 
   .btn-1 {

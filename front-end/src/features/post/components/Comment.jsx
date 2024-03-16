@@ -1,50 +1,46 @@
 import UserAccount from "../../../components/UserAccount";
 import Image from '../../../components/Image'
-import { BsThreeDots } from "react-icons/bs";
-import { Button } from "../../../components/ui";
 import CommentApi from '../services/CommentApi'
-import { useQueryClient } from "react-query";
-import { useState } from "react";
+import { useQuery } from "react-query";
+import { useContext, useState } from "react";
 import CreateComment from './CreateComment'
 import Comments from './Comments'
-import { toast } from "react-toastify";
 import LikeComment from "./LikeComment";
+import CommonContext from "../../../store/CommonContext";
+import CommentContext from '../store/CommentContext'
+import UpdateComment from "./UpdateComment";
+import DeleteComment from "./DeleteComment";
 
-export default function ({ comment }) {
-  const [open, setOpen] = useState(false)
-  const queryClient = useQueryClient()
-  
-  const handleDelete = () => {
-    CommentApi.deleteById(comment._id)
-      .then(() => queryClient.invalidateQueries(['comments', {post : comment.post, comment : comment.comment}]))
-      .catch(err => toast(err.message, {type : 'error'}))      
-  }
-
-  return <div className={`flex flex-col gap-2`}>    
-    <div className="relative">
-      <UserAccount id={comment.user} />
-      {comment.comment && <div className=" absolute left-0 top-1/2 -tranlsate-y-1/2 border-red_0 -translate-x-full w-8 border-t-2"></div>}
-    </div>
-    <div className="flex items-center gap-5">
-      <div className="flex flex-col gap-2">
-        <div className=" whitespace-pre-line">{comment.content}</div>
-        {comment.image && <Image id={comment.image} className={'w-64'} />}
+export default function ({ id }) {
+  const { user } = useContext(CommonContext)
+  const [create, setCreate] = useState(false)
+  const [update, setUpdate] = useState(false)
+  const query = useQuery({
+    queryKey: ['comment', id],
+    queryFn: () => CommentApi.getById(id),
+  })
+  if (query.isLoading || query.isError) return <></>
+  const comment = query.data
+  return <CommentContext.Provider value={{ setCreate: setCreate, id: comment._id, setUpdate: setUpdate, comment: comment }}>
+    <div className={`flex flex-col`}>
+      <div className="relative">
+        <UserAccount id={comment.user} />
+        {comment.comment && <div className=" absolute left-0 top-1/2 -tranlsate-y-1/2 border-red_0 -translate-x-full w-8 border-t-2"></div>}
       </div>
-      <div className="group relative">
-        <BsThreeDots className=" w-8 h-8 hover:bg-white_1 rounded-full" />
-        <div className="absolute left-full top-0 hidden group-hover:block z-10">
-          <div className="p-5 rounded-lg flex bg-white_1 flex-col gap-2">
-            <Button onClick={handleDelete}>Xóa</Button>
-            <Button className={'bg-black'}>Chỉnh sửa</Button>
-          </div>
-        </div>
+      {update ? <UpdateComment /> :
+        <div className="flex mt-2 flex-col gap-2 card_1 p-5">
+          <div className=" whitespace-pre-line">{comment.content}</div>
+          {comment.images.map(e => <div className="w-64" key={e._id}><Image id={e} /></div>)}
+        </div>}
+      <div className="flex mt-2 gap-5 items-center">
+        <LikeComment />
+        <div className="btn" onClick={() => setCreate(true)}>Phản hồi</div>
+        {comment.user == user._id && <DeleteComment />}
+        {comment.user == user._id && <div onClick={() => setUpdate(true)} className="btn">Chỉnh sửa</div>}
       </div>
+      <div className="mt-2"></div>
+      {create && <CreateComment />}
+      <Comments />
     </div>
-    <div className="flex gap-5">
-      <LikeComment comment={comment._id}/>
-      <div onClick={() => setOpen(true)}>Phản hồi</div>
-    </div>
-    <Comments post={comment.post} comment={comment._id}/>    
-    {open && <CreateComment post={comment.post} comment={comment._id}/>}
-  </div>
+  </CommentContext.Provider>
 }

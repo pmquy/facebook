@@ -7,10 +7,31 @@ import api from '../services/call'
 import { toast } from 'react-toastify'
 
 const servers = {
-  'iceServers': [
-    { 'urls': 'stun:stun.services.mozilla.com' },
-    { 'urls': 'stun:stun.l.google.com:19302' }
-  ]
+  iceServers: [
+    {
+      urls: "stun:stun.relay.metered.ca:80",
+    },
+    {
+      urls: "turn:asia.relay.metered.ca:80",
+      username: "5177322f9615b2eb2249488c",
+      credential: "k1G5No+LjyPmRKK4",
+    },
+    {
+      urls: "turn:asia.relay.metered.ca:80?transport=tcp",
+      username: "5177322f9615b2eb2249488c",
+      credential: "k1G5No+LjyPmRKK4",
+    },
+    {
+      urls: "turn:asia.relay.metered.ca:443",
+      username: "5177322f9615b2eb2249488c",
+      credential: "k1G5No+LjyPmRKK4",
+    },
+    {
+      urls: "turns:asia.relay.metered.ca:443?transport=tcp",
+      username: "5177322f9615b2eb2249488c",
+      credential: "k1G5No+LjyPmRKK4",
+    },
+  ],
 }
 
 export default function ({ id }) {
@@ -48,7 +69,7 @@ export default function ({ id }) {
             pc.onicecandidate = event => event.candidate && socket.emit('call', JSON.stringify({ type: 'ice', group: 'call' + id, user: user._id, data: event.candidate, to: payload.user }))
             pc.createOffer()
               .then(offer => pc.setLocalDescription(offer))
-              .then(() => socket.emit('call', JSON.stringify({ type: 'offer', group: 'call' + id, user: user._id, data: pc.localDescription, to: payload.user })))            
+              .then(() => socket.emit('call', JSON.stringify({ type: 'offer', group: 'call' + id, user: user._id, data: pc.localDescription, to: payload.user })))
             break
           }
           case 'offer': {
@@ -63,13 +84,13 @@ export default function ({ id }) {
               .then(() => pc.createAnswer())
               .then(answer => pc.setLocalDescription(answer))
               .then(() => socket.emit('call', JSON.stringify({ type: 'answer', group: 'call' + id, user: user._id, data: pc.localDescription, to: payload.user })))
-              .then(() => setOthers({...temp_others}))
+              .then(() => setOthers({ ...temp_others }))
             break
           }
           case 'answer': {
             if (payload.to != user._id) break
             temp_others[payload.user].pc.setRemoteDescription(new RTCSessionDescription(payload.data))
-            setOthers({...temp_others})
+            setOthers({ ...temp_others })
             break
           }
           case 'ice': {
@@ -79,7 +100,7 @@ export default function ({ id }) {
           }
           case 'left': {
             delete temp_others[payload.user]
-            setOthers({...temp_others})
+            setOthers({ ...temp_others })
             break
           }
         }

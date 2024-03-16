@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  fb_frontend:
+    image: fb_frontend
+    ports:
+      - "8000:8000"
+    environment:
+      - VITE_SERVER_URL=http://localhost:3000/
+  fb_backend:
+    image: fb_backend
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    environment:
+      - PORT=3000
+      - MONGO_URI=mongodb://mongo:27017/facebook
+      - REDIS_URL=redis://redis:6379
+      - SOCKET_PORT=3001
+      - SALT_ROUNDS=10
+      - TOKEN_SECRET=fkdsjfkjriewuorauiuries
+      - TOKEN_EXPIRE_IN=10d
+      - ENV=DEV
+      - CLIENT=http://localhost:8000
+  redis:
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
+  mongo:
+    image: "mongo:latest"
+    ports:
+      - "27017:27017"

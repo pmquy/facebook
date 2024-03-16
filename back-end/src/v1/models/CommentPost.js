@@ -5,7 +5,7 @@ const CommentPost = new mongoose.Schema({
   post : String,
   comment : String,
   content : String,
-  image : String,
+  images : Array,
 }, {timestamps : true})
 
 module.exports = mongoose.model('CommentPosts', CommentPost)

@@ -6,10 +6,10 @@ class Service {
   get = async query => Post.find(query)
 
   getById = async id => {
-    let val = await redisClient.get('posts' + id)
-    if(val) return JSON.parse(val)
-    val = await Post.findById(id)
-    redisClient.set('posts' + id, JSON.stringify(val))
+    // let val = await redisClient.get('posts' + id)
+    // if(val) return JSON.parse(val)
+    const val = await Post.findById(id)
+    // redisClient.set('posts' + id, JSON.stringify(val))
     return val
   }
 
@@ -18,17 +18,18 @@ class Service {
   deleteById = async (user, id) => {
     const post = await Post.findById(id)
     if(post.user != user._id) throw new Error()
-    if(post.image) Image.findByIdAndDelete(post.image)
-    redisClient.del('posts' + id)
+    await Promise.all(post.images.map(e => Image.findByIdAndDelete(e)))
+    // redisClient.del('posts' + id)
     return post.deleteOne()
   }
 
   updateById = async (user, id, data) => {
     const post = await Post.findById(id)
     if(post.user != user._id) throw new Error()
-    if(post.image && data.image) Image.findByIdAndDelete(post.image)
+    console.log(post.images)
+    await Promise.all(post.images.map(e => Image.findByIdAndDelete(e)))
     const val = await post.updateOne(data, {new : true})
-    redisClient.set('posts' + id, JSON.stringify(val))
+    // redisClient.del('posts' + id)
     return val
   }
 }
