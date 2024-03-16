@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const Message = new mongoose.Schema({
   content : String,
-  image : String,
+  images : Array,
   user : String,
   groupChat : String,
 }, {timestamps : true})

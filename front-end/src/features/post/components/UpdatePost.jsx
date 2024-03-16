@@ -46,6 +46,6 @@ export default function () {
       {images.map((e, i) => <img key={i} src={e} className='rounded-xl'></img>)}
       <Button onClick={handleCreatePost} className={'m-auto'}>Xong</Button>
     </div>
-    <div onClick={() => setOpen(true)} className=''>Chỉnh sửa</div>
+    <div onClick={() => setOpen(true)} className="btn hover:bg-white_2 p-2 rounded-lg">Chỉnh sửa</div>
   </div>
 }

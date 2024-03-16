@@ -12,6 +12,7 @@ const User = new mongoose.Schema({
   password : String,
   firstName : String,
   lastName : String,
+  avatar : String,
 }, {timestamps : true})
 
 module.exports = mongoose.model('Users', User)

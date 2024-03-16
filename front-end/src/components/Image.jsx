@@ -9,6 +9,6 @@ export default function ({id, className, ...props}) {
       return `data:image/jpg;base64,${base64String}`;
     })
   })  
-  if(query.isError || query.isLoading) return <></>      
-  return <img key={id} className={`${className} rounded-xl`} {...props} src={query.data} alt="fdkj"/>
+  if(query.isError || query.isLoading) return <img className={className} {...props} src="/bg.jpg"></img>      
+  return <img className={className} {...props} src={query.data} alt="image"/>
 }
