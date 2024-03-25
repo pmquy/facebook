@@ -2,8 +2,9 @@ import { useQueries } from "react-query";
 import MessageApi from '../services/message'
 import CallApi from '../services/call'
 import Image from '../../../components/Image'
+import Video from '../../../components/Video'
 import UserAccount from '../../../components/UserAccount'
-import { useContext, useEffect, useMemo } from "react";
+import { useContext, useMemo } from "react";
 import CommonContext from "../../../store/CommonContext";
 
 export default function ({id}) {
@@ -29,7 +30,8 @@ export default function ({id}) {
       <UserAccount id={e.user}/>
       {e.type == 0 && <div className="card_1 p-5 flex flex-col gap-5">
         {e.content}
-        {e.image && <Image className={'w-96'} id={e.image}/>}
+        {e.images.map(t => <Image className={'w-96'} id={t}/>)}
+        {e.videos.map(t => <Video className={'w-96'} id={t}/>)}
       </div>}
       {e.type == 1 && <div className="card_1 p-5 flex flex-col gap-5">
         <div>Đã bắt đầu một cuộc gọi</div>

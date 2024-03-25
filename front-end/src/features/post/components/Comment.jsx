@@ -1,5 +1,6 @@
 import UserAccount from "../../../components/UserAccount";
 import Image from '../../../components/Image'
+import Video from '../../../components/Video'
 import CommentApi from '../services/CommentApi'
 import { useQuery } from "react-query";
 import { useContext, useState } from "react";
@@ -31,6 +32,7 @@ export default function ({ id }) {
         <div className="flex mt-2 flex-col gap-2 card_1 p-5">
           <div className=" whitespace-pre-line">{comment.content}</div>
           {comment.images.map(e => <div className="w-64" key={e._id}><Image id={e} /></div>)}
+          {comment.videos.map(e => <div className="w-64" key={e._id}><Video id={e} /></div>)}
         </div>}
       <div className="flex mt-2 gap-5 items-center">
         <LikeComment />

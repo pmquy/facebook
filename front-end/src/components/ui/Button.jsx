@@ -1,3 +1,3 @@
 export default function({className, children, ...props}) {
-  return <button className={` btn-1 ${className}`} {...props} >{children}</button>
+  return <button className={`${className}`} {...props} >{children}</button>
 }

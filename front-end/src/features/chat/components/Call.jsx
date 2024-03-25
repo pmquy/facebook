@@ -12,26 +12,26 @@ const servers = {
       urls: "stun:stun.relay.metered.ca:80",
     },
     {
-      urls: "turn:asia.relay.metered.ca:80",
+      urls: "turn:standard.relay.metered.ca:80",
       username: "5177322f9615b2eb2249488c",
       credential: "k1G5No+LjyPmRKK4",
     },
     {
-      urls: "turn:asia.relay.metered.ca:80?transport=tcp",
+      urls: "turn:standard.relay.metered.ca:80?transport=tcp",
       username: "5177322f9615b2eb2249488c",
       credential: "k1G5No+LjyPmRKK4",
     },
     {
-      urls: "turn:asia.relay.metered.ca:443",
+      urls: "turn:standard.relay.metered.ca:443",
       username: "5177322f9615b2eb2249488c",
       credential: "k1G5No+LjyPmRKK4",
     },
     {
-      urls: "turns:asia.relay.metered.ca:443?transport=tcp",
+      urls: "turns:standard.relay.metered.ca:443?transport=tcp",
       username: "5177322f9615b2eb2249488c",
       credential: "k1G5No+LjyPmRKK4",
     },
-  ],
+],
 }
 
 export default function ({ id }) {
@@ -48,7 +48,7 @@ export default function ({ id }) {
     Object.keys(others).forEach((e, i) => {
       ref.current.childNodes[i + 1].childNodes[0].srcObject = others[e].stream
     })
-  }, [others])
+  }, [others, id])
 
   useEffect(() => {
     let listener;
@@ -121,7 +121,7 @@ export default function ({ id }) {
         setOthers({})
       }
     }
-  }, [open])
+  }, [open, id])
 
   const handleCall = () => {
     if (query.data.length == 0 || query.data[query.data.length - 1].status == 1) {
@@ -146,8 +146,8 @@ export default function ({ id }) {
   }
   if (query.isError || query.isLoading) return <></>
   return <div>
-    {open && <div className={` fixed z-30 left-0 top-0 w-screen h-screen bg-black_trans`}></div>}
-    {open && <div ref={ref} style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }} className="card p-5 grid gap-5 w-[90%] max-sm:w-screen max-sm:min-h-screen max-h-[90%] overflow-auto fixed z-30 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+    {open && <div className={` fixed z-20 left-0 top-0 w-screen h-screen bg-black_trans`}></div>}
+    {open && <div ref={ref} style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }} className="card p-5 grid gap-5 w-[90%] max-sm:w-screen max-h-[80%] overflow-auto fixed z-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
       <div className="flex flex-col items-center gap-2">
         <video className=" w-[300px] h-[300px] max-sm:w-full max-sm:h-full object-cover" ref={myVideoRef} autoPlay={true} />
         <div className="flex justify-between gap-5 items-center">

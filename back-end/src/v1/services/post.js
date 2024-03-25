@@ -4,7 +4,6 @@ const {redisClient} = require('../../app')
 
 class Service {
   get = async query => Post.find(query)
-
   getById = async id => {
     // let val = await redisClient.get('posts' + id)
     // if(val) return JSON.parse(val)
@@ -26,7 +25,6 @@ class Service {
   updateById = async (user, id, data) => {
     const post = await Post.findById(id)
     if(post.user != user._id) throw new Error()
-    console.log(post.images)
     await Promise.all(post.images.map(e => Image.findByIdAndDelete(e)))
     const val = await post.updateOne(data, {new : true})
     // redisClient.del('posts' + id)

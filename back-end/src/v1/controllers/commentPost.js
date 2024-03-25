@@ -1,6 +1,9 @@
 const CommentPost = require('../models/CommentPost')
 const Joi = require('joi')
 const Image = require('../models/Image')
+const Notification = require('../models/Notification')
+const PostService = require('../services/post')
+const {io} = require('../../app')
 
 const creatingPattern = Joi.object({
   content: Joi.string(),
@@ -9,6 +12,7 @@ const creatingPattern = Joi.object({
     then: Joi.array().items(Joi.string()).default([]),
     otherwise: Joi.array().items(Joi.string()).min(1)
   }),
+  videos : Joi.array().items(Joi.string()),
   post: Joi.string().required(),
   comment: Joi.string().default(''),
 }).unknown(false).required()
@@ -16,6 +20,7 @@ const creatingPattern = Joi.object({
 const updatingPattern = Joi.object({
   content: Joi.string(),
   images: Joi.array().items(Joi.string()),
+  videos : Joi.array().items(Joi.string()),
 }).unknown(false).required()
 
 class Controller {
@@ -34,7 +39,19 @@ class Controller {
   create = (req, res, next) => {
     creatingPattern.validateAsync(req.body)
       .then(val => CommentPost.create({ ...val, user: req.user._id }))
-      .then(val => res.status(200).send(val))
+      .then(async val => {
+        res.status(200).send(val)
+        const post = await PostService.getById(val.post)        
+        if(post.user != req.user._id) {
+          Notification.create({
+            content : `${req.user.firstName + ' ' + req.user.lastName} vừa bình luận bài viết của bạn`,
+            user : post.user,
+            to : '/?open=' + post._id,
+            key : JSON.stringify(['comments', { post: val.post, comment: val.comment }])
+          })
+            .then(() => io.emit('invalidate', ['notifications', post.user]))        
+        }
+      })   
       .catch(err => next(err))
   }
 
