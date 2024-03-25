@@ -24,7 +24,7 @@ export default function () {
   return <div className="flex flex-col gap-5 card p-5">
     <div className="flex gap-5 items-center justify-between">
       <div className='text-1'>Mật khẩu cũ</div>
-      <Input autoFocus={true} ref={oldPasswordRef} />
+      <Input ref={oldPasswordRef} />
     </div>
     <div className="flex gap-5 items-center justify-between">
       <div className='text-1'>Mật khẩu mới</div>

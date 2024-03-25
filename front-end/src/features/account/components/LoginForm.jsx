@@ -29,7 +29,7 @@ export default function () {
     </div>
     <div className="flex gap-5 items-center justify-between">
       <div className='text-1'>Mật khẩu</div>
-      <Input ref={passwordRef}/>
+      <Input type={'password'} ref={passwordRef}/>
     </div>
     <Button onClick={handleLogin} className={'m-auto'}>Đăng Nhập</Button>
     <Link to={'/register'} className='text-1 underline text-center'>Đăng kí tài khoản mới</Link>

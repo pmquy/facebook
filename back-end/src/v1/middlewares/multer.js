@@ -7,6 +7,6 @@ const storage = multer.diskStorage({
     cb(null, file.fieldname + Date.now())
   }
 })
-const upload = multer({ storage: storage })
+const upload = multer({ storage: storage, limits : 10 * 1024})
 
 module.exports = upload

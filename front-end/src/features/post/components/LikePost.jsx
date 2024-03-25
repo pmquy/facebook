@@ -20,9 +20,9 @@ export default function () {
     return query.data.some(e => e.user == user._id)
   }, [query.data])
 
-  if (query.isLoading || query.isError) return <div className="flex gap-2 btn items-center p-2 rounded-lg hover:bg-white_1">
-    <AiFillLike className={`w-6 h-6`} color={'gray'} />
-    <div>Thích (0)</div>
+  if (query.isLoading || query.isError) return <div className="flex gap-2 animate-pulse btn items-center p-2 rounded-lg hover:bg-white_1">
+    <AiFillLike className={`w-6 h-6`} color={'black'} />
+    <div>Thích</div>
   </div>
 
   const handleLike = () => {
@@ -33,7 +33,7 @@ export default function () {
   }
 
   return <div onClick={handleLike} className="flex gap-2 btn items-center p-2 rounded-lg hover:bg-white_1">
-    <AiFillLike className={`w-6 h-6 ${like ? ' animate-like' : ''}`} color={`${like ? 'red' : 'gray'}`} />
+    <AiFillLike className={`w-6 h-6 ${like ? ' animate-like' : ''}`} color={`${like ? 'red' : 'black'}`} />
     <div className={`${like ? 'text-red_0 font-semibold' : ''}`}>{like ? 'Đã thích' : 'Thích'} ({query.data.length})</div>
   </div>
 }

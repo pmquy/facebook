@@ -5,7 +5,6 @@ import { CgShoppingCart } from "react-icons/cg";
 import { MdOutlineOndemandVideo } from "react-icons/md";
 import { GrGroup } from "react-icons/gr";
 import { IoGameController } from "react-icons/io5";
-import { MdAccountCircle } from "react-icons/md";
 import { Link, useLocation } from "react-router-dom";
 import { getIndexFromPathName } from "../utils/path";
 import { useContext } from "react";
@@ -26,7 +25,6 @@ export default function () {
         <FaFacebook color="red" className="w-12 h-12" />
       </Link>
       <div className="p-2 rounded-full hover:bg-white_0 relative group">
-        <div className=" absolute w-max p-2 left-1/2 -translate-x-1/2 bottom-0 hidden group-hover:block rounded-lg bg-red_0 text-white_0 translate-y-[150%] z-20">Find</div>
         <RiFindReplaceLine className="w-8 h-8 " />
       </div>
     </div>
@@ -34,27 +32,22 @@ export default function () {
     <div className="flex gap-5 basis-1/3 max-lg:hidden">
       <Link to={'/'} className="py-2 px-10 group relative hover:bg-white_0 rounded-lg">
         {index == 1 && <div className="absolute h-1 bg-red_0 left-0 bottom-0 w-full" />}
-        <div className=" absolute w-max p-2 left-1/2 -translate-x-1/2 bottom-0 hidden group-hover:block rounded-lg bg-red_0 text-white_0 translate-y-[150%] z-20">Home</div>
         <FaHome className="w-8 h-8" color={index == 1 ? 'red' : ''} />
       </Link>
       <div className="py-2 px-10 group relative hover:bg-white_0 rounded-lg">
         {index == 2 && <div className="absolute h-1 bg-red_0 left-0 bottom-0 w-full" />}
-        <div className=" absolute w-max p-2 left-1/2 -translate-x-1/2 bottom-0 hidden group-hover:block rounded-lg bg-red_0 text-white_0 translate-y-[150%] z-20">Video</div>
         <MdOutlineOndemandVideo className="w-8 h-8" color={index == 2 ? 'red' : ''} />
       </div>
       <div className="py-2 px-10 group relative hover:bg-white_0 rounded-lg">
         {index == 3 && <div className="absolute h-1 bg-red_0 left-0 bottom-0 w-full" />}
-        <div className=" absolute w-max p-2 left-1/2 -translate-x-1/2 bottom-0 hidden group-hover:block rounded-lg bg-red_0 text-white_0 translate-y-[150%] z-20">Marketplace</div>
         <CgShoppingCart className="w-8 h-8" color={index == 3 ? 'red' : ''} />
       </div>
       <div className="py-2 px-10 group relative hover:bg-white_0 rounded-lg">
         {index == 4 && <div className="absolute h-1 bg-red_0 left-0 bottom-0 w-full" />}
-        <div className=" absolute w-max p-2 left-1/2 -translate-x-1/2 bottom-0 hidden group-hover:block rounded-lg bg-red_0 text-white_0 translate-y-[150%] z-20">Group</div>
         <GrGroup className="w-8 h-8" color={index == 4 ? 'red' : ''} />
       </div>
       <Link to={'/carogames'} className="py-2 px-10 group relative hover:bg-white_0 rounded-lg">
         {index == 5 && <div className="absolute h-1 bg-red_0 left-0 bottom-0 w-full" />}
-        <div className=" absolute w-max p-2 left-1/2 -translate-x-1/2 bottom-0 hidden group-hover:block rounded-lg bg-red_0 text-white_0 translate-y-[150%] z-20">Gaming</div>
         <IoGameController className="w-8 h-8" color={index == 5 ? 'red' : ''} />
       </Link>
     </div>
@@ -64,7 +57,6 @@ export default function () {
       <Messenger />
       <Notification />
       <Link to={'/user/' + user._id} className={`p-2 rounded-full hover:bg-white_0 relative group`}>
-        <div className=" absolute w-max p-2 right-0 bottom-0 hidden group-hover:block rounded-lg bg-red_0 text-white_0 translate-y-[150%] z-20">{user.firstName + ' ' + user.lastName}</div>
         {user.avatar && <Image id={user.avatar} className={'min-w-8 min-h-8 max-w-8 max-h-8 object-cover rounded-full'} />}
       </Link>
     </div >

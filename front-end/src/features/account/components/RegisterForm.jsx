@@ -29,7 +29,7 @@ export default function () {
     if (lastNameRef.current.value) formData.append('lastName', lastNameRef.current.value)
     if (image) formData.append('avatar', fileRef.current.files[0])
     api.create(formData)
-      .then((user) => { setUser(user); queryClient.invalidateQueries(['users']); navigate('/login') })
+      .then((user) => {queryClient.invalidateQueries(['users']); navigate('/login') })
       .catch(err => toast(err.message, { type: 'error' }))
   }
 
@@ -44,11 +44,11 @@ export default function () {
     </div>
     <div className="flex gap-5 items-center justify-between">
       <div className='text-1'>Mật khẩu</div>
-      <Input ref={passwordRef} />
+      <Input type={'password'} ref={passwordRef} />
     </div>
     <div className="flex gap-5 items-center justify-between">
       <div className='text-1'>Nhập lại mật khẩu</div>
-      <Input ref={repeatPasswordRef} />
+      <Input type={'password'} ref={repeatPasswordRef} />
     </div>
     <div className="flex gap-5 items-center justify-between">
       <div className='text-1'>Họ</div>

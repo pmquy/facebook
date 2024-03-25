@@ -7,12 +7,14 @@ const creatingPattern = Joi.object({
     is : Joi.exist(),
     then : Joi.array().items(Joi.string()).default([]),
     otherwise : Joi.array().items(Joi.string()).min(1)
-  })
+  }),
+  videos : Joi.array().items(Joi.string()).default([])
 }).unknown(false).required()
 
 const updatingPattern = Joi.object({
   content: Joi.string(),
-  images: Joi.array().items(Joi.string())
+  images: Joi.array().items(Joi.string()),
+  videos : Joi.array().items(Joi.string())
 }).unknown(false).required()
 
 class Controller {

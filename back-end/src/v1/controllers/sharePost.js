@@ -9,12 +9,14 @@ const creatingPattern = Joi.object({
     then : Joi.array().items(Joi.string()).default([]),
     otherwise : Joi.array().items(Joi.string()).min(1)
   }),
+  videos : Joi.array().items(Joi.string()),
   post: Joi.string().required()
 }).unknown(false).required()
 
 const updatingPattern = Joi.object({
   content: Joi.string(),
-  images : Joi.array().items(Joi.string())
+  images : Joi.array().items(Joi.string()),
+  videos : Joi.array().items(Joi.string()),
 }).unknown(false).required()
 
 

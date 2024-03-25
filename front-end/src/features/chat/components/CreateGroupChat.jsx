@@ -25,7 +25,7 @@ export default function () {
   }
 
   return <div>    
-    {open && <div onClick={(e) => {if(!ref.current.contains(e.target)) setOpen(false)}} className='fixed z-10 left-0 top-0 w-screen h-screen bg-black_trans'>
+    {open && <div onClick={(e) => {if(!ref.current.contains(e.target)) setOpen(false)}} className='fixed z-20 left-0 top-0 w-screen h-screen bg-black_trans'>
       <div ref={ref} className=" flex flex-col gap-5 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 max-h-screen w-[90%] max-sm:w-screen overflow-y-auto card p-5">
         <div className="flex gap-5 items-center">
           <div className="text-1">Tên nhóm</div>          

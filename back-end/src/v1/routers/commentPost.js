@@ -1,13 +1,13 @@
 const router = require('express').Router()
 const controller = require('../controllers/commentPost')
 const auth = require('../middlewares/authentication')
-const uploads = require('../middlewares/multer')
-const {getImages} = require('../middlewares/getImage')
+const upload = require('../middlewares/multer')
+const {getImages, getVideos} = require('../middlewares/getMedia')
 
-router.post('/create', auth, uploads.array('images'), getImages, controller.create)
+router.post('/create', auth, upload.fields([{name : 'images'}, {name : 'videos'}]), getImages, getVideos, controller.create)
 router.get('/:id', auth, controller.getById)
 router.delete('/:id', auth, controller.deleteById)
-router.put('/:id', auth, uploads.array('images'), getImages, controller.updateById)
+router.put('/:id', auth, upload.fields([{name : 'images'}, {name : 'videos'}]), getImages, getVideos, controller.updateById)
 router.get('/', auth, controller.get)
 
 module.exports = router
