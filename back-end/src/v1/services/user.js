@@ -1,7 +1,7 @@
-const User = require('../models/User')
-const { redisClient } = require('../../app')
-const bcrypt = require('bcrypt')
-const Image = require('../models/Image')
+import User from '../models/User.js'
+import { redisClient } from '../../app.js'
+import bcrypt from 'bcrypt'
+import Image from '../models/Image.js'
 
 class Service {
   get = async query => {
@@ -33,19 +33,19 @@ class Service {
 
   updateById = async (user, id, data) => {
     if (user._id != id) throw new Error()
-    if(user.avatar) await Image.findByIdAndDelete(user.avatar)
-    const val = await User.findByIdAndUpdate(id, data, {new : true})
-    return val
+    if(user.avatar && data.avatar) await Image.findByIdAndDelete(user.avatar)
+    return User.findByIdAndUpdate(id, data, {new : true})
   }
 
-  changePasswordById = async (user, id, data) => {
-    if (user._id != id) throw new Error()
-    const val = await User.findById(req.params.id)
-    if (bcrypt.compareSync(data.oldPassword, user.password))
-      return val.updateOne({ password: data.password }, { new: true })
+  changePassword = async (user, data) => {
+    const val = await User.findById(user._id)
+    if (bcrypt.compareSync(data.oldPassword, user.password)) {
+      await val.updateOne({ password: data.password }, { new: true })
+      return {password : data.password}
+    }
     throw new Error()
   }
 }
 
 
-module.exports = new Service()
+export default new Service()

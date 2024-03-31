@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 const SharePost = new mongoose.Schema({
   user : String,
@@ -8,4 +8,4 @@ const SharePost = new mongoose.Schema({
   videos : String,
 }, {timestamps : true})
 
-module.exports = mongoose.model('SharePosts', SharePost)
+export default mongoose.model('SharePosts', SharePost)

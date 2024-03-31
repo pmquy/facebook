@@ -1,13 +1,13 @@
-const router = require('express').Router()
-const controller = require('../controllers/commentPost')
-const auth = require('../middlewares/authentication')
-const upload = require('../middlewares/multer')
-const {getImages, getVideos} = require('../middlewares/getMedia')
+import upload from '../middlewares/multer.js'
+import {getImages, getVideos} from '../middlewares/getMedia.js'
+import controller from '../controllers/commentPost.js'
+import {Router} from 'express'
+const router = Router()
 
-router.post('/create', auth, upload.fields([{name : 'images'}, {name : 'videos'}]), getImages, getVideos, controller.create)
-router.get('/:id', auth, controller.getById)
-router.delete('/:id', auth, controller.deleteById)
-router.put('/:id', auth, upload.fields([{name : 'images'}, {name : 'videos'}]), getImages, getVideos, controller.updateById)
-router.get('/', auth, controller.get)
+router.post('/create', upload.fields([{name : 'images'}, {name : 'videos'}]), getImages, getVideos, controller.create)
+router.get('/:id', controller.getById)
+router.delete('/:id', controller.deleteById)
+router.put('/:id', upload.fields([{name : 'images'}, {name : 'videos'}]), getImages, getVideos, controller.updateById)
+router.get('/', controller.get)
 
-module.exports = router
+export default router

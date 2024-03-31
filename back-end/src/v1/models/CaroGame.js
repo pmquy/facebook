@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from "mongoose"
 
 const CaroGame = new mongoose.Schema({
   from : String,
@@ -8,4 +8,4 @@ const CaroGame = new mongoose.Schema({
   result : Array,
 }, {timestamps : true})
 
-module.exports = mongoose.model('CaroGames', CaroGame)
+export default mongoose.model('CaroGames', CaroGame)

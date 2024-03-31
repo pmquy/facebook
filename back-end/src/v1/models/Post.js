@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 const Post = new mongoose.Schema({
   user : String,
@@ -7,4 +7,4 @@ const Post = new mongoose.Schema({
   videos : Array,
 }, {timestamps : true})
 
-module.exports = mongoose.model('Posts', Post)
+export default mongoose.model('Posts', Post)

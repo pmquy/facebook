@@ -1,12 +1,15 @@
-const fs = require('fs')
-const path = require('path')
-const Image = require('../models/Image')
-const Video = require('../models/Video')
+import fs from 'fs'
+import path from 'path'
+import Image from '../models/Image.js'
+import Video from '../models/Video.js'
+
+import { fileURLToPath } from 'url'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const getImages = async (req, res, next) => {
   if(req.files && req.files.images) {
-    req.body.images = await Promise.all(req.files.images.map(async e =>
-      await Image.create({
+    req.body.images = await Promise.all(req.files.images.map(e =>
+      Image.create({
         data: fs.readFileSync(path.join(__dirname, '..', '..', '..', 'uploads', e.filename)),
         type: 'image/png'
       })
@@ -35,8 +38,8 @@ const getImage = async (req, res, next) => {
 
 const getVideos = async (req, res, next) => {
   if(req.files && req.files.videos) {
-    req.body.videos = await Promise.all(req.files.videos.map(async e =>
-      await Video.create({
+    req.body.videos = await Promise.all(req.files.videos.map(e =>
+      Video.create({
         data: fs.readFileSync(path.join(__dirname, '..', '..', '..', 'uploads', e.filename)),
         type: 'video/mp4'
       })
@@ -49,4 +52,4 @@ const getVideos = async (req, res, next) => {
   next()
 }
 
-module.exports = { getImages, getImage, getVideos }
+export { getImages, getImage, getVideos }

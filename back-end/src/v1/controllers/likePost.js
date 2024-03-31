@@ -1,8 +1,8 @@
-const {io} = require('../../app')
-const LikePost = require('../models/LikePost')
-const Joi = require('joi')
-const Notification = require('../models/Notification')
-const PostService = require('../services/post')
+import {io} from '../../app.js'
+import LikePost from '../models/LikePost.js'
+import Joi from 'joi'
+import Notification from '../models/Notification.js'
+import PostService from '../services/post.js'
 
 const creatingPattern = Joi.object({
   post: Joi.string().required()
@@ -39,4 +39,4 @@ class Controller {
       .catch(err => next(err))
 }
 
-module.exports = new Controller()
+export default new Controller()

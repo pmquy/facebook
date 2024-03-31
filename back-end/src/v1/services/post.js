@@ -1,6 +1,6 @@
-const Post = require('../models/Post')
-const Image = require('../models/Image')
-const {redisClient} = require('../../app')
+import Post from '../models/Post.js'
+import Image from '../models/Image.js'
+import {redisClient} from '../../app.js'
 
 class Service {
   get = async query => Post.find(query)
@@ -33,4 +33,4 @@ class Service {
 }
 
 
-module.exports = new Service()
+export default new Service()

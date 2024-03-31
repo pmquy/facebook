@@ -1,5 +1,5 @@
-const Video = require('../models/Video')
-const {redisClient} = require('../../app')
+import Video from '../models/Video.js'
+import {redisClient} from '../../app.js'
 class Controller {
   getById = async (req, res, next) => {
     const val = await redisClient.get('videos' + req.params.id)
@@ -13,4 +13,4 @@ class Controller {
   }
 }
 
-module.exports = new Controller() 
+export default new Controller()

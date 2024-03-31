@@ -1,10 +1,7 @@
-const User = require('../models/User')
-const Joi = require('joi')
-const bcrypt = require('bcrypt')
-const CustomError = require('../utils/CustomError')
-const jwt = require('jsonwebtoken')
-const {redisClient} = require('../../app')
-const UserService = require('../services/user')
+import Joi from 'joi'
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import UserService from '../services/user.js'
 
 const creatingPattern = Joi.object({
   phoneNumber: Joi.string().trim().required().pattern(/^\d*$/),
@@ -91,9 +88,9 @@ class Controller {
       .catch(err => next(err))
   }
 
-  changePasswordById = async (req, res, next) => {
+  changePassword = async (req, res, next) => {
     changePasswordPattern.validateAsync(req.body)
-      .then(async val => UserService.changePasswordById(req.user, req.params.id, val))
+      .then(async val => UserService.changePassword(req.user, val))
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
@@ -102,7 +99,7 @@ class Controller {
     loginPattern.validateAsync(req.body)
       .then(val => UserService.login(val.phoneNumber, val.password))
       .then(val => {
-        res.cookie('access_token', this.getToken(val.toObject()), process.env.ENV == "DEV" ? opt1 : opt2)
+        res.cookie('access_token', this.getToken(val.toObject()), process.env.ENV == "PRODUCT" ? opt2 : opt1)
         res.status(200).send(val)
       })
       .catch(err => next(err))
@@ -116,4 +113,4 @@ class Controller {
 }
 
 
-module.exports = new Controller()
+export default new Controller()
