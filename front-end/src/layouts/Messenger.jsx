@@ -23,7 +23,7 @@ export default function () {
     </button>
 
     {id && <div className="fixed z-10 card flex flex-col gap-5 right-5 bottom-12 max-h-[70%] w-[90%] max-w-[500px] overflow-y-auto">
-      <div className=" sticky bg-red_0 p-5 top-0 flex justify-between">
+      <div className=" sticky z-10 bg-red_0 p-5 top-0 flex justify-between">
         <IoCloseCircle onClick={() => setId(null)} className=" w-8 h-8" color="white" />
         <GroupHeader id={id} />
       </div>

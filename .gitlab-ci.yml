@@ -1,0 +1,35 @@
+image: docker:latest
+
+services:
+  - docker:dind
+
+stages:
+  # - build
+  - test
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://docker:2375/
+  FF_NETWORK_PER_BUILD: "true"
+
+# build:
+#   stage: build
+#   script:
+#     - docker-compose build
+
+test:
+  stage: test
+  script:
+    - docker-compose up -d
+    - docker ps
+    # - docker-compose exec -T fb_frontend npm test
+    - docker-compose exec -T fb_backend npm test
+    - docker-compose down
+    
+deploy:
+  stage: deploy
+  only:
+    - master
+  script:
+    - echo "Deploying application"

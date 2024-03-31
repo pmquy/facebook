@@ -78,7 +78,7 @@ function Record({ handleVideo, setOpen }) {
   </div>
 }
 
-export default function ({ images, setImages, videos, setVideos }) {
+export default function ({ images, setImages, videos, setVideos, height, width}) {
 
   const [openRecord, setOpenRecord] = useState(false)
   const [openCapture, setOpenCapture] = useState(false)
@@ -91,7 +91,7 @@ export default function ({ images, setImages, videos, setVideos }) {
         <div className="px-5 py-1 hover:bg-white_1 rounded-lg">Mở camera</div>
       </div>
     </div>
-    {images.map((e, i) => <div className=" relative rounded-lg">
+    {images.map((e, i) => <div style={{height : height, width : width}} className=" relative rounded-lg">
       <IoCloseCircle onClick={e => setImages(t => t.filter((a, b) => b != i))} className="z-10 absolute top-0 right-0 h-8 w-8" color="black" />
       <img key={i} src={URL.createObjectURL(e)} controls={true}></img>
     </div>)}
@@ -102,7 +102,7 @@ export default function ({ images, setImages, videos, setVideos }) {
         <div onClick={() => setOpenRecord(true)} className="px-5 py-1 hover:bg-white_1 rounded-lg">Mở camera</div>
       </div>
     </div>
-    {videos.map((e, i) => <div className=" relative rounded-lg">
+    {videos.map((e, i) => <div style={{height : height, width : width}} className=" relative rounded-lg">
       <IoCloseCircle onClick={e => setVideos(t => t.filter((a, b) => b != i))} className="z-10 absolute top-0 right-0 h-8 w-8" color="black" />
       <video key={i} src={URL.createObjectURL(e)} controls={true}></video>
     </div>)}

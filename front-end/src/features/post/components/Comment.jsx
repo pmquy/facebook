@@ -22,7 +22,7 @@ export default function ({ id }) {
   })
   if (query.isLoading || query.isError) return <></>
   const comment = query.data
-  return <CommentContext.Provider value={{ setCreate: setCreate, id: comment._id, setUpdate: setUpdate, comment: comment }}>
+  return <CommentContext.Provider value={{ setCreate: setCreate, setUpdate: setUpdate, comment: comment }}>
     <div className={`flex flex-col`}>
       <div className="relative">
         <UserAccount id={comment.user} />

@@ -1,11 +1,6 @@
-import '../env.js'
-import app from '../../src/app.js'
-app.listen(process.env.PORT, () => {})
-
 import {use} from 'chai'
 import chaiHttp from 'chai-http'
 const chai = use(chaiHttp)
-import User from '../../src/v1/models/User.js'
 import bcrypt from 'bcrypt'
 import {join, dirname} from 'path'
 import { fileURLToPath } from 'url'
@@ -23,12 +18,10 @@ const user = {
 
 describe('Test user api', () => {
 
-  before(done => {
-    User.deleteMany({}).then(() => done())
-  })
-
   it('Should create new user', done => {
-    chai.request(app).post('/users/create').field(user).attach('avatar', join(__dirname, 'bg.jpg')).end((err, res) => {
+    chai.request(process.env.SERVER_URL).post('/users/create').field(user).attach('avatar', join(__dirname, 'bg.jpg')).end((err, res) => {
+      console.log(err)
+      console.log(res)
       id = res.body._id
       chai.expect(res.status).to.be.equal(200)
       chai.expect(res.body.phoneNumber).to.be.equal(user.phoneNumber)
@@ -49,7 +42,9 @@ describe('Test user api', () => {
       lastName : 'Quy',
       firstName : 'Pham Minh'
     }
-    chai.request(app).post('/users/create').send(user).end((err, res) => {
+    chai.request(process.env.SERVER_URL).post('/users/create').send(user).end((err, res) => {
+      console.log(err)
+      console.log(res)
       chai.expect(res.status).to.be.not.equal(200)
       done()
     })
@@ -63,7 +58,9 @@ describe('Test user api', () => {
       lastName : 'Quy',
       firstName : 'Pham Minh'
     }
-    chai.request(app).post('/users/create').send(user).end((err, res) => {
+    chai.request(process.env.SERVER_URL).post('/users/create').send(user).end((err, res) => {
+      console.log(err)
+      console.log(res)
       chai.expect(res.status).to.be.not.equal(200)
       done()
     })
@@ -77,7 +74,9 @@ describe('Test user api', () => {
       lastName : 'Quy',
       firstName : 'Pham Minh'
     }
-    chai.request(app).post('/users/create').send(user).end((err, res) => {
+    chai.request(process.env.SERVER_URL).post('/users/create').send(user).end((err, res) => {
+      console.log(err)
+      console.log(res)
       chai.expect(res.status).to.be.not.equal(200)
       done()
     })
@@ -88,7 +87,9 @@ describe('Test user api', () => {
       phoneNumber : '0979926225',
       password : 'Paturnskop3012',
     }
-    chai.request(app).post('/users/login').send(user).end((err, res) => {
+    chai.request(process.env.SERVER_URL).post('/users/login').send(user).end((err, res) => {
+      console.log(err)
+      console.log(res)
       chai.expect(res.status).to.be.equal(200)
       chai.expect(res.header['set-cookie']).to.length(1)
       cookie = res.header['set-cookie']
@@ -101,7 +102,9 @@ describe('Test user api', () => {
       phoneNumber : '0979926226',
       password : 'Paturnskop3012',
     }
-    chai.request(app).post('/users/login').send(user).end((err, res) => {
+    chai.request(process.env.SERVER_URL).post('/users/login').send(user).end((err, res) => {
+      console.log(err)
+      console.log(res)
       chai.expect(res.status).to.be.not.equal(200)
       done()
     })
@@ -112,14 +115,18 @@ describe('Test user api', () => {
       phoneNumber : '0979926225',
       password : 'Paturnskop3013',
     }
-    chai.request(app).post('/users/login').send(user).end((err, res) => {
+    chai.request(process.env.SERVER_URL).post('/users/login').send(user).end((err, res) => {
+      console.log(err)
+      console.log(res)
       chai.expect(res.status).to.be.not.equal(200)
       done()
     })
   })
 
   it('Should get list of user', done => {
-    chai.request(app).get('/users').end((err, res) => {
+    chai.request(process.env.SERVER_URL).get('/users').end((err, res) => {
+      console.log(err)
+      console.log(res)
       chai.expect(res.status).to.be.equal(200)
       chai.expect(res.body).length(1)
       done()
@@ -127,7 +134,9 @@ describe('Test user api', () => {
   })
 
   it('Should get user with id', done => {
-    chai.request(app).get('/users/' + id).end((err, res) => {
+    chai.request(process.env.SERVER_URL).get('/users/' + id).end((err, res) => {
+      console.log(err)
+      console.log(res)
       chai.expect(res.status).to.be.equal(200)
       chai.expect(res.body.firstName).to.be.equal(user.firstName)
       chai.expect(res.body.lastName).to.be.equal(user.lastName)
@@ -141,7 +150,9 @@ describe('Test user api', () => {
       firstName : 'vip',
       lastName : 'quy'
     }
-    chai.request(app).put('/users/' + id).set("Cookie",cookie).field(data).attach('avatar', join(__dirname, 'bg.jpg')).end((err, res) => {
+    chai.request(process.env.SERVER_URL).put('/users/' + id).set("Cookie",cookie).field(data).attach('avatar', join(__dirname, 'bg.jpg')).end((err, res) => {
+      console.log(err)
+      console.log(res)
       chai.expect(res.status).to.be.equal(200)
       chai.expect(res.body.firstName).to.be.equal(data.firstName)
       chai.expect(res.body.lastName).to.be.equal(data.lastName)
@@ -155,7 +166,9 @@ describe('Test user api', () => {
       firstName : 'vip',
       lastName : 'quy'
     }
-    chai.request(app).put('/users/' + id).send(data).end((err, res) => {
+    chai.request(process.env.SERVER_URL).put('/users/' + id).send(data).end((err, res) => {
+      console.log(err)
+      console.log(res)
       chai.expect(res.status).to.be.not.equal(200)
       done()
     })
@@ -166,7 +179,7 @@ describe('Test user api', () => {
       oldPassword : 'Paturnskop3012',
       password : 'Paturnskop3013',
     }
-    chai.request(app).post('/users/changePassword').set("Cookie",cookie).send(data).end((err,res) => {
+    chai.request(process.env.SERVER_URL).post('/users/changePassword').set("Cookie",cookie).send(data).end((err,res) => {
       chai.expect(res.status).to.be.equal(200)
       chai.expect(bcrypt.compareSync(data.password,res.body.password)).to.be.equal(true)
       done()
@@ -178,7 +191,7 @@ describe('Test user api', () => {
       oldPassword : 'Paturnskop3012',
       password : 'Paturnskop3013',
     }
-    chai.request(app).post('/users/changePassword').send(data).end((err,res) => {
+    chai.request(process.env.SERVER_URL).post('/users/changePassword').send(data).end((err,res) => {
       chai.expect(res.status).to.be.not.equal(200)
       done()
     })
@@ -189,7 +202,7 @@ describe('Test user api', () => {
       oldPassword : 'Paturnskop3012',
       password : 'Paturnskop3013',
     }
-    chai.request(app).post('/users/changePassword').set("Cookie",cookie).send(data).end((err,res) => {
+    chai.request(process.env.SERVER_URL).post('/users/changePassword').set("Cookie",cookie).send(data).end((err,res) => {
       chai.expect(res.status).to.be.not.equal(200)
       done()
     })

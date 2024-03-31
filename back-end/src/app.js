@@ -1,7 +1,7 @@
 import express from 'express'
-import {Server} from 'http'
+import {createServer} from 'http'
 const app = express()
-const server = Server(app)
+const server = createServer(app)
 
 // connect database
 import connect_mongo from './v1/configs/init.mongo.js'
@@ -17,7 +17,7 @@ export {io, redisClient}
 
 // log request
 import morgan from 'morgan' 
-if(process.env == 'DEV') {
+if(process.env.ENV == 'DEV') {
     app.use(morgan('tiny'))
 }
 
