@@ -1,6 +1,6 @@
 import { useContext, useRef, useState } from "react"
 import CommonContext from "../../../store/CommonContext"
-import { Button, FileInput, Input } from '../../../components/ui'
+import { Button, Input } from '../../../components/ui'
 import CommentApi from "../services/CommentApi"
 import { toast } from 'react-toastify'
 import UserAccount from '../../../components/UserAccount'

@@ -4,11 +4,11 @@ import GroupChat from '../models/GroupChat.js'
 import {io} from '../../app.js'
 
 const creatingPattern = Joi.object({
-  content : Joi.string().required(),
+  content : Joi.string(),
   images : Joi.when('content', {
     is : Joi.exist(),
     then : Joi.array().items(Joi.string()).default([]),
-    otherwise : Joi.array().items(Joi.string()).min(1)
+    otherwise : Joi.array().items(Joi.string()).min(1).required()
   }),
   videos : Joi.array().items(Joi.string()),
   groupChat : Joi.string().required(),

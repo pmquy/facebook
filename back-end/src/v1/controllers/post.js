@@ -6,7 +6,7 @@ const creatingPattern = Joi.object({
   images: Joi.when('content', {
     is : Joi.exist(),
     then : Joi.array().items(Joi.string()).default([]),
-    otherwise : Joi.array().items(Joi.string()).min(1)
+    otherwise : Joi.array().items(Joi.string()).min(1).required()
   }),
   videos : Joi.array().items(Joi.string()).default([])
 }).unknown(false).required()
