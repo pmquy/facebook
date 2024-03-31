@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 const Friend = new mongoose.Schema({
   sender : String,
@@ -8,4 +8,4 @@ const Friend = new mongoose.Schema({
 
 Friend.index({sender : 1, receiver : 1}, {unique : true})
 
-module.exports = mongoose.model('Friends', Friend)
+export default mongoose.model('Friends', Friend)

@@ -1,4 +1,5 @@
-const controller = require('../controllers/image')
-const router = require('express').Router()
+import controller from '../controllers/image.js'
+import {Router} from 'express'
+const router = Router()
 router.get('/:id', controller.getById)
-module.exports = router
+export default router

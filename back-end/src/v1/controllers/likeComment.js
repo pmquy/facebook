@@ -1,6 +1,6 @@
-const LikeComment = require('../models/LikeComment')
-const Joi = require('joi')
-const {io} = require('../../app')
+import LikeComment from '../models/LikeComment.js'
+import Joi from 'joi'
+import {io} from '../../app.js'
 
 const creatingPattern = Joi.object({
   comment: Joi.string().required()
@@ -26,4 +26,4 @@ class Controller {
       .catch(err => next(err))
 }
 
-module.exports = new Controller()
+export default new Controller()

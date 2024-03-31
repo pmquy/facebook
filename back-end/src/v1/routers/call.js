@@ -1,8 +1,9 @@
-const controller = require('../controllers/call')
-const router = require('express').Router()
+import controller from '../controllers/call.js'
+import {Router} from 'express'
+const router = Router()
 
 router.get('/', controller.get)
 router.post('/create', controller.create)
 router.delete('/:id', controller.deleteById)
 
-module.exports = router
+export default router

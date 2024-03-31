@@ -1,4 +1,4 @@
-const Notifaction = require('../models/Notification')
+import Notifaction from '../models/Notification.js'
 
 class Controller {
   get = (req, res, next) => 
@@ -15,4 +15,4 @@ class Controller {
       .catch(err => next(err))
 }
 
-module.exports = new Controller()
+export default new Controller()

@@ -1,5 +1,5 @@
-const Image = require('../models/Image')
-const {redisClient} = require('../../app')
+import Image from '../models/Image.js'
+import {redisClient} from '../../app.js'
 class Controller {
   getById = async (req, res, next) => {
     const val = await redisClient.get('images' + req.params.id)
@@ -13,4 +13,4 @@ class Controller {
   }
 }
 
-module.exports = new Controller() 
+export default new Controller()

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 const User = new mongoose.Schema({
   phoneNumber : {
@@ -15,4 +15,4 @@ const User = new mongoose.Schema({
   avatar : String,
 }, {timestamps : true})
 
-module.exports = mongoose.model('Users', User)
+export default mongoose.model('Users', User)

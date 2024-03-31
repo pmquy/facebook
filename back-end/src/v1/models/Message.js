@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 const Message = new mongoose.Schema({
   content : String,
@@ -8,4 +8,4 @@ const Message = new mongoose.Schema({
   groupChat : String,
 }, {timestamps : true})
 
-module.exports = mongoose.model('Messages', Message)
+export default mongoose.model('Messages', Message)

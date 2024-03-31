@@ -1,7 +1,8 @@
-const router = require('express').Router()
-const controller = require('../controllers/notification')
+import controller from '../controllers/notification.js'
+import {Router} from 'express'
+const router = Router()
 
 router.get('/', controller.get)
 router.delete('/:id', controller.deleteById)
 
-module.exports = router
+export default router

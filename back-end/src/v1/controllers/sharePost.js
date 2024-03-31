@@ -1,6 +1,6 @@
-const SharePost = require('../models/SharePost')
-const Joi = require('joi')
-const Image = require('../models/Image')
+import SharePost from '../models/SharePost.js'
+import Joi from 'joi'
+import Image from '../models/Image.js'
 
 const creatingPattern = Joi.object({
   content: Joi.string().required(),
@@ -62,4 +62,4 @@ class Controller {
       .catch(err => next(err))
 }
 
-module.exports = new Controller()
+export default new Controller()

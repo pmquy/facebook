@@ -1,9 +1,9 @@
-const CommentPost = require('../models/CommentPost')
-const Joi = require('joi')
-const Image = require('../models/Image')
-const Notification = require('../models/Notification')
-const PostService = require('../services/post')
-const {io} = require('../../app')
+import CommentPost from '../models/CommentPost.js'
+import Joi from 'joi'
+import Image from '../models/Image.js'
+import Notification from '../models/Notification.js'
+import PostService from '../services/post.js'
+import {io} from '../../app.js'
 
 const creatingPattern = Joi.object({
   content: Joi.string(),
@@ -77,4 +77,4 @@ class Controller {
       .catch(err => next(err))
 }
 
-module.exports = new Controller()
+export default new Controller()

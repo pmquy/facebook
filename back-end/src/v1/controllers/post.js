@@ -1,5 +1,5 @@
-const PostService = require('../services/post')
-const Joi = require('joi')
+import PostService from '../services/post.js'
+import Joi from 'joi'
 
 const creatingPattern = Joi.object({
   content: Joi.string(),
@@ -51,4 +51,4 @@ class Controller {
   }
 }
 
-module.exports = new Controller() 
+export default new Controller()
