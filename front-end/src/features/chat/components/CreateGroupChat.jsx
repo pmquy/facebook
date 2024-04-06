@@ -4,6 +4,7 @@ import CommonContext from '../../../store/CommonContext'
 import GroupChatApi from '../services/groupChat'
 import {toast} from 'react-toastify'
 import { useQueryClient } from "react-query";
+import UserAccount from "../../../components/UserAccount";
 
 export default function () {
   const [ids, setIds] = useState(new Set())
@@ -15,11 +16,12 @@ export default function () {
   const handleCreate = () => {
     GroupChatApi.create({
       name : nameRef.current.value,
-      users : [...ids, user._id]
+      users : [...ids]
     })
       .then(() => {
         queryClient.invalidateQueries(['groupchats', user._id])
         setOpen(false)
+        setIds([])
       })
       .catch(err => toast(err.message, {type : 'error'}))
   }
@@ -33,21 +35,21 @@ export default function () {
         </div>
         {users.map(e => <div className={e._id == user._id ? 'hidden' : 'block'}>
           <div className="flex gap-5 justify-between">
-            <div>{e.firstName + ' ' + e.lastName}</div>            
-            {!ids.has(e._id) && <Button onClick={() => {
+            <UserAccount id={e._id}/>
+            {!ids.has(e._id) && <Button className={' btn-grey'} onClick={() => {
               ids.add(e._id)
               setIds(new Set(ids))
             }}>Thêm</Button>}
-            {ids.has(e._id) && <Button onClick={() => {
+            {ids.has(e._id) && <Button className={' btn-grey'} onClick={() => {
               ids.delete(e._id)
               setIds(new Set(ids))
             }}>Loại</Button>}
           </div>
         </div>)}
-        <Button onClick={handleCreate} className={'m-auto'}>Tạo nhóm chat</Button>
-        <Button onClick={() => setOpen(false)} className={'m-auto'}>Thoát</Button>
+        <Button onClick={handleCreate} className={'btn-teal m-auto'}>Tạo nhóm chat</Button>
+        <Button onClick={() => setOpen(false)} className={'btn-teal m-auto'}>Thoát</Button>
       </div>
     </div>}
-    <Button onClick={() => setOpen(true)}>Tạo nhóm mới</Button>
+    <Button className={'btn-teal m-auto'} onClick={() => setOpen(true)}>Tạo nhóm mới</Button>
   </div>
 }

@@ -12,5 +12,5 @@ export default function () {
       .then(() => queryClient.invalidateQueries(['posts']))
       .catch(err => toast(err.message, { type: 'error' }))
   }
-  return <div className="btn hover:bg-white_2 p-2 rounded-lg" onClick={handleDelete}>Xóa</div>
+  return <div className="p-2" onClick={handleDelete}>Xóa</div>
 }

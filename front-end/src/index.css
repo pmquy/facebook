@@ -23,6 +23,14 @@ html {
   border-radius: 8px;
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px rgb(253, 239, 237) inset !important;
+}
+
+
 @layer utilities {
   .box-shadow {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -36,15 +44,28 @@ html {
     @apply select-none cursor-pointer
   }
 
-  .btn-1 {
-    @apply bg-red_0 text-white_0 rounded-lg p-2 hover:bg-red_1 w-max cursor-pointer select-none
+  .btn-teal {
+    @apply bg-teal text-white rounded-lg p-2 w-max btn hover:bg-black
+  }
+
+  .btn-grey {
+    @apply bg-grey text-white rounded-lg p-2 w-max btn hover:bg-teal
   }
 
   .card {
-    @apply rounded-lg bg-white_0 box-shadow
+    @apply rounded-lg bg-white box-shadow
   }
-
-  .card_1 {
-    @apply rounded-lg bg-red_0 box-shadow text-white_0
+  
+  .card-teal {
+    @apply rounded-lg bg-teal box-shadow text-white
+  }
+  
+  .card-grey {
+    @apply rounded-lg bg-grey box-shadow text-white
+  }
+  
+  .card-black {
+    @apply rounded-lg bg-black box-shadow text-white
   }
 }
+

@@ -16,8 +16,8 @@ export default function () {
     <div>Bình luận</div>
   </div>
 
-  return <div onClick={() => setCreate(true)} className="flex gap-2 btn items-center p-2 rounded-lg hover:bg-white_1">
-    <FaComment className="w-6 h-6" color="black" />
-    <div>Bình luận ({query.data.length})</div>
+  return <div onClick={() => setCreate(true)} className="flex gap-1 btn hover:bg-grey hover:text-white items-center p-2 rounded-lg hover:bg-white_1">
+    <FaComment className="w-6 h-6" color="#00ADB5" />
+    <div>({query.data.length})</div>
   </div>
 }

@@ -5,7 +5,7 @@ import { useContext } from "react";
 import CommonContext from "../store/CommonContext";
 
 export default function () {
-  const {user} = useContext(CommonContext)
+  const {user, setUser} = useContext(CommonContext)
   const params = useParams()
 
   if(!user) return <>fd</>
@@ -14,6 +14,6 @@ export default function () {
     <Account userId={params.id}/>
     {user && params.id == user._id && <UpdateForm/>}
     {user && params.id == user._id && <ChangePasswordForm/>}    
-    {user && params.id == user._id && <Link to={'/login'} className="btn-1">Đăng xuất</Link>}    
+    {user && params.id == user._id && <Link onClick={() => setUser(null)} to={'/login'} className="btn-1">Đăng xuất</Link>}    
   </div>
 }

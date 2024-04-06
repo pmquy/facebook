@@ -20,11 +20,6 @@ export default function () {
     return query.data.some(e => e.user == user._id)
   }, [query.data])
 
-  if (query.isLoading || query.isError) return <div className="flex gap-2 animate-pulse btn items-center p-2 rounded-lg hover:bg-white_1">
-    <AiFillLike className={`w-6 h-6`} color={'black'} />
-    <div>Thích</div>
-  </div>
-
   const handleLike = () => {
     if (like)
       LikePostApi.delete({ post: post._id }).then(() => queryClient.invalidateQueries(['likeposts', { post: post._id }]))
@@ -32,8 +27,8 @@ export default function () {
       LikePostApi.create({ post: post._id }).then(() => queryClient.invalidateQueries(['likeposts', { post: post._id }]))
   }
 
-  return <div onClick={handleLike} className="flex gap-2 btn items-center p-2 rounded-lg hover:bg-white_1">
-    <AiFillLike className={`w-6 h-6 ${like ? ' animate-like' : ''}`} color={`${like ? 'red' : 'black'}`} />
-    <div className={`${like ? 'text-red_0 font-semibold' : ''}`}>{like ? 'Đã thích' : 'Thích'} ({query.data.length})</div>
+  return <div onClick={handleLike} className="flex gap-2 items-center hover:bg-grey hover:text-white p-2 rounded-lg btn">
+    <AiFillLike className={`w-6 h-6 ${like ? ' animate-like' : ''}`} color={`${like ? '#00ADB5' : '#222831'}`} />
+    <div>({query?.data?.length})</div>
   </div>
 }

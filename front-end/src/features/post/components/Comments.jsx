@@ -14,7 +14,7 @@ export default function () {
   })
 
   if (query.isError || query.isLoading) return <></>
-  return <div className={`flex flex-col gap-3 ${commentContext ? 'pl-8 border-l-2 border-red_0' : ''}`}>
+  return <div className={`flex flex-col gap-2 ${commentContext ? 'pl-8 border-l-2 border-teal' : ''}`}>
     {query.data.map((e, i) => <div id={e._id} key={e._id}><Comment id={e._id} /></div>)}
   </div>
 }

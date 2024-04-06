@@ -12,7 +12,7 @@ export default function ({cb}) {
     }
   ])
   if(query.some(e => e.isError || e.isLoading)) return <></>
-  return <div className='flex flex-col overflow-y-auto'>
+  return <div className='flex flex-col'>
     {query[0].data.map(cb)}
   </div>
 }

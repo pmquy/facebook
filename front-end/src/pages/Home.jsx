@@ -11,7 +11,9 @@ export default function () {
     <LeftBar className={' max-lg:hidden'}/>
     <RightBar className={'max-md:hidden'}/>
     <div className=' w-full max-w-[500px] xl:max-w-[700px] lg:m-auto max-md:m-auto flex flex-col gap-5'>            
-      <CreatePost/>
+      <div className="card">
+        <CreatePost/>
+      </div>
       <Posts/>
     </div>
   </div>

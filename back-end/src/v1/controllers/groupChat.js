@@ -3,12 +3,12 @@ import GroupChat from '../models/GroupChat.js'
 
 const creatingPattern = Joi.object({
   name: Joi.string().default('Nhóm Chat').required(),
-  users: Joi.array().min(2).required()
+  users: Joi.array().min(1).required()
 }).unknown(false).required()
 
 const updatingPattern = Joi.object({
   name: Joi.string(),
-  users: Joi.array().min(2)
+  users: Joi.array().min(1)
 }).unknown(false).required()
 
 class Controller {
@@ -28,7 +28,7 @@ class Controller {
 
   create = (req, res, next) =>
     creatingPattern.validateAsync(req.body)
-      .then(val => GroupChat.create(val))
+      .then(val => GroupChat.create({...val, users : [...val.users, req.user._id]}))
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
 

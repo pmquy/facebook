@@ -26,14 +26,14 @@ export default function ({id}) {
   if(query.some(e => e.isError || e.isLoading)) return <></>
 
   return <div className="flex flex-col gap-10">
-    {all.map(e => <div className={`flex flex-col gap-2 ${e.user == user._id ? 'items-end' : 'items-start'}`} key={e._id}>
+    {all.map(e => <div className={`flex flex-col gap-2 ${e.user == user._id ? 'items-end ' : 'items-start'}`} key={e._id}>
       <UserAccount id={e.user}/>
-      {e.type == 0 && <div className="card_1 p-5 flex flex-col gap-5">
+    {e.type == 0 && <div className={`${e.user == user._id ? 'card-teal' : 'card'} p-3 flex flex-col gap-5`}>
         {e.content}
         {e.images.map(t => <Image className={'w-96'} id={t}/>)}
         {e.videos.map(t => <Video className={'w-96'} id={t}/>)}
       </div>}
-      {e.type == 1 && <div className="card_1 p-5 flex flex-col gap-5">
+    {e.type == 1 && <div className={`${e.user == user._id ? 'card-teal' : 'card'} p-3 flex flex-col gap-5`}>
         <div>Đã bắt đầu một cuộc gọi</div>
         {e.status ? 'Đã kết thúc' : 'Đang diễn ra'}
       </div>}     

@@ -39,7 +39,7 @@ export default function ({ id }) {
   const [open, setOpen] = useState(false)
   const [others, setOthers] = useState({})
   const { socket, user, users } = useContext(CommonContext)
-  const myVideoRef = useRef(), otherVideoRef = useRef(), ref = useRef()
+  const myVideoRef = useRef(), currentOtherRef = useRef(), ref = useRef()
   const [currentOther, setCurrentOther] = useState()
 
   const query = useQuery({
@@ -60,7 +60,7 @@ export default function ({ id }) {
           case 'join': {
             const pc = new RTCPeerConnection(servers)
             const remoteStream = new MediaStream()
-            temp_others = { ...temp_others, [payload.user]: { pc: pc, stream: remoteStream, user : users.filter(e => e._id == payload.user)[0] } }
+            temp_others = { ...temp_others, [payload.user]: { pc: pc, stream: remoteStream, user: users.filter(e => e._id == payload.user)[0] } }
             stream.getTracks().forEach(track => pc.addTrack(track, stream))
             pc.ontrack = event => event.streams[0] && event.streams[0].getTracks().forEach(track => remoteStream.addTrack(track))
             pc.onicecandidate = event => event.candidate && socket.emit('call', JSON.stringify({ type: 'ice', group: 'call' + id, user: user._id, data: event.candidate, to: payload.user }))
@@ -73,7 +73,7 @@ export default function ({ id }) {
             if (payload.to != user._id) break
             const pc = new RTCPeerConnection(servers)
             const remoteStream = new MediaStream()
-            temp_others = { ...temp_others, [payload.user]: { pc: pc, stream: remoteStream,  user : users.filter(e => e._id == payload.user)[0]} }
+            temp_others = { ...temp_others, [payload.user]: { pc: pc, stream: remoteStream, user: users.filter(e => e._id == payload.user)[0] } }
             stream.getTracks().forEach(track => pc.addTrack(track, stream))
             pc.ontrack = event => event.streams[0] && event.streams[0].getTracks().forEach(track => remoteStream.addTrack(track))
             pc.onicecandidate = event => event.candidate && socket.emit('call', JSON.stringify({ type: 'ice', group: 'call' + id, user: user._id, data: event.candidate, to: payload.user }))
@@ -127,10 +127,10 @@ export default function ({ id }) {
     })
     if (!a.length) {
       setCurrentOther(null)
-      if (otherVideoRef.current) otherVideoRef.current.srcObject = null
+      if (currentOtherRef.current) currentOtherRef.current.srcObject = null
     } else if (!others[currentOther] || !currentOther) {
       setCurrentOther(a[0])
-      if (otherVideoRef.current) otherVideoRef.current.srcObject = others[a[0]].stream
+      if (currentOtherRef.current) currentOtherRef.current.srcObject = others[a[0]].stream
     }
   }, [others, id])
 
@@ -159,25 +159,27 @@ export default function ({ id }) {
   }
 
   return <div>
-    {open && <div className={` fixed z-30 left-0 top-0 w-screen h-screen bg-black_trans`}></div>}
-    {open && <div className="card w-[90%] max-sm:w-screen h-[80%] max-sm:h-full overflow-y-auto overflow-x-hidden fixed z-30 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+    <div className={`${open ? '' : 'hidden'} fixed z-30 left-0 top-0 w-screen h-screen bg-black_trans`}></div>
+    <div className={`${open ? '' : 'hidden'} card w-[90%] max-sm:w-screen h-[80%] max-sm:h-full overflow-y-auto overflow-x-hidden fixed z-30 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}>
       <div className={`${open == 1 ? 'translate-x-0' : '-translate-x-full'} transition-all duration-500 absolute top-0 left-0 w-full h-full p-2`}>
-        {others[currentOther] && <div className=" text-white absolute top-5 left-1/2 -translate-x-1/2">{others[currentOther].user.firstName + ' ' + others[currentOther].user.lastName}</div>}
-        <video className="object-cover h-full m-auto" ref={otherVideoRef} autoPlay={true} />
-        <SlCallEnd onClick={handleClose} className="w-8 h-8 btn-1 rounded-full absolute bottom-5 left-1/2 -translate-x-1/2" />
-        <FaChevronCircleRight onClick={() => setOpen(2)} color="red" className="w-8 h-8 absolute top-1/2 -translate-y-1/2 right-5" />
-        <video className="object-cover absolute top-2 right-2 h-[150px] w-[150px]" ref={myVideoRef} autoPlay={true} />
+        <div className=" text-white absolute top-5 left-1/2 -translate-x-1/2">{others[currentOther]?.user?.firstName + ' ' + others[currentOther]?.user?.lastName}</div>
+        <video className="object-cover h-full m-auto" ref={currentOtherRef} autoPlay={true} />
+        <video className={`object-cover border-4 border-teal object-center absolute duration-500 transition-all ${currentOther ? 'top-2 right-2 h-[150px] w-[150px]' : 'top-0 left-0 w-full h-full'} `} ref={myVideoRef} autoPlay={true} />
+        <FaChevronCircleRight onClick={() => setOpen(2)} className="w-10 h-10 btn-teal absolute top-1/2 -translate-y-1/2 right-5" />
+        <SlCallEnd onClick={handleClose} className="w-10 h-10 btn-teal absolute bottom-5 left-1/2 -translate-x-1/2" />
       </div>
       <div className={`${open == 2 ? 'translate-x-0' : 'translate-x-full'} transition-all duration-500 absolute top-0 left-0 w-full h-full p-2`}>
-        <FaChevronCircleLeft onClick={() => setOpen(1)} color="red" className="w-8 h-8 absolute top-1/2 -translate-y-1/2 left-5" />
+        <FaChevronCircleLeft onClick={() => setOpen(1)} className="w-10 h-10 btn-teal absolute top-1/2 -translate-y-1/2 left-5" />
         <div className=" grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }} ref={ref}>
-          {Object.keys(others).map(e => <div className="flex flex-col items-center" key={e}>
-            <video autoPlay={true} onClick={() => { setCurrentOther(e); setOpen(1) }} className="w-[300px] h-[300px] object-cover" />
-            <div className=" text-black">{others[e].user.firstName + ' ' + others[e].user.lastName}</div>
-          </div>)}
+          {Object.keys(others).map(e =>
+            <div className="flex flex-col items-center" key={e}>
+              <video autoPlay={true} onClick={() => { setCurrentOther(e); setOpen(1) }} className="w-[300px] h-[300px] object-cover" />
+              <div className=" text-black">{others[e].user.firstName + ' ' + others[e].user.lastName}</div>
+            </div>
+          )}
         </div>
       </div>
-    </div>}
+    </div>
     <MdVideoCall color={query.data.length == 0 || query.data[query.data.length - 1].status ? 'white' : 'aqua'} onClick={handleCall} className="w-8 h-8" />
   </div>
 }

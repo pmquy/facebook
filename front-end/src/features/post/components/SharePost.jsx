@@ -11,13 +11,8 @@ export default function () {
     queryFn: () => ShareApi.get({ post: post._id }),
   })
 
-  if (query.isLoading || query.isError) return <div className="flex animate-pulse gap-2 btn items-center p-2 rounded-lg hover:bg-white_1">
-    <FaShare className="w-6 h-6" color="black" />
-    <div>Chia sẻ</div>
-  </div>
-
-  return <div className="flex gap-2 btn items-center p-2 rounded-lg hover:bg-white_1">
-    <FaShare className="w-6 h-6" color="black" />
-    <div>Chia sẻ ({query.data.length})</div>
+  return <div className="flex gap-2 btn hover:bg-grey hover:text-white items-center p-2 rounded-lg hover:bg-white_1">
+    <FaShare className="w-6 h-6" color="#00ADB5" />
+    <div>({query?.data?.length})</div>
   </div>
 }

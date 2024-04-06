@@ -3,6 +3,7 @@ import CommentContext from "../store/CommentContext";
 import CommentApi from "../services/CommentApi";
 import { useQueryClient } from "react-query";
 import {toast} from 'react-toastify'
+import { MdDelete } from "react-icons/md";
 
 export default function () {
   const {comment} = useContext(CommentContext)
@@ -12,5 +13,5 @@ export default function () {
       .then(() => queryClient.invalidateQueries(['comments', { post: comment.post, comment: comment.comment }]))
       .catch(err => toast(err.message, { type: 'error' }))
   }
-  return <div className="btn" onClick={handleDelete}>Xóa</div>
+  return <MdDelete onClick={handleDelete} className=" w-6 h-6 bg-teal text-white hover:bg-black rounded-lg p-1" color="#EEEEEE"/>
 }

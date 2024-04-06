@@ -8,7 +8,7 @@
     "dev": "nodemon index.js",
     "start": "node index.js",
     "test": "mocha --timeout 20000 './test/**/*.test.js'",
-    "test_dev": "mocha --watch --parallel --timeout 20000 './test/**/*.test.js'"
+    "test:dev": "mocha --watch --parallel --timeout 20000 './test/**/*.test.js'"
   },
   "author": "",
   "license": "ISC",

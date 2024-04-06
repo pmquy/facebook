@@ -26,8 +26,8 @@ export default function () {
     const formData = new FormData()
     if (contentRef.current.value)
       formData.append('content', contentRef.current.value)
-    images.forEach(e => formData.append('images', e))
-    videos.forEach(e => formData.append('videos', e))
+      images.forEach(e => formData.append('images', e))
+      videos.forEach(e => formData.append('videos', e))
     PostApi.create(formData)
       .then(() => {
         setImages([])
@@ -39,16 +39,18 @@ export default function () {
       .catch(err => toast(err.message, { type: 'error' }))
   }
 
-  return <div className='flex gap-5 items-center p-5 bg-white_0 box-shadow rounded-lg'>
+  return <div className='flex gap-5 items-center p-5'>
     {open && <div onClick={e => { if (!ref.current.contains(e.target)) setOpen(false) }} className={`z-10 top-0 left-0 w-screen h-screen fixed bg-black_trans`}></div>}
     <div ref={ref} className={`left-1/2 -translate-x-1/2 top-1/2 fixed z-10 ${open ? '-translate-y-1/2' : 'translate-y-[1000px]'} transition-all duration-500 card p-5 w-[90%] max-h-screen max-sm:w-screen overflow-y-auto max-w-[500px] flex flex-col gap-5`}>
-      <IoCloseCircle onClick={() => setOpen(false)} className='w-8 h-8 absolute right-5 top-5' />
+      <IoCloseCircle onClick={() => setOpen(false)} className='w-10 h-10 absolute right-5 top-5 btn-teal' />
       <UserAccount id={user._id} />
-      <Textarea autoFocus={true} ref={contentRef} />
-      <Upload videos={videos} images={images} setImages={setImages} setVideos={setVideos}/>
-      <Button onClick={handleCreatePost} className={'m-auto'}>Đăng</Button>
+      <div className="border-2 border-teal p-2 rounded-lg">
+        <Textarea placeholder={'Viết nội dung'} className={'w-full bg-white'} autoFocus={true} ref={contentRef} />
+        <Upload videos={videos} images={images} setImages={setImages} setVideos={setVideos}/>
+      </div>
+      <Button onClick={handleCreatePost} className={'m-auto btn-teal'}>Đăng</Button>
     </div>
     {user.avatar ? <Image id={user.avatar} className={'min-w-8 min-h-8 max-w-8 max-h-8 object-cover rounded-full'} /> : <MdAccountCircle className='w-8 h-8' />}
-    <div onClick={() => setOpen(true)} className='btn bg-white_1 p-2 rounded-xl flex-grow hover:bg-white_2'>Bạn đang nghĩ gì thế</div>
+    <div onClick={() => setOpen(true)} className='btn p-2 rounded-xl flex-grow border-2 border-teal'>Bạn đang nghĩ gì thế</div>
   </div>
 }

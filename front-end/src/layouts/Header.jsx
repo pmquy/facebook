@@ -18,11 +18,11 @@ export default function () {
   const { user } = useContext(CommonContext)
   const location = useLocation()
   const index = getIndexFromPathName(location.pathname)
-
-  return <div className="sticky z-10 top-0 w-full flex justify-between p-2 bg-white_1 border-b-2">
+  if(!index) return <></>
+  return <div className="sticky z-10 top-0 w-full flex justify-between p-2 bg-white border-b-2">
     <div className="flex gap-2 basis-1/3">
       <Link to={'/'}>
-        <FaFacebook color="red" className="w-12 h-12" />
+        <FaFacebook color="#00ADB5" className="w-12 h-12" />
       </Link>
       <div className="p-2 rounded-full hover:bg-white_0 relative group">
         <RiFindReplaceLine className="w-8 h-8 " />
@@ -30,25 +30,20 @@ export default function () {
     </div>
 
     <div className="flex gap-5 basis-1/3 max-lg:hidden">
-      <Link to={'/'} className="py-2 px-10 group relative hover:bg-white_0 rounded-lg">
-        {index == 1 && <div className="absolute h-1 bg-red_0 left-0 bottom-0 w-full" />}
-        <FaHome className="w-8 h-8" color={index == 1 ? 'red' : ''} />
+      <Link to={'/'} className={`py-2 px-10 group relative ${index == 1 ? 'bg-black' : 'hover:bg-teal'} rounded-lg`}>
+        <FaHome className="w-8 h-8" color={index == 1 ? '#00ADB5' : '#222831'} />
       </Link>
-      <div className="py-2 px-10 group relative hover:bg-white_0 rounded-lg">
-        {index == 2 && <div className="absolute h-1 bg-red_0 left-0 bottom-0 w-full" />}
-        <MdOutlineOndemandVideo className="w-8 h-8" color={index == 2 ? 'red' : ''} />
+      <div className={`py-2 px-10 group relative ${index == 2 ? 'bg-black' : 'hover:bg-teal'} rounded-lg`}>
+        <MdOutlineOndemandVideo className="w-8 h-8" color={index == 2 ? '#00ADB5' : '#222831'} />
       </div>
-      <div className="py-2 px-10 group relative hover:bg-white_0 rounded-lg">
-        {index == 3 && <div className="absolute h-1 bg-red_0 left-0 bottom-0 w-full" />}
-        <CgShoppingCart className="w-8 h-8" color={index == 3 ? 'red' : ''} />
+      <div className={`py-2 px-10 group relative ${index == 3 ? 'bg-black' : 'hover:bg-teal'} rounded-lg`}>
+        <CgShoppingCart className="w-8 h-8" color={index == 3 ? '#00ADB5' : '#222831'} />
       </div>
-      <div className="py-2 px-10 group relative hover:bg-white_0 rounded-lg">
-        {index == 4 && <div className="absolute h-1 bg-red_0 left-0 bottom-0 w-full" />}
-        <GrGroup className="w-8 h-8" color={index == 4 ? 'red' : ''} />
+      <div className={`py-2 px-10 group relative ${index == 4 ? 'bg-black' : 'hover:bg-teal'} rounded-lg`}>
+        <GrGroup className="w-8 h-8" color={index == 4 ? '#00ADB5' : '#222831'} />
       </div>
-      <Link to={'/carogames'} className="py-2 px-10 group relative hover:bg-white_0 rounded-lg">
-        {index == 5 && <div className="absolute h-1 bg-red_0 left-0 bottom-0 w-full" />}
-        <IoGameController className="w-8 h-8" color={index == 5 ? 'red' : ''} />
+      <Link to={'/carogames'} className={`py-2 px-10 group relative  ${index == 5 ? 'bg-black' : 'hover:bg-teal'} rounded-lg `}>
+        <IoGameController className="w-8 h-8" color={index == 5 ? '#00ADB5' : '#222831'} />
       </Link>
     </div>
 

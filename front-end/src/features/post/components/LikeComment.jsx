@@ -7,9 +7,9 @@ import CommentContext from "../store/CommentContext"
 
 export default function () {
   const { user } = useContext(CommonContext)
-  const {comment} = useContext(CommentContext)
+  const { comment } = useContext(CommentContext)
   const query = useQuery({
-    queryKey: ['likecomments', {comment : comment._id}],
+    queryKey: ['likecomments', { comment: comment._id }],
     queryFn: () => LikeCommentApi.get({ comment: comment._id })
   })
   const queryClient = useQueryClient()
@@ -25,13 +25,13 @@ export default function () {
 
   const handleLike = () => {
     if (like)
-      LikeCommentApi.delete({comment: comment._id,}).then(() => queryClient.invalidateQueries(['likecomments', {comment : comment._id}]))        
+      LikeCommentApi.delete({ comment: comment._id, }).then(() => queryClient.invalidateQueries(['likecomments', { comment: comment._id }]))
     else
-      LikeCommentApi.create({comment: comment._id}).then(() => queryClient.invalidateQueries(['likecomments', {comment : comment._id}]))
+      LikeCommentApi.create({ comment: comment._id }).then(() => queryClient.invalidateQueries(['likecomments', { comment: comment._id }]))
   }
 
-  return <div onClick={handleLike} className="flex btn gap-2 items-center rounded-lg ">
-    <AiFillLike className={`w-6 h-6 ${like ? ' animate-like' : ''}`} color={`${like ? 'red' : 'black'}`} />
-    <div className={`${like ? 'text-red_0 font-semibold' : ''}`}>{like ? 'Đã thích' : 'Thích'} ({query.data.length})</div>
+  return <div onClick={handleLike} className="flex gap-1 hover:bg-grey p-1 rounded-lg items-center btn">
+    <AiFillLike className={`w-4 h-4 ${like ? ' animate-like' : ''}`} color={`${like ? '#222831' : '#EEEEEE'}`} />
+    <div>({query?.data?.length})</div>
   </div>
 }

@@ -11,6 +11,8 @@ import CommonContext from "../../../store/CommonContext";
 import CommentContext from '../store/CommentContext'
 import UpdateComment from "./UpdateComment";
 import DeleteComment from "./DeleteComment";
+import { FaReply } from "react-icons/fa";
+import { MdEdit } from "react-icons/md";
 
 export default function ({ id }) {
   const { user } = useContext(CommonContext)
@@ -26,23 +28,23 @@ export default function ({ id }) {
     <div className={`flex flex-col`}>
       <div className="relative">
         <UserAccount id={comment.user} />
-        {comment.comment && <div className=" absolute left-0 top-1/2 -tranlsate-y-1/2 border-red_0 -translate-x-full w-8 border-t-2"></div>}
+        {comment.comment && <div className=" absolute left-0 top-1/2 -tranlsate-y-1/2 border-teal -translate-x-full w-8 border-t-2"></div>}
       </div>
-      {update ? <UpdateComment /> :
-        <div className="flex mt-2 flex-col gap-2 card_1 p-5">
+      {update ? <div className="pt-2"><UpdateComment /></div> :
+        <div className="flex mt-2 flex-col gap-2 p-3 card-teal w-max text-white">
           <div className=" whitespace-pre-line">{comment.content}</div>
           {comment.images.map(e => <div className="w-64" key={e._id}><Image id={e} /></div>)}
           {comment.videos.map(e => <div className="w-64" key={e._id}><Video id={e} /></div>)}
-        </div>}
-      <div className="flex mt-2 gap-5 items-center">
-        <LikeComment />
-        <div className="btn" onClick={() => setCreate(true)}>Phản hồi</div>
-        {comment.user == user._id && <DeleteComment />}
-        {comment.user == user._id && <div onClick={() => setUpdate(true)} className="btn">Chỉnh sửa</div>}
-      </div>
-      <div className="mt-2"></div>
-      {create && <CreateComment />}
-      <Comments />
+          <div className="flex mt-2 gap-3 items-center">
+            <LikeComment />
+            <FaReply className=" w-6 h-6 bg-teal text-white hover:bg-black rounded-lg p-1" color="#EEEEEE" onClick={() => setCreate(true)} />
+            {comment.user == user._id && <DeleteComment />}
+            {comment.user == user._id && <MdEdit onClick={() => setUpdate(true)} className=" w-6 h-6 bg-teal text-white hover:bg-black rounded-lg p-1" color="#EEEEEE" />}
+          </div>
+        </div>
+      }
+      {create && <div className="pt-3"><CreateComment /></div>}
+      <div className="pt-3"><Comments /></div>
     </div>
   </CommentContext.Provider>
 }

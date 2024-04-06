@@ -1,6 +1,7 @@
 import { IoCloseCircle } from "react-icons/io5"
 import { useRef, useState } from "react";
 import { Button, FileInput } from "./ui";
+import { CiVideoOn,CiImageOn } from "react-icons/ci";
 
 function Record({ handleVideo, setOpen }) {
   const [state, setState] = useState(0)
@@ -78,34 +79,38 @@ function Record({ handleVideo, setOpen }) {
   </div>
 }
 
-export default function ({ images, setImages, videos, setVideos, height, width}) {
+export default function ({ images, setImages, videos, setVideos, height, width }) {
 
   const [openRecord, setOpenRecord] = useState(false)
   const [openCapture, setOpenCapture] = useState(false)
 
   return <div className="flex flex-col gap-5">
-    <div className="relative group w-max">
-      <div>Thêm ảnh</div>
-      <div className="flex flex-col absolute bg-white_0 z-10 rounded-lg max-h-0 top-0 right-0 translate-x-full w-max group-hover:max-h-screen overflow-hidden duration-500 transition-all">
-        <FileInput className={'px-5 py-1 hover:bg-white_1'} ref={useRef()} onChange={e => setImages(t => [...t, ...e.target.files])} accept={'image/*'}>Chọn file</FileInput>
-        <div className="px-5 py-1 hover:bg-white_1 rounded-lg">Mở camera</div>
+    <div className="flex gap-3">
+      <div className="relative group w-max">
+        <CiImageOn className=" w-6 h-6 bg-teal text-white rounded-lg p-1"/>
+        <div className="flex flex-col absolute bg-grey text-white z-10 max-h-0 top-0 left-0 -translate-y-full w-max group-hover:max-h-screen overflow-hidden duration-500 transition-all">
+          <FileInput className={'px-5 py-1 hover:bg-teal'} ref={useRef()} onChange={e => setImages(t => [...t, ...e.target.files])} accept={'image/*'}>Chọn file</FileInput>
+          <div className="px-5 py-1 hover:bg-teal">Mở camera</div>
+        </div>
+      </div>
+
+      <div className="relative group w-max">
+        <CiVideoOn className=" w-6 h-6 bg-teal text-white rounded-lg p-1" />
+        <div className="flex flex-col absolute bg-grey text-white z-10 max-h-0 top-0 left-0 -translate-y-full w-max group-hover:max-h-screen overflow-hidden duration-500 transition-all">
+          <FileInput className={'px-5 py-1 hover:bg-teal'} ref={useRef()} onChange={e => setVideos(t => [...t, ...e.target.files])} accept={'video/*'}>Chọn file</FileInput>
+          <div onClick={() => setOpenRecord(true)} className="px-5 py-1 hover:bg-teal">Mở camera</div>
+        </div>
       </div>
     </div>
-    {images.map((e, i) => <div style={{height : height, width : width}} className=" relative rounded-lg">
+
+    {images.map((e, i) => <div style={{ height: height, width: width }} className=" relative rounded-lg">
       <IoCloseCircle onClick={e => setImages(t => t.filter((a, b) => b != i))} className="z-10 absolute top-0 right-0 h-8 w-8" color="black" />
       <img key={i} src={URL.createObjectURL(e)} controls={true}></img>
     </div>)}
-    <div className="relative group w-max">
-      <div>Thêm video</div>
-      <div className="flex flex-col absolute bg-white_0 z-10 rounded-lg max-h-0 top-0 right-0 translate-x-full w-max group-hover:max-h-screen overflow-hidden duration-500 transition-all">
-        <FileInput className={'px-5 py-1 hover:bg-white_1'} ref={useRef()} onChange={e => setVideos(t => [...t, ...e.target.files])} accept={'video/*'}>Chọn file</FileInput>
-        <div onClick={() => setOpenRecord(true)} className="px-5 py-1 hover:bg-white_1 rounded-lg">Mở camera</div>
-      </div>
-    </div>
-    {videos.map((e, i) => <div style={{height : height, width : width}} className=" relative rounded-lg">
+    {openRecord && <Record setOpen={setOpenRecord} handleVideo={t => setVideos(a => [...a, t])} />}
+    {videos.map((e, i) => <div style={{ height: height, width: width }} className=" relative rounded-lg">
       <IoCloseCircle onClick={e => setVideos(t => t.filter((a, b) => b != i))} className="z-10 absolute top-0 right-0 h-8 w-8" color="black" />
       <video key={i} src={URL.createObjectURL(e)} controls={true}></video>
     </div>)}
-    {openRecord && <Record setOpen={setOpenRecord} handleVideo={t => setVideos(a => [...a, t])} />}
   </div>
 }

@@ -10,12 +10,12 @@ export default function () {
   const navigate = useNavigate()
 
   return <div>
-    <button onClick={() => setOpen(!open)} className={`p-2 rounded-full  relative group ${open ? 'bg-white_0' : 'hover:bg-white_0'}`}>
-      <FaFacebookMessenger color={`${open ? 'red' : ''}`} className="w-8 h-8" />
-      <div className={` max-sm:fixed max-sm:top-16 max-sm:left-0 max-sm:w-full h-max absolute w-max sm:max-w-[500px] overflow-y-auto -bottom-2 sm:translate-y-full right-0 bg-white_1 rounded-b-lg transition-all duration-500 ${open ? 'max-h-[400px]' : 'max-h-0'}`}>
+    <button onClick={() => setOpen(!open)} className={`p-2 rounded-full  relative group ${open ? 'bg-black' : 'hover:bg-teal'}`}>
+      <FaFacebookMessenger color={`${open ? '#00ADB5' : '#222831'}`} className="w-8 h-8" />
+      <div className={` max-sm:fixed max-sm:top-16 max-sm:left-0 max-sm:w-full h-max absolute w-max sm:max-w-[500px] overflow-y-auto -bottom-2 sm:translate-y-full right-0 bg-grey rounded-b-lg transition-all duration-500 ${open ? 'max-h-[400px]' : 'max-h-0'}`}>
         <GroupChats cb={e => {
-          return <div key={e._id}>
-            <div onClick={() => setId(e._id)} className=" max-sm:hidden hover:bg-white_0 py-2 px-5 rounded-lg">{e.name}</div>
+          return <div className="hover:bg-teal text-white" key={e._id}>
+            <div onClick={() => setId(e._id)} className=" max-sm:hidden  py-2 px-5 rounded-lg">{e.name}</div>
             <div onClick={() => navigate('/messages?id=' + e._id)} className=" hidden max-sm:block hover:bg-white_0 py-2 px-5 rounded-lg">{e.name}</div>
           </div>
         }} />

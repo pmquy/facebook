@@ -20,11 +20,11 @@ export default function () {
     setOpen(false)
   }
   return <div className="relative">
-    <div className={`max-sm:fixed  max-sm:top-16 max-sm:left-0 max-sm:translate-y-0 max-sm:w-full absolute h-max w-max sm:max-w-[500px] flex flex-col overflow-y-auto -bottom-2 translate-y-full right-0 bg-white_1 rounded-b-lg transition-all duration-500 ${open ? 'max-h-[400px]' : 'max-h-0'}`}>
-      {query.data.map(e => <div key={e._id} className="btn hover:bg-white_0 p-2 rounded-lg px-5" onClick={() => handleClick(e)}>{e.content}</div>)}
+    <div className={`max-sm:fixed  max-sm:top-16 max-sm:left-0 max-sm:translate-y-0 max-sm:w-full absolute h-max w-max sm:max-w-[500px] flex flex-col overflow-y-auto -bottom-2 translate-y-full right-0 bg-grey rounded-b-lg transition-all duration-500 ${open ? 'max-h-[400px]' : 'max-h-0'}`}>
+      {query.data.map(e => <div key={e._id} className="btn hover:bg-teal text-white py-2 px-5" onClick={() => handleClick(e)}>{e.content}</div>)}
     </div>
-    <button onClick={() => setOpen(!open)} className={` p-2 rounded-full group ${open ? 'bg-white_0' : 'hover:bg-white_0 '}` }>
-      <IoIosNotifications color={`${open ? 'red' : ''}`} className="w-8 h-8" />
+    <button onClick={() => setOpen(!open)} className={` p-2 rounded-full group ${open ? 'bg-black' : 'hover:bg-teal '}` }>
+      <IoIosNotifications color={`${open ? '#00ADB5' : '#222831'}`} className="w-8 h-8" />
     </button>
   </div>
 }
