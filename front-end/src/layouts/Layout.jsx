@@ -3,13 +3,19 @@ import { Outlet } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CommonContext from "../store/CommonContext";
-import { useQueries } from "react-query";
+import { useQueries, focusManager } from "react-query";
 import UserApi from '../services/user'
 import {useUser, useSocket} from '../hooks'
 
 export default function () {
   const socket = useSocket()
   const [user, setUser, isLoading] = useUser(socket)
+  focusManager.setEventListener((handleFocus) => {
+    if (typeof window !== 'undefined' && window.addEventListener) {
+      window.addEventListener('visibilitychange', handleFocus, false)
+    }
+    return () => window.removeEventListener('visibilitychange', handleFocus)
+  })
   const query = useQueries([
     {
       queryKey: ['users'],

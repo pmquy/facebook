@@ -1,11 +1,10 @@
-const {createClient} = require('redis')
-
-
+import {createClient} from 'redis'
 const connect = () => {
   const redisClient = createClient({url : process.env.REDIS_URL})
-  redisClient.on('error', err => 'Connect redis failed')
-  redisClient.connect().then(() => console.log('Connect redis successfully'))  
+  redisClient.connect()
+    .then(() => console.log('Connect redis successfully'))
+    .catch(err => console.log(err.message))  
   return redisClient
 }
 
-module.exports = connect
+export default connect

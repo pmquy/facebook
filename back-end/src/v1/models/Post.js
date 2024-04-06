@@ -1,9 +1,10 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 const Post = new mongoose.Schema({
   user : String,
   content : String,
-  image : String,
+  images : Array,
+  videos : Array,
 }, {timestamps : true})
 
-module.exports = mongoose.model('Posts', Post)
+export default mongoose.model('Posts', Post)

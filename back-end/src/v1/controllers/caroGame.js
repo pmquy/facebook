@@ -1,6 +1,6 @@
-const {io, redisClient} = require('../../app')
-const CaroGame = require('../models/CaroGame')
-const Joi = require('joi')
+import {io, redisClient} from '../../app.js'
+import CaroGame from '../models/CaroGame.js'
+import Joi from 'joi'
 const m = 30, n = 30, w = 5;
 
 
@@ -118,4 +118,4 @@ class Controller {
   }
 }
 
-module.exports = new Controller()
+export default new Controller()

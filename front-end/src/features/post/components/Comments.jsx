@@ -1,17 +1,20 @@
 import CommentApi from '../services/CommentApi'
 import { useQuery } from "react-query"
 import Comment from './Comment'
+import PostContext from '../store/PostContext'
+import CommentContext from '../store/CommentContext'
+import { useContext } from 'react'
 
-export default function ({ post, comment }) {
-  
+export default function () {
+  const postContext = useContext(PostContext)
+  const commentContext = useContext(CommentContext)
   const query = useQuery({
-    queryKey: ['comments', {post : post, comment : comment}],
-    queryFn: () => CommentApi.get({comment : comment, post : post})
+    queryKey: ['comments', { post: postContext.post._id, comment: commentContext ? commentContext.comment._id : '' }],
+    queryFn: () => CommentApi.get({ comment: commentContext ? commentContext.comment._id : '', post: postContext.post._id })
   })
 
   if (query.isError || query.isLoading) return <></>
-
-  return <div className={`flex flex-col gap-3 ${comment ? 'pl-8 border-l-2 border-red_0' : ''}`}>    
-    {query.data.map((e, i ) => <Comment comment={e}/>)}
+  return <div className={`flex flex-col gap-3 ${commentContext ? 'pl-8 border-l-2 border-red_0' : ''}`}>
+    {query.data.map((e, i) => <div id={e._id} key={e._id}><Comment id={e._id} /></div>)}
   </div>
 }

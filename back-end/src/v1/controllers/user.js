@@ -1,10 +1,7 @@
-const User = require('../models/User')
-const Joi = require('joi')
-const bcrypt = require('bcrypt')
-const CustomError = require('../utils/CustomError')
-const jwt = require('jsonwebtoken')
-const {redisClient} = require('../../app')
-const UserService = require('../services/user')
+import Joi from 'joi'
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import UserService from '../services/user.js'
 
 const creatingPattern = Joi.object({
   phoneNumber: Joi.string().trim().required().pattern(/^\d*$/),
@@ -14,6 +11,7 @@ const creatingPattern = Joi.object({
   }).custom((value, helpers) => bcrypt.hashSync(value, Number.parseInt(process.env.SALT_ROUNDS))),
   firstName: Joi.string().trim().required(),
   lastName: Joi.string().trim().required(),
+  avatar: Joi.string(),
 }).unknown(false).required()
 
 const updatingPattern = Joi.object({
@@ -21,6 +19,7 @@ const updatingPattern = Joi.object({
   email: Joi.string().email().trim(),
   firstName: Joi.string().trim(),
   lastName: Joi.string().trim(),
+  avatar: Joi.string(),
 }).unknown(false).required()
 
 const loginPattern = Joi.object({
@@ -37,7 +36,7 @@ const changePasswordPattern = Joi.object({
 
 const opt1 = {
   maxAge: 1000 * 60 * 60 * 24 * 10,
-  httpOnly: true
+  httpOnly: false
 }
 
 const opt2 = {
@@ -84,14 +83,14 @@ class Controller {
 
   updateById = async (req, res, next) => {
     updatingPattern.validateAsync(req.body)
-      .then(val => UserService.updateById(req.user, id, val))
+      .then(val => UserService.updateById(req.user, req.params.id, val))
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
 
-  changePasswordById = async (req, res, next) => {
+  changePassword = async (req, res, next) => {
     changePasswordPattern.validateAsync(req.body)
-      .then(async val => UserService.changePasswordById(req.user, req.params.id, val))
+      .then(async val => UserService.changePassword(req.user, val))
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
@@ -100,7 +99,7 @@ class Controller {
     loginPattern.validateAsync(req.body)
       .then(val => UserService.login(val.phoneNumber, val.password))
       .then(val => {
-        res.cookie('access_token', this.getToken(val.toObject()), process.env.ENV == "DEV" ? opt1 : opt2)
+        res.cookie('access_token', this.getToken(val.toObject()), process.env.ENV == "PRODUCT" ? opt2 : opt1)
         res.status(200).send(val)
       })
       .catch(err => next(err))
@@ -114,4 +113,4 @@ class Controller {
 }
 
 
-module.exports = new Controller()
+export default new Controller()

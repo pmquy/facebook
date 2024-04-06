@@ -1,4 +1,4 @@
-const Friend = require('../models/Friend')
+import Friend from '../models/Friend.js'
 
 class Controller {
   get = (req, res, next) => {
@@ -43,4 +43,4 @@ class Controller {
 
 }
 
-module.exports = new Controller()
+export default new Controller()

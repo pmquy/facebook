@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 const LikeComment = new mongoose.Schema({
   user : String,
@@ -7,4 +7,4 @@ const LikeComment = new mongoose.Schema({
 
 LikeComment.index({user : 1, comment : 1}, {unique : true})
 
-module.exports = mongoose.model('LikeComments', LikeComment)
+export default mongoose.model('LikeComments', LikeComment)

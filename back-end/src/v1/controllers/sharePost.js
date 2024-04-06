@@ -1,16 +1,22 @@
-const SharePost = require('../models/SharePost')
-const Joi = require('joi')
-const Image = require('../models/Image')
+import SharePost from '../models/SharePost.js'
+import Joi from 'joi'
+import Image from '../models/Image.js'
 
 const creatingPattern = Joi.object({
   content: Joi.string().required(),
-  image: Joi.string(),
+  images: Joi.when('content', {
+    is : Joi.exist(),
+    then : Joi.array().items(Joi.string()).default([]),
+    otherwise : Joi.array().items(Joi.string()).min(1)
+  }),
+  videos : Joi.array().items(Joi.string()),
   post: Joi.string().required()
 }).unknown(false).required()
 
 const updatingPattern = Joi.object({
   content: Joi.string(),
-  image: Joi.string(),
+  images : Joi.array().items(Joi.string()),
+  videos : Joi.array().items(Joi.string()),
 }).unknown(false).required()
 
 
@@ -56,4 +62,4 @@ class Controller {
       .catch(err => next(err))
 }
 
-module.exports = new Controller()
+export default new Controller()

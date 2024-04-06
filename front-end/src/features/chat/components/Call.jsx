@@ -5,32 +5,33 @@ import { SlCallEnd } from "react-icons/sl";
 import { useQuery } from 'react-query'
 import api from '../services/call'
 import { toast } from 'react-toastify'
+import { FaChevronCircleLeft, FaChevronCircleRight } from "react-icons/fa";
 
 const servers = {
   iceServers: [
-      {
-        urls: "stun:stun.relay.metered.ca:80",
-      },
-      {
-        urls: "turn:asia.relay.metered.ca:80",
-        username: "5177322f9615b2eb2249488c",
-        credential: "k1G5No+LjyPmRKK4",
-      },
-      {
-        urls: "turn:asia.relay.metered.ca:80?transport=tcp",
-        username: "5177322f9615b2eb2249488c",
-        credential: "k1G5No+LjyPmRKK4",
-      },
-      {
-        urls: "turn:asia.relay.metered.ca:443",
-        username: "5177322f9615b2eb2249488c",
-        credential: "k1G5No+LjyPmRKK4",
-      },
-      {
-        urls: "turns:asia.relay.metered.ca:443?transport=tcp",
-        username: "5177322f9615b2eb2249488c",
-        credential: "k1G5No+LjyPmRKK4",
-      },
+    {
+      urls: "stun:stun.relay.metered.ca:80",
+    },
+    {
+      urls: "turn:standard.relay.metered.ca:80",
+      username: "5177322f9615b2eb2249488c",
+      credential: "k1G5No+LjyPmRKK4",
+    },
+    {
+      urls: "turn:standard.relay.metered.ca:80?transport=tcp",
+      username: "5177322f9615b2eb2249488c",
+      credential: "k1G5No+LjyPmRKK4",
+    },
+    {
+      urls: "turn:standard.relay.metered.ca:443",
+      username: "5177322f9615b2eb2249488c",
+      credential: "k1G5No+LjyPmRKK4",
+    },
+    {
+      urls: "turns:standard.relay.metered.ca:443?transport=tcp",
+      username: "5177322f9615b2eb2249488c",
+      credential: "k1G5No+LjyPmRKK4",
+    },
   ],
 }
 
@@ -38,18 +39,13 @@ export default function ({ id }) {
   const [open, setOpen] = useState(false)
   const [others, setOthers] = useState({})
   const { socket, user, users } = useContext(CommonContext)
-  const myVideoRef = useRef(), ref = useRef()
+  const myVideoRef = useRef(), otherVideoRef = useRef(), ref = useRef()
+  const [currentOther, setCurrentOther] = useState()
+
   const query = useQuery({
     queryKey: ['calls', { groupChat: id }],
     queryFn: () => api.get({ groupChat: id })
   })
-
-  useEffect(() => {
-    console.log(others)
-    Object.keys(others).forEach((e, i) => {
-      ref.current.childNodes[i + 1].childNodes[0].srcObject = others[e].stream
-    })
-  }, [others])
 
   useEffect(() => {
     let listener;
@@ -60,25 +56,24 @@ export default function ({ id }) {
       myVideoRef.current.srcObject = stream
       listener = async payload => {
         payload = JSON.parse(payload)
-        console.log(payload)
         switch (payload.type) {
           case 'join': {
             const pc = new RTCPeerConnection(servers)
             const remoteStream = new MediaStream()
-            temp_others = { ...temp_others, [payload.user]: { pc: pc, stream: remoteStream } }
+            temp_others = { ...temp_others, [payload.user]: { pc: pc, stream: remoteStream, user : users.filter(e => e._id == payload.user)[0] } }
             stream.getTracks().forEach(track => pc.addTrack(track, stream))
             pc.ontrack = event => event.streams[0] && event.streams[0].getTracks().forEach(track => remoteStream.addTrack(track))
             pc.onicecandidate = event => event.candidate && socket.emit('call', JSON.stringify({ type: 'ice', group: 'call' + id, user: user._id, data: event.candidate, to: payload.user }))
             pc.createOffer()
               .then(offer => pc.setLocalDescription(offer))
-              .then(() => socket.emit('call', JSON.stringify({ type: 'offer', group: 'call' + id, user: user._id, data: pc.localDescription, to: payload.user })))            
+              .then(() => socket.emit('call', JSON.stringify({ type: 'offer', group: 'call' + id, user: user._id, data: pc.localDescription, to: payload.user })))
             break
           }
           case 'offer': {
             if (payload.to != user._id) break
             const pc = new RTCPeerConnection(servers)
             const remoteStream = new MediaStream()
-            temp_others = { ...temp_others, [payload.user]: { pc: pc, stream: remoteStream } }
+            temp_others = { ...temp_others, [payload.user]: { pc: pc, stream: remoteStream,  user : users.filter(e => e._id == payload.user)[0]} }
             stream.getTracks().forEach(track => pc.addTrack(track, stream))
             pc.ontrack = event => event.streams[0] && event.streams[0].getTracks().forEach(track => remoteStream.addTrack(track))
             pc.onicecandidate = event => event.candidate && socket.emit('call', JSON.stringify({ type: 'ice', group: 'call' + id, user: user._id, data: event.candidate, to: payload.user }))
@@ -86,13 +81,13 @@ export default function ({ id }) {
               .then(() => pc.createAnswer())
               .then(answer => pc.setLocalDescription(answer))
               .then(() => socket.emit('call', JSON.stringify({ type: 'answer', group: 'call' + id, user: user._id, data: pc.localDescription, to: payload.user })))
-              .then(() => setOthers({...temp_others}))
+              .then(() => setOthers({ ...temp_others }))
             break
           }
           case 'answer': {
             if (payload.to != user._id) break
             temp_others[payload.user].pc.setRemoteDescription(new RTCSessionDescription(payload.data))
-            setOthers({...temp_others})
+            setOthers({ ...temp_others })
             break
           }
           case 'ice': {
@@ -102,7 +97,7 @@ export default function ({ id }) {
           }
           case 'left': {
             delete temp_others[payload.user]
-            setOthers({...temp_others})
+            setOthers({ ...temp_others })
             break
           }
         }
@@ -123,17 +118,33 @@ export default function ({ id }) {
         setOthers({})
       }
     }
-  }, [open])
+  }, [open == 0, id])
+
+  useEffect(() => {
+    const a = Object.keys(others)
+    a.forEach((e, i) => {
+      ref.current.childNodes[i].childNodes[0].srcObject = others[e].stream
+    })
+    if (!a.length) {
+      setCurrentOther(null)
+      if (otherVideoRef.current) otherVideoRef.current.srcObject = null
+    } else if (!others[currentOther] || !currentOther) {
+      setCurrentOther(a[0])
+      if (otherVideoRef.current) otherVideoRef.current.srcObject = others[a[0]].stream
+    }
+  }, [others, id])
+
+  if (query.isError || query.isLoading) return <></>
 
   const handleCall = () => {
     if (query.data.length == 0 || query.data[query.data.length - 1].status == 1) {
       api.create({
         groupChat: id,
       })
-        .then(() => setOpen(true))
+        .then(() => setOpen(1))
         .catch(err => toast(err.message, { type: 'error' }))
     } else {
-      setOpen(true)
+      setOpen(1)
     }
   }
 
@@ -143,26 +154,29 @@ export default function ({ id }) {
         .then(() => setOpen(false))
         .catch(err => toast(err.message, { type: 'error' }))
     } else {
-      setOpen(false)
+      setOpen(0)
     }
   }
-  if (query.isError || query.isLoading) return <></>
+
   return <div>
     {open && <div className={` fixed z-30 left-0 top-0 w-screen h-screen bg-black_trans`}></div>}
-    {open && <div ref={ref} style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }} className="card p-5 grid gap-5 w-[90%] max-sm:w-screen max-sm:min-h-screen max-h-[90%] overflow-auto fixed z-30 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-      <div className="flex flex-col items-center gap-2">
-        <video className=" w-[300px] h-[300px] max-sm:w-full max-sm:h-full object-cover" ref={myVideoRef} autoPlay={true} />
-        <div className="flex justify-between gap-5 items-center">
-          <div className="text-black">Bạn</div>
-          <div onClick={handleClose} className="p-2 btn-1 rounded-full">
-            <SlCallEnd className="w-4 h-4" />
-          </div>
+    {open && <div className="card w-[90%] max-sm:w-screen h-[80%] max-sm:h-full overflow-y-auto overflow-x-hidden fixed z-30 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      <div className={`${open == 1 ? 'translate-x-0' : '-translate-x-full'} transition-all duration-500 absolute top-0 left-0 w-full h-full p-2`}>
+        {others[currentOther] && <div className=" text-white absolute top-5 left-1/2 -translate-x-1/2">{others[currentOther].user.firstName + ' ' + others[currentOther].user.lastName}</div>}
+        <video className="object-cover h-full m-auto" ref={otherVideoRef} autoPlay={true} />
+        <SlCallEnd onClick={handleClose} className="w-8 h-8 btn-1 rounded-full absolute bottom-5 left-1/2 -translate-x-1/2" />
+        <FaChevronCircleRight onClick={() => setOpen(2)} color="red" className="w-8 h-8 absolute top-1/2 -translate-y-1/2 right-5" />
+        <video className="object-cover absolute top-2 right-2 h-[150px] w-[150px]" ref={myVideoRef} autoPlay={true} />
+      </div>
+      <div className={`${open == 2 ? 'translate-x-0' : 'translate-x-full'} transition-all duration-500 absolute top-0 left-0 w-full h-full p-2`}>
+        <FaChevronCircleLeft onClick={() => setOpen(1)} color="red" className="w-8 h-8 absolute top-1/2 -translate-y-1/2 left-5" />
+        <div className=" grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }} ref={ref}>
+          {Object.keys(others).map(e => <div className="flex flex-col items-center" key={e}>
+            <video autoPlay={true} onClick={() => { setCurrentOther(e); setOpen(1) }} className="w-[300px] h-[300px] object-cover" />
+            <div className=" text-black">{others[e].user.firstName + ' ' + others[e].user.lastName}</div>
+          </div>)}
         </div>
       </div>
-      {Object.keys(others).map(e => <div key={e} className="flex flex-col items-center gap-2">
-        <video className="w-[300px] h-[300px] max-sm:w-full max-sm:h-full object-cover" autoPlay={true} />
-        <div className="text-black">{users.filter(t => t._id == e)[0].firstName} {users.filter(t => t._id == e)[0].lastName}</div>
-      </div>)}
     </div>}
     <MdVideoCall color={query.data.length == 0 || query.data[query.data.length - 1].status ? 'white' : 'aqua'} onClick={handleCall} className="w-8 h-8" />
   </div>

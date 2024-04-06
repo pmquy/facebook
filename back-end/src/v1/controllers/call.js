@@ -1,6 +1,6 @@
-const Call = require('../models/Call')
-const Joi = require('joi')
-const {io} = require('../../app')
+import Call from '../models/Call.js'
+import Joi from 'joi'
+import { io } from '../../app.js'
 
 const creatingPattern = Joi.object({  
   groupChat : Joi.string().required()
@@ -35,4 +35,4 @@ class Controller {
   }
 }
 
-module.exports = new Controller()
+export default new Controller()

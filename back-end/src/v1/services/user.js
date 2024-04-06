@@ -1,37 +1,27 @@
-const User = require('../models/User')
-const { redisClient } = require('../../app')
-const bcrypt = require('bcrypt')
+import User from '../models/User.js'
+import { redisClient } from '../../app.js'
+import bcrypt from 'bcrypt'
+import Image from '../models/Image.js'
 
 class Service {
   get = async query => {
-    let val = await redisClient.get('users')
-    if (val) return JSON.parse(val)
-    val = await User.find(query).select('-password -phoneNumber -email')
-    redisClient.set('users', JSON.stringify(val))
+    const val = await User.find(query).select('-password -phoneNumber -email')
     return val
   }
 
   getById = async id => {
-    let val = await redisClient.get('users' + id)
-    if (val) return JSON.parse(val)
-    val = await User.findById(id).select('-password -phoneNumber -email')
-    redisClient.set('users' + id, JSON.stringify(val))
+    const val = await User.findById(id).select('-password -phoneNumber -email')
     return val
   }
 
   create = async data => {
     const val = await User.create(data)
-    redisClient.get('users')
-      .then(t => {
-        t = JSON.parse(t)
-        redisClient.set('users', [...t, val])
-      })
     return val
   }
 
   deleteById = async (user, id) => {
     if (user._id != id) throw new Error()
-    redisClient.del('users' + id)
+    if(user.avatar) await Image.findByIdAndDelete(user.avatar)
     return User.findByIdAndDelete(id)
   }
 
@@ -43,19 +33,19 @@ class Service {
 
   updateById = async (user, id, data) => {
     if (user._id != id) throw new Error()
-    const val = await User.findByIdAndUpdate(id, data)
-    redisClient.set('users' + id, JSON.stringify(val))
-    return val
+    if(user.avatar && data.avatar) await Image.findByIdAndDelete(user.avatar)
+    return User.findByIdAndUpdate(id, data, {new : true})
   }
 
-  changePasswordById = async (user, id, data) => {
-    if (user._id != id) throw new Error()
-    const val = await User.findById(req.params.id)
-    if (bcrypt.compareSync(data.oldPassword, user.password))
-      return val.updateOne({ password: data.password }, { new: true })
+  changePassword = async (user, data) => {
+    const val = await User.findById(user._id)
+    if (bcrypt.compareSync(data.oldPassword, user.password)) {
+      await val.updateOne({ password: data.password }, { new: true })
+      return {password : data.password}
+    }
     throw new Error()
   }
 }
 
 
-module.exports = new Service()
+export default new Service()

@@ -1,13 +1,13 @@
-const router = require('express').Router()
-const controller = require('../controllers/sharePost')
-const auth = require('../middlewares/authentication')
-const uploads = require('../middlewares/multer')
-const getImage = require('../middlewares/getImage')
+import controller from '../controllers/sharePost.js'
+import {Router} from 'express'
+const router = Router()
+import upload from '../middlewares/multer.js'
+import { getImages, getVideos } from '../middlewares/getMedia.js'
 
-router.post('/create', auth, uploads.single('image'), getImage, controller.create)
-router.get('/:id', auth, controller.getById)
-router.delete('/:id', auth, controller.deleteById)
-router.put('/:id', auth, uploads.single('image'), getImage, controller.updateById)
-router.get('/', auth, controller.get)
+router.post('/create', upload.fields([{name : 'images'}, {name : 'videos'}]), getImages, getVideos, controller.create)
+router.get('/:id', controller.getById)
+router.delete('/:id', controller.deleteById)
+router.put('/:id', upload.fields([{name : 'images'}, {name : 'videos'}]), getImages, getVideos, controller.updateById)
+router.get('/', controller.get)
 
-module.exports = router
+export default router

@@ -1,9 +1,8 @@
-const {io} = require('../../app')
-const LikePost = require('../models/LikePost')
-const Joi = require('joi')
-const Notification = require('../models/Notification')
-const PostService = require('../services/post')
-const UserService = require('../services/user')
+import {io} from '../../app.js'
+import LikePost from '../models/LikePost.js'
+import Joi from 'joi'
+import Notification from '../models/Notification.js'
+import PostService from '../services/post.js'
 
 const creatingPattern = Joi.object({
   post: Joi.string().required()
@@ -16,11 +15,15 @@ class Controller {
       .then(async val => {
         res.status(200).send(val)
         const post = await PostService.getById(val.post)        
-        Notification.create({
-          content : `${req.user.firstName + ' ' + req.user.lastName} vừa thích bài viết của bạn`,
-          user : post.user,
-        })
-          .then(() => io.emit('invalidate', ['notifications', post.user]))        
+        if(post.user != req.user._id) {
+          Notification.create({
+            content : `${req.user.firstName + ' ' + req.user.lastName} vừa thích bài viết của bạn`,
+            user : post.user,
+            to : '/?open=' + post._id,
+            key : JSON.stringify(['likeposts', { post: val.post }])
+          })
+            .then(() => io.emit('invalidate', ['notifications', post.user]))        
+        }
       })            
       .catch(err => next(err))
 
@@ -36,4 +39,4 @@ class Controller {
       .catch(err => next(err))
 }
 
-module.exports = new Controller()
+export default new Controller()

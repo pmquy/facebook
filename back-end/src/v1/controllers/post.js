@@ -1,14 +1,20 @@
-const PostService = require('../services/post')
-const Joi = require('joi')
+import PostService from '../services/post.js'
+import Joi from 'joi'
 
 const creatingPattern = Joi.object({
-  content: Joi.string().required(),
-  image: Joi.string()
+  content: Joi.string(),
+  images: Joi.when('content', {
+    is : Joi.exist(),
+    then : Joi.array().items(Joi.string()).default([]),
+    otherwise : Joi.array().items(Joi.string()).min(1).required()
+  }),
+  videos : Joi.array().items(Joi.string()).default([])
 }).unknown(false).required()
 
 const updatingPattern = Joi.object({
   content: Joi.string(),
-  image: Joi.string()
+  images: Joi.array().items(Joi.string()),
+  videos : Joi.array().items(Joi.string())
 }).unknown(false).required()
 
 class Controller {
@@ -45,4 +51,4 @@ class Controller {
   }
 }
 
-module.exports = new Controller() 
+export default new Controller()

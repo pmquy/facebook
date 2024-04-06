@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from "mongoose"
 
 const Call = new mongoose.Schema({  
   status : Number,
@@ -6,4 +6,4 @@ const Call = new mongoose.Schema({
   user : String,
 }, {timestamps : true})
 
-module.exports = mongoose.model('Calls', Call)
+export default mongoose.model('Calls', Call)

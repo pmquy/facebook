@@ -1,17 +1,23 @@
-const Joi = require('joi')
-const Message = require('../models/Message')
-const GroupChat = require('../models/GroupChat')
-const {io} = require('../../app')
+import Joi from 'joi'
+import Message from '../models/Message.js'
+import GroupChat from '../models/GroupChat.js'
+import {io} from '../../app.js'
 
 const creatingPattern = Joi.object({
-  content : Joi.string().required(),
-  image : Joi.string(),
+  content : Joi.string(),
+  images : Joi.when('content', {
+    is : Joi.exist(),
+    then : Joi.array().items(Joi.string()).default([]),
+    otherwise : Joi.array().items(Joi.string()).min(1).required()
+  }),
+  videos : Joi.array().items(Joi.string()),
   groupChat : Joi.string().required(),
 }).unknown(false).required()
 
 const updatingPattern = Joi.object({
   content : Joi.string(),
-  image : Joi.string(),  
+  images : Joi.array().items(Joi.string()),
+  videos : Joi.array().items(Joi.string()),
 }).unknown(false).required()
 
 class Controller {
@@ -56,4 +62,4 @@ class Controller {
   }
 }
 
-module.exports = new Controller()
+export default new Controller()

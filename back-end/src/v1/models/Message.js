@@ -1,10 +1,11 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 const Message = new mongoose.Schema({
   content : String,
-  image : String,
+  images : Array,
+  videos : Array,
   user : String,
   groupChat : String,
 }, {timestamps : true})
 
-module.exports = mongoose.model('Messages', Message)
+export default mongoose.model('Messages', Message)

@@ -7,11 +7,14 @@ import UserAccount from '../../../components/UserAccount'
 import CommonContext from '../../../store/CommonContext'
 import { IoCloseCircle } from "react-icons/io5";
 import { useQueryClient } from 'react-query'
+import Image from '../../../components/Image'
+import Upload from '../../../components/Upload'
 
 export default function () {
   const { user } = useContext(CommonContext)
   const [open, setOpen] = useState(false)
-  const [image, setImage] = useState()
+  const [images, setImages] = useState([])
+  const [videos, setVideos] = useState([])
   const queryClient = useQueryClient()
   const ref = useRef(), contentRef = useRef(), fileRef = useRef()
 
@@ -21,14 +24,17 @@ export default function () {
 
   const handleCreatePost = () => {
     const formData = new FormData()
-    formData.append('content', contentRef.current.value)
-    if (fileRef.current.files[0]) {
-      formData.append('image', fileRef.current.files[0])
-    }
+    if (contentRef.current.value)
+      formData.append('content', contentRef.current.value)
+    images.forEach(e => formData.append('images', e))
+    videos.forEach(e => formData.append('videos', e))
     PostApi.create(formData)
       .then(() => {
+        setImages([])
+        setVideos([])
+        contentRef.current.value = ''
         setOpen(false)
-        queryClient.invalidateQueries(['posts', user._id])
+        queryClient.invalidateQueries(['posts'])
       })
       .catch(err => toast(err.message, { type: 'error' }))
   }
@@ -39,11 +45,10 @@ export default function () {
       <IoCloseCircle onClick={() => setOpen(false)} className='w-8 h-8 absolute right-5 top-5' />
       <UserAccount id={user._id} />
       <Textarea autoFocus={true} ref={contentRef} />
-      <FileInput onChange={e => setImage(e.target.files[0] ? URL.createObjectURL(e.target.files[0]) : null)} ref={fileRef} accept={'image/*'}>Tải ảnh lên</FileInput>
-      {image && <img src={image} className='rounded-xl'></img>}
+      <Upload videos={videos} images={images} setImages={setImages} setVideos={setVideos}/>
       <Button onClick={handleCreatePost} className={'m-auto'}>Đăng</Button>
     </div>
-    <MdAccountCircle className='w-8 h-8' />
-    <div onClick={() => setOpen(true)} className=' bg-white_1 p-2 rounded-xl flex-grow hover:bg-white_2'>Bạn đang nghĩ gì thế</div>
+    {user.avatar ? <Image id={user.avatar} className={'min-w-8 min-h-8 max-w-8 max-h-8 object-cover rounded-full'} /> : <MdAccountCircle className='w-8 h-8' />}
+    <div onClick={() => setOpen(true)} className='btn bg-white_1 p-2 rounded-xl flex-grow hover:bg-white_2'>Bạn đang nghĩ gì thế</div>
   </div>
 }
