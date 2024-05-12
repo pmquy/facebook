@@ -10,7 +10,7 @@ export default function ({ id }) {
   return <div className="flex justify-start">
     <Link to={'/user/' + id} className="flex gap-2 items-center">
       {user.avatar ?
-        <Image id={user.avatar} className={'w-8 h-8 rounded-full object-cover'} />
+        <Image needToNavigate={false} id={user.avatar} className={'w-8 h-8 rounded-full object-cover'} />
         :
         <MdAccountCircle className="w-8 h-8" />
       }

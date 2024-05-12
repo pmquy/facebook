@@ -25,25 +25,27 @@ export default function () {
       .catch(err => toast(err.message, { type: 'error' }))
   }
 
-  return <div className="flex flex-col gap-5 card p-5">
+  return <div className="flex flex-col justify-center gap-5 card dark:card-black p-5">
     <div className="flex gap-5 items-center justify-between">
       <div className='text-1'>Số điện thoại</div>
-      <Input defaultValue={user.phoneNumber} autoFocus={true} ref={phoneNumberRef} />
+      <Input className="bg-white border-teal border-2 dark:bg-black" defaultValue={user.phoneNumber} autoFocus={true} ref={phoneNumberRef} />
     </div>
     <div className="flex gap-5 items-center justify-between">
       <div className='text-1'>Email</div>
-      <Input defaultValue={user.email} ref={emailRef} />
+      <Input className="bg-white border-teal border-2 dark:bg-black" defaultValue={user.email} ref={emailRef} />
     </div>    
     <div className="flex gap-5 items-center justify-between">
       <div className='text-1'>Họ</div>
-      <Input defaultValue={user.firstName} ref={firstNameRef} />
+      <Input className="bg-white border-teal border-2 dark:bg-black" defaultValue={user.firstName} ref={firstNameRef} />
     </div>
     <div className="flex gap-5 items-center justify-between">
       <div className='text-1'>Tên</div>
-      <Input defaultValue={user.lastName} ref={lastNameRef} />
+      <Input className="bg-white border-teal border-2 dark:bg-black" defaultValue={user.lastName} ref={lastNameRef} />
     </div>
     {image && <img src={image} className='w-72 rounded-full h-72 object-cover'></img>}
-    <FileInput accept={'image/*'} onChange={e => setImage(URL.createObjectURL(e.target.files[0]))} ref={fileRef}/>
-    <Button onClick={handleUpdate} className={'m-auto'}>Cập Nhật</Button>
+    <div className="m-auto w-max">
+      <FileInput className="btn-teal dark:btn-grey"  accept={'image/*'} onChange={e => setImage(URL.createObjectURL(e.target.files[0]))} ref={fileRef}/>
+    </div>
+    <Button onClick={handleUpdate} className={'m-auto btn-teal dark:btn-grey'}>Cập Nhật</Button>
   </div>
 }

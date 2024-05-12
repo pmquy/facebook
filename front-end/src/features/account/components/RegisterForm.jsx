@@ -31,38 +31,40 @@ export default function () {
     if (lastNameRef.current.value) formData.append('lastName', lastNameRef.current.value)
     if (image) formData.append('avatar', fileRef.current.files[0])
     api.create(formData)
-      .then((user) => {queryClient.invalidateQueries(['users']); navigate('/login') })
+      .then((user) => { queryClient.invalidateQueries(['users']); navigate('/login') })
       .catch(err => toast(err.message, { type: 'error' }))
   }
 
   return <div className="flex flex-col gap-5">
-    <div className="flex gap-5 items-center justify-between border-b-2 border-black pb-1">
-      <MdPhoneIphone className='w-6 h-6'/>
-      <Input name="phonenumber" placeholder={'Your phonenumber'} ref={phoneNumberRef} />
+    <div className="flex gap-5 items-center justify-between border-b-2 border-teal pb-1">
+      <MdPhoneIphone className='w-6 h-6' />
+      <Input className="bg-white dark:bg-black" name="phonenumber" placeholder={'Your phonenumber'} ref={phoneNumberRef} />
     </div>
-    <div className="flex gap-5 items-center justify-between border-b-2 border-black pb-1">
-      <MdEmail className='w-6 h-6'/>
-      <Input name="email" placeholder={'Your email'} ref={emailRef} />
+    <div className="flex gap-5 items-center justify-between border-b-2 border-teal pb-1">
+      <MdEmail className='w-6 h-6' />
+      <Input className="bg-white dark:bg-black" name="email" placeholder={'Your email'} ref={emailRef} />
     </div>
-    <div className="flex gap-5 items-center justify-between border-b-2 border-black pb-1">
-      <IoIosLock className='w-6 h-6'/>
-      <Input name="password" placeholder={'Your password'} type={'password'} ref={passwordRef} />
+    <div className="flex gap-5 items-center justify-between border-b-2 border-teal pb-1">
+      <IoIosLock className='w-6 h-6' />
+      <Input className="bg-white dark:bg-black" name="password" placeholder={'Your password'} type={'password'} ref={passwordRef} />
     </div>
-    <div className="flex gap-5 items-center justify-between border-b-2 border-black pb-1">
-      <IoIosLock className='w-6 h-6'/>
-      <Input name="repeatpassword" placeholder={'Repeat password'} type={'password'} ref={repeatPasswordRef} />
+    <div className="flex gap-5 items-center justify-between border-b-2 border-teal pb-1">
+      <IoIosLock className='w-6 h-6' />
+      <Input className="bg-white dark:bg-black" name="repeatpassword" placeholder={'Repeat password'} type={'password'} ref={repeatPasswordRef} />
     </div>
-    <div className="flex gap-5 items-center justify-between border-b-2 border-black pb-1">
-      <MdPerson className='w-6 h-6'/>
-      <Input name="firstname" placeholder={'Your first name'} ref={firstNameRef} />
+    <div className="flex gap-5 items-center justify-between border-b-2 border-teal pb-1">
+      <MdPerson className='w-6 h-6' />
+      <Input className="bg-white dark:bg-black" name="firstname" placeholder={'Your first name'} ref={firstNameRef} />
     </div>
-    <div className="flex gap-5 items-center justify-between border-b-2 border-black pb-1">
-      <MdPerson className='w-6 h-6'/>
-      <Input name="lastname" placeholder={'Your last name'} ref={lastNameRef} />
+    <div className="flex gap-5 items-center justify-between border-b-2 border-teal pb-1">
+      <MdPerson className='w-6 h-6' />
+      <Input className="bg-white dark:bg-black" name="lastname" placeholder={'Your last name'} ref={lastNameRef} />
     </div>
     {image && <img src={image} className='w-72 rounded-full h-72 object-cover'></img>}
-    <FileInput className={'btn-green p-2 rounded-lg'} ref={fileRef} onChange={e => setImage(URL.createObjectURL(e.target.files[0]))} accept={'image/*'} />
-    <Button onClick={handleRegister} className={'m-auto btn-1'}>Tạo mới</Button>
+    <div className="m-auto w-max">
+      <FileInput className={'btn-teal dark:btn-grey'} ref={fileRef} onChange={e => setImage(URL.createObjectURL(e.target.files[0]))} accept={'image/*'} />
+    </div>
+    <Button onClick={handleRegister} className={'m-auto btn-teal dark:btn-grey'}>Tạo mới</Button>
     <Link to={'/login'} className='text-1 hover:text-red_0 underline text-center'>Quay lại trang đăng nhập</Link>
   </div>
 }

@@ -19,7 +19,7 @@ html {
 
 /* Change the scrollbar thumb */
 ::-webkit-scrollbar-thumb {
-  background: black;
+  background: rgb(0 173 181);
   border-radius: 8px;
 }
 
@@ -27,7 +27,7 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px rgb(253, 239, 237) inset !important;
+    -webkit-box-shadow: 0 0 0 30px rgb(0 173 181) inset !important;
 }
 
 
@@ -51,9 +51,13 @@ input:-webkit-autofill:active {
   .btn-grey {
     @apply bg-grey text-white rounded-lg p-2 w-max btn hover:bg-teal
   }
+  
+  .btn-black {
+    @apply bg-black text-white rounded-lg p-2 w-max btn hover:bg-teal
+  }
 
   .card {
-    @apply rounded-lg bg-white box-shadow
+    @apply rounded-lg bg-white box-shadow text-black
   }
   
   .card-teal {

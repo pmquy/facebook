@@ -25,8 +25,8 @@ export default function ({ id }) {
   }
 
 
-  return <div className="flex flex-col gap-3 p-2 rounded-lg border-teal border-2">
-    <Input autoFocus={true} placeholder={'Viết bình luận'} className={'bg-white flex-grow'} ref={contentRef} />
+  return <div className="flex flex-col gap-3 p-2 rounded-lg border-teal border-2 dark:bg-black">
+    <Input autoFocus={true} placeholder={'Viết bình luận'} className={'bg-white dark:bg-black flex-grow'} ref={contentRef} />
     <div className="flex gap-5 justify-between">
       <Upload videos={videos} setImages={setImages} setVideos={setVideos} images={images} />
       <IoMdSend onClick={handleCreate} className=" w-6 h-6 bg-teal text-white hover:bg-black rounded-lg p-1" />

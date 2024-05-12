@@ -2,17 +2,23 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 
 // https://vitejs.dev/config/
-export default defineConfig({  
+export default defineConfig({
   plugins: [react()],
   server: {
-    host: true,
     port: 80,
-     watch: {
-       usePolling: true
-     }
+    strictPort: true,
+    host: true,
+    origin: "http://0.0.0.0:8080",
+    watch: {
+      usePolling: true
+    }
   },
-  test : {
-    globals : true,
-    environment : 'jsdom'
+  preview: {
+    port: 80,
+    strictPort: true,
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom'
   }
 })

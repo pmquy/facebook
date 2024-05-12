@@ -5,10 +5,11 @@ import { CiVideoOn,CiImageOn } from "react-icons/ci";
 
 function Record({ handleVideo, setOpen }) {
   const [state, setState] = useState(0)
-  const [currentStream, setCurrentStream] = useState()
+  const [currentStream, setCurrentStream] = useState(null)
   const [recorder, setRecorder] = useState()
-  const [recordedStream, setRecordedStream] = useState()
+  const [recordedStream, setRecordedStream] = useState(null)
   const currentRef = useRef()
+  
   const handleExit = () => {
     if (currentStream) {
       currentStream.getTracks().forEach(e => e.stop())
@@ -23,7 +24,7 @@ function Record({ handleVideo, setOpen }) {
         const recorder = new MediaRecorder(stream)
         const chunks = []
         recorder.ondataavailable = e => chunks.push(e.data)
-        recorder.onstop = e => setRecordedStream(new Blob(chunks, { type: 'video/mp4' }))
+        recorder.onstop = () => setRecordedStream(new Blob(chunks, { type: 'video/mp4' }))
         recorder.start()
         setRecorder(recorder)
         setState(1)
@@ -42,11 +43,10 @@ function Record({ handleVideo, setOpen }) {
   }
 
   const handleStop = () => {
-    recorder.stop()
     if (currentStream) {
       currentStream.getTracks().forEach(e => e.stop())
+      currentRef.current.srcObject = null
     }
-    currentRef.current.srcObject = null
     setCurrentStream(null)
     setState(3)
   }
@@ -59,23 +59,25 @@ function Record({ handleVideo, setOpen }) {
   const handleCancel = () => {
     if (currentStream) {
       currentStream.getTracks().forEach(e => e.stop())
+      currentRef.current.srcObject = null
     }
-    currentRef.current.srcObject = null
     setState(0)
     setCurrentStream(null)
     setRecordedStream(null)
   }
 
-  return <div className="flex flex-col gap-5">
-    <Button onClick={handleExit}>Thoát</Button>
-    {state == 0 && <Button onClick={handleStart}>Bắt đầu quay</Button>}
-    {state != 0 && <Button onClick={handleCancel}>Hủy</Button>}
-    {state == 1 && <Button onClick={handlePause}>Tạm dừng</Button>}
-    {state == 2 && <Button onClick={handleResume}>Tiếp tục</Button>}
-    {(state == 1 || state == 2) && <Button onClick={handleStop}>Dừng</Button>}
-    {state == 3 && <Button onClick={handleDone}>Chọn video này</Button>}
+  return <div className="flex flex-col gap-2">
+    <div className="flex gap-2 justify-center">
+      <Button className={'btn-teal dark:btn-grey'} onClick={handleExit}>Thoát</Button>
+      {state == 0 && <Button className={'btn-teal dark:btn-grey'} onClick={handleStart}>Bắt đầu quay</Button>}
+      {state != 0 && <Button className={'btn-teal dark:btn-grey'} onClick={handleCancel}>Hủy</Button>}
+      {state == 1 && <Button className={'btn-teal dark:btn-grey'} onClick={handlePause}>Tạm dừng</Button>}
+      {state == 2 && <Button className={'btn-teal dark:btn-grey'} onClick={handleResume}>Tiếp tục</Button>}
+      {(state == 1 || state == 2) && <Button className={'btn-teal dark:btn-grey'} onClick={handleStop}>Dừng</Button>}
+      {state == 3 && <Button className={'btn-teal dark:btn-grey'} onClick={handleDone}>Chọn video này</Button>}
+    </div>
     <video className={`${currentStream ? 'block' : 'hidden'}`} ref={currentRef} autoPlay={true}></video>
-    {recordedStream && <video src={URL.createObjectURL(recordedStream)} autoPlay={true} controls={true}></video>}
+    {state == 3 && recordedStream && <video src={URL.createObjectURL(recordedStream)} autoPlay={true} controls={true}></video>}
   </div>
 }
 
@@ -90,7 +92,7 @@ export default function ({ images, setImages, videos, setVideos, height, width }
         <CiImageOn className=" w-6 h-6 bg-teal text-white rounded-lg p-1"/>
         <div className="flex flex-col absolute bg-grey text-white z-10 max-h-0 top-0 left-0 -translate-y-full w-max group-hover:max-h-screen overflow-hidden duration-500 transition-all">
           <FileInput className={'px-5 py-1 hover:bg-teal'} ref={useRef()} onChange={e => setImages(t => [...t, ...e.target.files])} accept={'image/*'}>Chọn file</FileInput>
-          <div className="px-5 py-1 hover:bg-teal">Mở camera</div>
+          <div className="px-5 py-1 hover:bg-teal btn">Mở camera</div>
         </div>
       </div>
 
@@ -98,7 +100,7 @@ export default function ({ images, setImages, videos, setVideos, height, width }
         <CiVideoOn className=" w-6 h-6 bg-teal text-white rounded-lg p-1" />
         <div className="flex flex-col absolute bg-grey text-white z-10 max-h-0 top-0 left-0 -translate-y-full w-max group-hover:max-h-screen overflow-hidden duration-500 transition-all">
           <FileInput className={'px-5 py-1 hover:bg-teal'} ref={useRef()} onChange={e => setVideos(t => [...t, ...e.target.files])} accept={'video/*'}>Chọn file</FileInput>
-          <div onClick={() => setOpenRecord(true)} className="px-5 py-1 hover:bg-teal">Mở camera</div>
+          <div onClick={() => setOpenRecord(true)} className="px-5 py-1 hover:bg-teal btn">Mở camera</div>
         </div>
       </div>
     </div>
