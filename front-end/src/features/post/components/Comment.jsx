@@ -30,8 +30,8 @@ export default function ({ id }) {
         <UserAccount id={comment.user} />
         {comment.comment && <div className=" absolute left-0 top-1/2 -tranlsate-y-1/2 border-teal -translate-x-full w-8 border-t-2"></div>}
       </div>
-      {update ? <div className="pt-2"><UpdateComment /></div> :
-        <div className="flex mt-2 flex-col gap-2 p-3 card-teal w-max text-white">
+      {update ? <div className="my-2"><UpdateComment /></div> :
+        <div className="flex mt-2 flex-col gap-2 p-3 my-2 card-teal w-max text-white">
           <div className=" whitespace-pre-line">{comment.content}</div>
           {comment.images.map(e => <div className="w-64" key={e._id}><Image id={e} /></div>)}
           {comment.videos.map(e => <div className="w-64" key={e._id}><Video id={e} /></div>)}
@@ -43,8 +43,10 @@ export default function ({ id }) {
           </div>
         </div>
       }
-      {create && <div className="pt-3"><CreateComment /></div>}
-      <div className="pt-3"><Comments /></div>
+      <div className="border-l-2 border-teal flex flex-col gap-2">
+        {create && <CreateComment />}
+        <Comments />
+      </div>
     </div>
   </CommentContext.Provider>
 }

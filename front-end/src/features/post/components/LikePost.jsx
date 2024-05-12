@@ -7,7 +7,7 @@ import PostContext from "../store/PostContext"
 
 export default function () {
   const { post } = useContext(PostContext)
-  const { user } = useContext(CommonContext)
+  const { user,darkMode } = useContext(CommonContext)
   const queryClient = useQueryClient()
 
   const query = useQuery({
@@ -28,7 +28,7 @@ export default function () {
   }
 
   return <div onClick={handleLike} className="flex gap-2 items-center hover:bg-grey hover:text-white p-2 rounded-lg btn">
-    <AiFillLike className={`w-6 h-6 ${like ? ' animate-like' : ''}`} color={`${like ? '#00ADB5' : '#222831'}`} />
+    <AiFillLike className={`w-6 h-6 ${like ? ' animate-like' : ''}`} color={`${like ? '#00ADB5' : `${darkMode ? '#EEEEEE' : '#222831'}`}`} />
     <div>({query?.data?.length})</div>
   </div>
 }

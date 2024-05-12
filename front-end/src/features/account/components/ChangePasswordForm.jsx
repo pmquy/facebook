@@ -21,19 +21,19 @@ export default function () {
       .catch(err => toast(err.message, { type: 'error' }))
   }
 
-  return <div className="flex flex-col gap-5 card p-5">
+  return <div className="flex flex-col gap-5 card dark:card-black p-5">
     <div className="flex gap-5 items-center justify-between">
       <div className='text-1'>Mật khẩu cũ</div>
-      <Input ref={oldPasswordRef} />
+      <Input className="bg-white dark:bg-black border-2 border-teal" ref={oldPasswordRef} />
     </div>
     <div className="flex gap-5 items-center justify-between">
       <div className='text-1'>Mật khẩu mới</div>
-      <Input ref={passwordRef} />
+      <Input className="bg-white dark:bg-black border-2 border-teal" ref={passwordRef} />
     </div>
     <div className="flex gap-5 items-center justify-between">
       <div className='text-1'>Nhập lại mật khẩu</div>
-      <Input ref={repeatPasswordRef}/>
+      <Input className="bg-white dark:bg-black border-2 border-teal" ref={repeatPasswordRef}/>
     </div>    
-    <Button onClick={handleUpdate} className={'m-auto'}>Cập Nhật Mật Khẩu</Button>
+    <Button onClick={handleUpdate} className={'m-auto btn-teal dark:btn-grey'}>Cập Nhật Mật Khẩu</Button>
   </div>
 }

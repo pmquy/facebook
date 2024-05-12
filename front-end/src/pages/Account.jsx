@@ -14,6 +14,6 @@ export default function () {
     <Account userId={params.id}/>
     {user && params.id == user._id && <UpdateForm/>}
     {user && params.id == user._id && <ChangePasswordForm/>}    
-    {user && params.id == user._id && <Link onClick={() => setUser(null)} to={'/login'} className="btn-1">Đăng xuất</Link>}    
+    {user && params.id == user._id && <Link onClick={() => setUser(null)} to={'/login'} className="btn-teal dark:btn-black">Đăng xuất</Link>}    
   </div>
 }

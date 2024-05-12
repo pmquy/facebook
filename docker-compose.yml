@@ -2,8 +2,8 @@ version: "3.8"
 
 services:
   fb_frontend:
-    # image: lokikurri/fb_frontend:v1.0.1
-    build: ./front-end
+    image: fb_frontend
+    # build: ./front-end
     ports:
       - 80:80
     restart: unless-stopped
@@ -23,8 +23,8 @@ services:
       - fb_backend
 
   fb_backend:
-    # image: lokikurri/fb_backend:v1
-    build: ./back-end
+    image: fb_backend
+    # build: ./back-end
     ports:
       - 3000:3000
     restart: unless-stopped

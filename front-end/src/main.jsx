@@ -13,6 +13,7 @@ import Messenger from './pages/Messenger'
 import CaroGame from './pages/CaroGame'
 import CaroGames from './pages/CaroGames'
 import Landing from './pages/Landing'
+import ImageDetail from './pages/ImageDetail'
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path : '/user/:id',
         element : <Account/>
+      },
+      {
+        path : '/imagedetail/:id',
+        element : <ImageDetail/>
       },
       {
         path : '/friends',

@@ -5,6 +5,7 @@ import api from '../services/api'
 import { Link } from 'react-router-dom'
 import { Button } from '../../../components/ui'
 import {toast} from 'react-toastify'
+import UserAccount from '../../../components/UserAccount'
 
 export default function () {
   const { user, users } = useContext(CommonContext)
@@ -35,11 +36,11 @@ export default function () {
   }
 
   return <div>
-    <div className='card p-5 flex flex-col gap-5'>
+    <div className='card dark:card-black p-5 flex flex-col gap-5'>
       <div className='text-1 text-xl'>Gợi ý kết bạn</div>
       {arr.map(e => <div key={e._id} className='flex gap-5 items-center justify-between'>
-        <Link to={'/user/' + e._id}>{e.firstName + ' ' + e.lastName}</Link>
-        <Button onClick={() => handleCreate(e._id)}>Thêm bạn bè</Button>
+        <UserAccount id={e}/>
+        <Button className={'btn-teal dark:btn-grey'} onClick={() => handleCreate(e._id)}>Thêm bạn bè</Button>
       </div>)}
     </div>
   </div>

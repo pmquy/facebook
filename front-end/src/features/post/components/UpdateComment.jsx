@@ -33,13 +33,13 @@ export default function () {
   return <div className={`flex relative flex-col gap-2`}>
     {images.map((e, i) => <img key={i} src={e} className='w-64 rounded-xl'></img>)}
     <div className="flex flex-col gap-3 p-2 rounded-lg border-teal border-2">
-      <Input defaultValue={commentContext.comment.content} autoFocus={true} placeholder={'Viết bình luận'} className={'flex-grow'} ref={contentRef} />
+      <Input defaultValue={commentContext.comment.content} autoFocus={true} placeholder={'Viết bình luận'} className={'flex-grow bg-white dark:bg-black'} ref={contentRef} />
       <div className="flex gap-5 justify-between">
         <Upload videos={videos} setImages={setImages} setVideos={setVideos} images={images}/>
         <div className="flex gap-5">
           
-          <IoMdSend onClick={handleUpdate} className={" w-6 h-6 bg-teal text-white hover:bg-black rounded-lg p-1"}>Xong</IoMdSend>
-          <MdCancel className=" w-6 h-6 bg-teal text-white hover:bg-black rounded-lg p-1" onClick={() => commentContext.setUpdate(false)}>Hủy</MdCancel>
+          <IoMdSend onClick={handleUpdate} className={" w-6 h-6 bg-teal text-white hover:bg-black dark:bg-grey dark:hover:bg-teal rounded-lg p-1"}>Xong</IoMdSend>
+          <MdCancel className=" w-6 h-6 bg-teal text-white hover:bg-black dark:bg-grey dark:hover:bg-teal rounded-lg p-1" onClick={() => commentContext.setUpdate(false)}>Hủy</MdCancel>
         </div>
       </div>
     </div>

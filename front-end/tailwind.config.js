@@ -4,13 +4,15 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'selector',
   theme: {
     extend: {
       colors: {
         'black': '#222831',
         'grey': '#393E46',
         'teal': '#00ADB5',
-        'white': '#EEEEEE'
+        'white': '#EEEEEE',
+        'black_trans' : 'rgb(0,0,0,0.4)'
       },
       animation: {
         'like': 'like 1 0.5s linear'
