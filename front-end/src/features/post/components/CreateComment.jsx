@@ -39,16 +39,16 @@ export default function () {
       .catch(err => toast(err.message, { type: 'error' }))
   }
 
-  return <div className={`flex relative flex-col gap-2 ${commentContext ? 'pl-8 border-l-2 border-teal' : ''}`}>
+  return <div className={`flex relative flex-col gap-2 ${commentContext ? 'pl-8' : ''}`}>
     {commentContext && <div className=" absolute left-0 top-4 border-teal w-8 border-t-2"></div>}
     <UserAccount id={user._id} />
     <div className="flex flex-col gap-3 p-2 rounded-lg border-teal border-2">
-      <Input autoFocus={true} placeholder={'Viết bình luận'} className={'bg-white flex-grow'} ref={contentRef} />
+      <Input autoFocus={true} placeholder={'Viết bình luận'} className={'bg-white dark:bg-black flex-grow'} ref={contentRef} />
       <div className="flex gap-5 justify-between">
         <Upload videos={videos} setImages={setImages} setVideos={setVideos} images={images}/>
         <div className="flex gap-5">
-          <IoMdSend onClick={handleComment} className=" w-6 h-6 bg-teal text-white hover:bg-black rounded-lg p-1"/>
-          <MdCancel onClick={() => {if (commentContext) commentContext.setCreate(false); else postContext.setCreate(false)}} className=" w-6 h-6 bg-teal text-white hover:bg-black rounded-lg p-1"/>
+          <IoMdSend onClick={handleComment} className=" w-6 h-6 bg-teal text-white hover:bg-black dark:bg-grey dark:hover:bg-teal rounded-lg p-1"/>
+          <MdCancel onClick={() => {if (commentContext) commentContext.setCreate(false); else postContext.setCreate(false)}} className=" w-6 h-6 bg-teal text-white hover:bg-black dark:bg-grey dark:hover:bg-teal rounded-lg p-1"/>
         </div>
       </div>
     </div>

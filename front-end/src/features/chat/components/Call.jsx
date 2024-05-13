@@ -169,8 +169,8 @@ export default function ({ id }) {
         <SlCallEnd onClick={handleClose} className="w-10 h-10 btn-teal absolute bottom-5 left-1/2 -translate-x-1/2" />
       </div>
       <div className={`${open == 2 ? 'translate-x-0' : 'translate-x-full'} transition-all duration-500 absolute top-0 left-0 w-full h-full p-2`}>
-        <FaChevronCircleLeft onClick={() => setOpen(1)} className="w-10 h-10 btn-teal absolute top-1/2 -translate-y-1/2 left-5" />
         <div className=" grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }} ref={ref}>
+        <FaChevronCircleLeft onClick={() => setOpen(1)} className="w-10 h-10 btn-teal absolute top-1/2 -translate-y-1/2 left-5" />
           {Object.keys(others).map(e =>
             <div className="flex flex-col items-center" key={e}>
               <video autoPlay={true} onClick={() => { setCurrentOther(e); setOpen(1) }} className="w-[300px] h-[300px] object-cover" />

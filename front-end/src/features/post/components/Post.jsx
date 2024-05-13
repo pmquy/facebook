@@ -28,9 +28,7 @@ export default function ({ id }) {
       queryFn: () => PostApi.getById(id)
     }
   ])
-  useEffect(() => {
-    document.body.style.overflow = params.get('open') == id ? 'hidden' : 'auto'
-  }, [params.get('open') == id, id])
+
   if (query.some(e => e.isError || e.isLoading)) return <></>
   const setCreate = e => {
     if (e) {
@@ -49,15 +47,15 @@ export default function ({ id }) {
         setParams(params)
       }
     }} className={`fixed left-0 top-0 bg-black_trans w-screen h-screen z-20 ${(params.get('open') == id) ? 'block' : 'hidden'}`}></div>
-    <div ref={ref} className={`min-w-[70%] card max-h-[80%] max-sm:min-w-full max-sm:min-h-full fixed left-1/2 -translate-x-1/2 top-1/2 ${(params.get('open') == id) ? '-translate-y-1/2' : 'translate-y-[1000px]'} transition-all duration-500 z-20  overflow-x-auto`}>
+    <div ref={ref} className={`min-w-[70%] card dark:card-black max-h-[80%] max-sm:min-w-full max-sm:min-h-full fixed left-1/2 -translate-x-1/2 top-1/2 ${(params.get('open') == id) ? '-translate-y-1/2' : 'translate-y-[1000px]'} transition-all duration-500 z-20  overflow-x-auto`}>
       <div className="flex flex-col gap-5 relative">
-        <div className="flex gap-5 p-5 items-center justify-between sticky top-0 z-20 bg-teal text-white">
+        <div className="flex gap-5 p-5 items-center justify-between sticky border-b-2 border-white top-0 z-20 bg-teal text-white">
           <UserAccount id={post.user} />
           <div>Vào {parseDate(post.createdAt)}</div>
           <IoCloseCircle onClick={() => setCreate(false)} className="w-8 h-8" />
         </div>
         <div className="p-5 flex flex-col gap-4">
-          <div className=" bg-teal text-white p-5 flex flex-col gap-2">
+          <div className="p-5 flex flex-col gap-2">
             <div className=" whitespace-pre-line">{post.content}</div>
             {post.images.map(e => <div key={e}><Image id={e} /></div>)}
             {post.videos.map(e => <div key={e}><Video id={e} /></div>)}
@@ -73,7 +71,7 @@ export default function ({ id }) {
         </div>
       </div>
     </div>
-    <div className="card p-5 flex flex-col gap-5">
+    <div className="card dark:card-black p-5 flex flex-col gap-5">
       <div className="flex justify-between items-center">
         <UserAccount id={post.user} />
         {user._id == post.user &&
@@ -87,9 +85,9 @@ export default function ({ id }) {
         }
       </div>
       <div>Vào {parseDate(post.createdAt)}</div>
-      <div onClick={() => setCreate(true)} className=" bg-teal text-white p-5 flex flex-col gap-2">
+      <div onClick={() => setCreate(true)} className=" p-5 flex flex-col gap-2">
         <div className=" whitespace-pre-line">{post.content}</div>
-        {post.images[0] && <Image id={post.images[0]} />}
+        {post.images[0] && <Image needToNavigate={false} id={post.images[0]} />}
         {post.videos[0] && <Video id={post.videos[0]} />}
       </div>
       <div className="flex justify-between">

@@ -18,11 +18,6 @@ export default function () {
     return query.data.some(e => e.user == user._id)
   }, [query.data])
 
-  if (query.isLoading || query.isError) return <div className="flex gap-2 btn items-center p-2 rounded-lg hover:bg-white_1">
-    <AiFillLike className={`w-6 h-6`} color={'black'} />
-    <div>Thích (0)</div>
-  </div>
-
   const handleLike = () => {
     if (like)
       LikeCommentApi.delete({ comment: comment._id, }).then(() => queryClient.invalidateQueries(['likecomments', { comment: comment._id }]))

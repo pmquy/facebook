@@ -1,6 +1,8 @@
-FROM node:latest
+FROM node:18-alpine
 WORKDIR /usr/src/app
-COPY package*.json ./
+COPY package.json .
 RUN npm install
 COPY . .
-CMD ["npm", "start"]
+RUN npm run build
+EXPOSE 80
+CMD [ "npm", "run", "preview" ]
