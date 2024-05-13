@@ -21,43 +21,43 @@ const router = createBrowserRouter([
     element : <Layout/>,
     children : [
       {
-        path : '/',
+        path : '',
         element : <Home/>
       },
       {
-        path : '/login',
+        path : 'login',
         element : <Login/>
       },
       {
-        path : '/register',
+        path : 'register',
         element : <Register/>
       },
       {
-        path : '/user/:id',
+        path : 'user/:id',
         element : <Account/>
       },
       {
-        path : '/imagedetail/:id',
+        path : 'imagedetail/:id',
         element : <ImageDetail/>
       },
       {
-        path : '/friends',
+        path : 'friends',
         element : <Friends/>
       },
       {
-        path : '/messages',
+        path : 'messages',
         element : <Messenger/>
       },
       {
-        path : '/carogames',
+        path : 'carogames',
         element : <CaroGames/>
       },
       {
-        path : '/carogames/:id',
+        path : 'carogames/:id',
         element : <CaroGame/>
       },
       {
-        path : '/hello',
+        path : 'hello',
         element : <Landing/>
       }
     ]
