@@ -6,9 +6,11 @@ import { Link } from 'react-router-dom'
 import { Button } from '../../../components/ui'
 import {toast} from 'react-toastify'
 import UserAccount from '../../../components/UserAccount'
+import { useUser } from '../../../hooks/user'
 
 export default function () {
-  const { user, users } = useContext(CommonContext)
+  const { users } = useContext(CommonContext)
+  const {user} = useUser()
   const queryClient = useQueryClient()
   const query = useQueries([
     {
@@ -39,7 +41,7 @@ export default function () {
     <div className='card dark:card-black p-5 flex flex-col gap-5'>
       <div className='text-1 text-xl'>Gợi ý kết bạn</div>
       {arr.map(e => <div key={e._id} className='flex gap-5 items-center justify-between'>
-        <UserAccount id={e}/>
+        <UserAccount id={e._id}/>
         <Button className={'btn-teal dark:btn-grey'} onClick={() => handleCreate(e._id)}>Thêm bạn bè</Button>
       </div>)}
     </div>

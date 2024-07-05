@@ -4,10 +4,12 @@ import { useQuery, useQueryClient } from 'react-query'
 import { useContext, useMemo } from "react"
 import CommonContext from '../../../store/CommonContext'
 import PostContext from "../store/PostContext"
+import { useUser } from "../../../hooks/user"
 
 export default function () {
   const { post } = useContext(PostContext)
-  const { user,darkMode } = useContext(CommonContext)
+  const { darkMode } = useContext(CommonContext)
+  const {user} = useUser()
   const queryClient = useQueryClient()
 
   const query = useQuery({
@@ -27,7 +29,7 @@ export default function () {
       LikePostApi.create({ post: post._id }).then(() => queryClient.invalidateQueries(['likeposts', { post: post._id }]))
   }
 
-  return <div onClick={handleLike} className="flex gap-2 items-center hover:bg-grey hover:text-white p-2 rounded-lg btn">
+  return <div onClick={handleLike} className="flex gap-2 items-center  p-2 rounded-lg btn">
     <AiFillLike className={`w-6 h-6 ${like ? ' animate-like' : ''}`} color={`${like ? '#00ADB5' : `${darkMode ? '#EEEEEE' : '#222831'}`}`} />
     <div>({query?.data?.length})</div>
   </div>

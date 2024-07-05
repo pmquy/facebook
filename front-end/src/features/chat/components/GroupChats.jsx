@@ -1,10 +1,9 @@
 import {useQueries} from 'react-query'
 import GroupChatApi from '../services/groupChat'
-import { useContext } from 'react'
-import CommonContext from '../../../store/CommonContext'
+import { useUser } from '../../../hooks/user'
 
 export default function ({cb}) {  
-  const {user} = useContext(CommonContext)
+  const {user} = useUser()
   const query = useQueries([
     {
       queryKey : ['groupchats', user._id],

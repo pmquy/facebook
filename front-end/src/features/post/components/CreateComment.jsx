@@ -10,14 +10,14 @@ import PostContext from '../store/PostContext'
 import Upload from "../../../components/Upload"
 import { IoMdSend } from "react-icons/io";
 import { MdCancel } from "react-icons/md"
+import { useUser } from "../../../hooks/user"
 
 export default function () {
-  const { user } = useContext(CommonContext)
+  const { user } = useUser()
   const commentContext = useContext(CommentContext)
   const postContext = useContext(PostContext)
   const contentRef = useRef()
-  const [images, setImages] = useState([])
-  const [videos, setVideos] = useState([])
+  const [files, setFiles] = useState([])
   const queryClient = useQueryClient()
 
   const handleComment = e => {
@@ -26,12 +26,10 @@ export default function () {
     if (contentRef.current.value) formData.append('content', contentRef.current.value)
     formData.append('post', postContext.post._id)
     if (commentContext) formData.append('comment', commentContext.comment._id)
-    images.forEach(e => formData.append('images', e))
-    videos.forEach(e => formData.append('videos', e))
+    files.forEach(e => formData.append('files', e))
     CommentApi.create(formData)
       .then(() => {
-        setImages([])
-        setVideos([])
+        setFiles([])
         contentRef.current.value = ''
         if (commentContext) commentContext.setCreate(false)
         queryClient.invalidateQueries(['comments', { comment: commentContext ? commentContext.comment._id : '', post: postContext.post._id }])
@@ -45,7 +43,9 @@ export default function () {
     <div className="flex flex-col gap-3 p-2 rounded-lg border-teal border-2">
       <Input autoFocus={true} placeholder={'Viết bình luận'} className={'bg-white dark:bg-black flex-grow'} ref={contentRef} />
       <div className="flex gap-5 justify-between">
-        <Upload videos={videos} setImages={setImages} setVideos={setVideos} images={images}/>
+        <div className="max-w-96">
+          <Upload files={files} setFiles={setFiles}/>
+        </div>
         <div className="flex gap-5">
           <IoMdSend onClick={handleComment} className=" w-6 h-6 bg-teal text-white hover:bg-black dark:bg-grey dark:hover:bg-teal rounded-lg p-1"/>
           <MdCancel onClick={() => {if (commentContext) commentContext.setCreate(false); else postContext.setCreate(false)}} className=" w-6 h-6 bg-teal text-white hover:bg-black dark:bg-grey dark:hover:bg-teal rounded-lg p-1"/>

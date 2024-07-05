@@ -1,27 +1,31 @@
 import { useQueries } from "react-query";
 import PostApi from "../services/PostApi";
-import Image from "../../../components/Image";
+import { File } from "../../../components";
 import Comments from "./Comments";
 import CreateComment from "./CreateComment";
 import UserAccount from "../../../components/UserAccount";
-import { useContext, useEffect, useRef } from "react";
-import CommonContext from "../../../store/CommonContext";
+import { useContext, useEffect, useRef, useState } from "react";
 import { parseDate } from '../../../utils/parseDate'
 import { IoCloseCircle } from "react-icons/io5";
 import LikePost from "./LikePost";
 import CommentPost from "./CommentPost";
 import SharePost from "./SharePost";
 import PostContext from '../store/PostContext'
+import { GroupAccount } from '../../group'
 import DeletePost from "./DeletePost";
 import UpdatePost from "./UpdatePost";
 import { BsThreeDots } from "react-icons/bs";
-import { useSearchParams } from "react-router-dom";
-import Video from "../../../components/Video";
+import { IoMdArrowDropright } from "react-icons/io";
+import { useUser } from "../../../hooks/user";
+import CommonContext from "../../../store/CommonContext";
+import { useNavigate } from "react-router-dom";
 
 export default function ({ id }) {
-  const [params, setParams] = useSearchParams()
+  const [open, setOpen] = useState(false)
+  const {headerRef} = useContext(CommonContext)
+  const navigate = useNavigate()
   const ref = useRef()
-  const { user } = useContext(CommonContext)
+  const { user } = useUser()
   const query = useQueries([
     {
       queryKey: ['post', id],
@@ -29,36 +33,37 @@ export default function ({ id }) {
     }
   ])
 
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : 'auto'
+    headerRef.current.style['z-index'] = open ? 5 : 10
+  }, [open])
+
   if (query.some(e => e.isError || e.isLoading)) return <></>
-  const setCreate = e => {
-    if (e) {
-      params.set('open', id)
-    }
-    else {
-      params.delete('open')
-    }
-    setParams(params)
-  }
+
   const post = query[0].data
-  return <PostContext.Provider value={{ setCreate: setCreate, post: post, }}>
-    <div onClick={e => {
-      if (!ref.current.contains(e.target)) {
-        params.delete('open')
-        setParams(params)
-      }
-    }} className={`fixed left-0 top-0 bg-black_trans w-screen h-screen z-20 ${(params.get('open') == id) ? 'block' : 'hidden'}`}></div>
-    <div ref={ref} className={`min-w-[70%] card dark:card-black max-h-[80%] max-sm:min-w-full max-sm:min-h-full fixed left-1/2 -translate-x-1/2 top-1/2 ${(params.get('open') == id) ? '-translate-y-1/2' : 'translate-y-[1000px]'} transition-all duration-500 z-20  overflow-x-auto`}>
+
+  return <PostContext.Provider value={{ setCreate: setOpen, post: post, }}>
+    <div onClick={e => { if (!ref.current.contains(e.target)) setOpen(false) }} className={`fixed left-0 top-0 bg-black_trans z-10 w-screen h-screen ${open ? 'block' : 'hidden'}`} />
+
+    <div ref={ref} className={` card dark:card-black w-[90%] max-h-[80%] sm:max-w-[900px] max-sm:w-screen max-sm:max-h-screen fixed left-1/2 -translate-x-1/2 top-1/2 ${open ? ' -translate-y-1/2' : 'translate-y-[1000px]'} transition-transform duration-500 z-10  overflow-x-auto`}>
       <div className="flex flex-col gap-5 relative">
-        <div className="flex gap-5 p-5 items-center justify-between sticky border-b-2 border-white top-0 z-20 bg-teal text-white">
-          <UserAccount id={post.user} />
+        <div className="p-5 flex flex-col gap-2  sticky z-10 border-b-2 border-white top-0 bg-teal text-white">
+          <div className="flex gap-5 justify-between">
+            <div className="flex gap-2">
+              <UserAccount id={post.user} />
+              {post.group && <IoMdArrowDropright className=" w-8 h-8" />}
+              {post.group && <GroupAccount id={post.group} />}
+            </div>
+            <IoCloseCircle onClick={() => setOpen(false)} className="w-8 h-8" />
+          </div>
           <div>Vào {parseDate(post.createdAt)}</div>
-          <IoCloseCircle onClick={() => setCreate(false)} className="w-8 h-8" />
         </div>
         <div className="p-5 flex flex-col gap-4">
-          <div className="p-5 flex flex-col gap-2">
+          <div className="flex flex-col gap-2">
             <div className=" whitespace-pre-line">{post.content}</div>
-            {post.images.map(e => <div key={e}><Image id={e} /></div>)}
-            {post.videos.map(e => <div key={e}><Video id={e} /></div>)}
+            <div className="flex flex-wrap gap-2">
+              {post.files.map(e => <div onClick={() => navigate('/posts/' + id)} key={e}><File id={e} /></div>)}
+            </div>
           </div>
           <div className="border-t-2 border-teal"></div>
           <div className="flex justify-between">
@@ -71,13 +76,19 @@ export default function ({ id }) {
         </div>
       </div>
     </div>
+
     <div className="card dark:card-black p-5 flex flex-col gap-5">
       <div className="flex justify-between items-center">
-        <UserAccount id={post.user} />
-        {user._id == post.user &&
+        <div className="flex gap-1">
+          <UserAccount id={post.user} />
+          {post.group && <IoMdArrowDropright className=" w-8 h-8" />}
+          {post.group && <GroupAccount id={post.group} />}
+        </div>
+        {
+          user._id == post.user &&
           <div className="group/1 relative">
             <BsThreeDots className="w-8 h-8" />
-            <div className=" absolute flex flex-col rounded-lg right-0 transition-all duration-500 w-max max-h-0 overflow-hidden bg-grey group-hover/1:max-h-screen text-white">
+            <div className=" absolute z-10 flex flex-col rounded-lg right-0 transition-all duration-500 w-max max-h-0 overflow-hidden bg-grey group-hover/1:max-h-screen text-white">
               <div className="hover:bg-teal"><DeletePost /></div>
               <div className="hover:bg-teal"><UpdatePost /></div>
             </div>
@@ -85,10 +96,9 @@ export default function ({ id }) {
         }
       </div>
       <div>Vào {parseDate(post.createdAt)}</div>
-      <div onClick={() => setCreate(true)} className=" p-5 flex flex-col gap-2">
+      <div onClick={() => setOpen(true)} className="flex flex-col gap-2">
         <div className=" whitespace-pre-line">{post.content}</div>
-        {post.images[0] && <Image needToNavigate={false} id={post.images[0]} />}
-        {post.videos[0] && <Video id={post.videos[0]} />}
+        {post.files[0] && <File id={post.files[0]} />}
       </div>
       <div className="flex justify-between">
         <LikePost />

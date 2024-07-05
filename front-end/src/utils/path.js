@@ -14,7 +14,7 @@ const getIndexFromPathName = pathName => {
   if(pathName == '/carogames') {
     return 5
   }
-  if(pathName == '/login' || pathName == '/register' || pathName == '/hello') {
+  if(pathName == '/login' || pathName == '/register') {
     return 0
   }
   return -1

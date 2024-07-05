@@ -23,7 +23,7 @@ const updatingPattern = Joi.object({
 }).unknown(false).required()
 
 const loginPattern = Joi.object({
-  phoneNumber: Joi.string().trim().pattern(/^\d*$/).required(),
+  email: Joi.string().email(),
   password: Joi.string().required()
 }).unknown(false).required()
 
@@ -55,18 +55,11 @@ class Controller {
   }
 
   getMe = (req, res, next) => {
-    if (req.user) {
-      res.status(200).send(req.user)
-    } else {
-      next(new Error())
-    }
+    if (req.user) res.status(200).send(req.user)
+    else next(new Error())
   }
 
-  getToken = _id => {
-    return jwt.sign({ _id: _id }, process.env.TOKEN_SECRET, {
-      expiresIn: process.env.TOKEN_EXPIRE_IN,
-    })
-  }
+  getToken = _id => jwt.sign({ _id: _id }, process.env.TOKEN_SECRET, {expiresIn: process.env.TOKEN_EXPIRE_IN,})
 
   getById = async (req, res, next) => {
     UserService.getById(req.params.id)
@@ -81,9 +74,9 @@ class Controller {
       .catch(err => next(err))
   }
 
-  updateById = async (req, res, next) => {
+  update = async (req, res, next) => {
     updatingPattern.validateAsync(req.body)
-      .then(val => UserService.updateById(req.user, req.params.id, val))
+      .then(val => UserService.update(req.user, val))
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
@@ -97,16 +90,22 @@ class Controller {
 
   login = async (req, res, next) => {
     loginPattern.validateAsync(req.body)
-      .then(val => UserService.login(val.phoneNumber, val.password))
+      .then(val => UserService.login(val.email, val.password))
       .then(val => {
-        res.cookie('access_token', this.getToken(val.toObject()), process.env.ENV == "PRODUCT" ? opt2 : opt1)
+        res.cookie('access_token', this.getToken(val.toObject()), process.env.ENV == "PRODUCTION" ? opt2 : opt1)
         res.status(200).send(val)
       })
       .catch(err => next(err))
   }
 
-  deleteById = (req, res, next) => {
-    UserService.deleteById(req.user, req.params.id)
+  delete = (req, res, next) => {
+    UserService.deleteById(req.user)
+      .then(val => res.status(200).send(val))
+      .catch(err => next(err))
+  }
+
+  getGroups = (req, res, next) => {
+    UserService.getGroups(req.user._id)
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }

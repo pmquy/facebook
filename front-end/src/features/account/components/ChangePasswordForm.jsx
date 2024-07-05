@@ -2,18 +2,18 @@ import { Input, Button } from '../../../components/ui'
 import { useContext, useRef } from 'react'
 import api from '../services/api'
 import { toast } from 'react-toastify'
-import CommonContext from '../../../store/CommonContext'
+import { useUser } from '../../../hooks/user'
 
 export default function () {
-  const { user, setUser } = useContext(CommonContext)
+  const { user, setUser } = useUser()
   const oldPasswordRef = useRef(),
     passwordRef = useRef(),
     repeatPasswordRef = useRef()
 
-  const handleUpdate = () => {
+  const handleChange = () => {
     if(passwordRef.current.value != repeatPasswordRef.current.value)
       return toast('Mật khẩu không khớp', {type : 'warning'})
-    api.changePasswordById(user._id, {
+    api.changePassword(user._id, {
       oldPassword: oldPasswordRef.current.value ? oldPasswordRef.current.value : undefined,
       password: passwordRef.current.value ? passwordRef.current.value : undefined,      
     })
@@ -34,6 +34,6 @@ export default function () {
       <div className='text-1'>Nhập lại mật khẩu</div>
       <Input className="bg-white dark:bg-black border-2 border-teal" ref={repeatPasswordRef}/>
     </div>    
-    <Button onClick={handleUpdate} className={'m-auto btn-teal dark:btn-grey'}>Cập Nhật Mật Khẩu</Button>
+    <Button onClick={handleChange} className={'m-auto btn-teal dark:btn-grey'}>Cập Nhật Mật Khẩu</Button>
   </div>
 }

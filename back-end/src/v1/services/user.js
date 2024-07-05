@@ -1,7 +1,8 @@
 import User from '../models/User.js'
 import { redisClient } from '../../app.js'
+import RoleInGroup from '../models/RoleInGroup.js'
 import bcrypt from 'bcrypt'
-import Image from '../models/Image.js'
+import File from '../services/file.js'
 
 class Service {
   get = async query => {
@@ -19,31 +20,31 @@ class Service {
     return val
   }
 
-  deleteById = async (user, id) => {
-    if (user._id != id) throw new Error()
-    if(user.avatar) await Image.findByIdAndDelete(user.avatar)
-    return User.findByIdAndDelete(id)
+  delete = async user => {
+    if (user.avatar) await File.deleteById(user.avatar)
+    return User.findByIdAndDelete(user._id)
   }
 
-  login = async (phoneNumber, password) => {
-    const user = await User.findOne({ phoneNumber: phoneNumber })
+  login = async (email, password) => {
+    const user = await User.findOne({ email: email })
     if (bcrypt.compareSync(password, user.password)) return user
     throw new Error()
   }
 
-  updateById = async (user, id, data) => {
-    if (user._id != id) throw new Error()
-    if(user.avatar && data.avatar) await Image.findByIdAndDelete(user.avatar)
-    return User.findByIdAndUpdate(id, data, {new : true})
+  update = async (user, data) => {
+    if (user.avatar) await File.deleteById(user.avatar)
+    return User.findByIdAndUpdate(user._id, data, { new: true })
   }
 
-  changePassword = async (user, data) => {
-    const val = await User.findById(user._id)
-    if (bcrypt.compareSync(data.oldPassword, user.password)) {
-      await val.updateOne({ password: data.password }, { new: true })
-      return {password : data.password}
+  changePassword = async (user, val) => {
+    if (bcrypt.compareSync(val.oldPassword, user.password)) {
+      return User.findByIdAndUpdate(user._id, { password: val.password })
     }
     throw new Error()
+  }
+
+  getGroups = async (user) => {
+    return RoleInGroup.find({ user: user, $or: [{ role: 'Admin' }, { role: 'Member' }] }).then(v => v.map(e => e.group))
   }
 }
 
