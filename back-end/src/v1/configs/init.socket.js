@@ -6,14 +6,14 @@ const init = server => {
             origin : process.env.CLIENT,            
         }
     })
-    io.on('connection', (socket) => {        
+    io.on('connection', (socket) => {
         socket.on('invalidate', keys => {
             io.emit('invalidate', keys)
         })
         socket.on('call', payload => {
-            const t = JSON.parse(payload)            
+            const t = JSON.parse(payload)
             if(t.type == 'join') socket.join(t.group)
-            if(t.type == 'left') socket.leave(t.group)
+            if(t.type == 'leave') socket.leave(t.group)
             socket.broadcast.to(t.group).emit('call', payload)
         })       
     }); 

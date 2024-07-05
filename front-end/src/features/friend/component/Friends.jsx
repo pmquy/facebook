@@ -2,13 +2,14 @@ import { useContext, useMemo } from 'react'
 import { useQueries, useQueryClient } from 'react-query'
 import CommonContext from '../../../store/CommonContext'
 import api from '../services/api'
-import { Link } from 'react-router-dom'
 import { Button } from '../../../components/ui'
 import {toast} from 'react-toastify'
 import UserAccount from '../../../components/UserAccount'
+import { useUser } from '../../../hooks/user'
 
 export default function () {
-  const { user, users } = useContext(CommonContext)
+  const {users } = useContext(CommonContext)
+  const {user} = useUser()
   const queryClient = useQueryClient()
   const query = useQueries([
     {

@@ -3,23 +3,16 @@ import { Outlet } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CommonContext from "../store/CommonContext";
-import { useQueries, focusManager } from "react-query";
+import { useQueries } from "react-query";
 import UserApi from '../services/user'
-import { useUser, useSocket } from '../hooks'
-import { useEffect, useState } from "react";
+import { useRef, useState} from "react";
+import { SocketProvider } from "../hooks/socket";
+import { UserProvider } from "../hooks/user";
+
 
 export default function () {
-  const socket = useSocket()
-  const [user, setUser, isLoading] = useUser(socket)
-  const [darkMode, setDarkMode] = useState()
-
-  focusManager.setEventListener((handleFocus) => {
-    if (typeof window !== 'undefined' && window.addEventListener) {
-      window.addEventListener('visibilitychange', handleFocus, false)
-    }
-    return () => window.removeEventListener('visibilitychange', handleFocus)
-  })
-
+  const [darkMode, setDarkMode] = useState(localStorage.getItem('darkmode') ? localStorage.getItem('darkmode') === 'true' : window.matchMedia('"(prefers-color-scheme: dark)"'))
+  const ref = useRef()
   const query = useQueries([
     {
       queryKey: ['users'],
@@ -27,16 +20,22 @@ export default function () {
     }
   ])
 
-  useEffect(() => {
-    setDarkMode(window.matchMedia('"(prefers-color-scheme: dark)"'))
-  }, [])
+  if (query.some(e => e.isLoading || e.isError)) return <></>
 
-  if (isLoading || query.some(e => e.isLoading || e.isError)) return <div></div>
-  return <CommonContext.Provider value={{ user: user, setUser: setUser, users: query[0].data, socket: socket, darkMode: darkMode, setDarkMode: setDarkMode }}>
-    <ToastContainer />
-    <div className={`${darkMode ? 'dark bg-grey text-white' : 'bg-white text-black'} min-h-screen`}>
-      {user && <Header />}
-      <Outlet />
-    </div>
-  </CommonContext.Provider>
+  return (
+    <CommonContext.Provider value={{users: query[0].data, darkMode, setDarkMode, headerRef : ref}}>
+      <SocketProvider>
+        <UserProvider>
+          <div className={`${darkMode ? 'dark bg-grey text-white' : 'bg-white text-black'} min-h-screen`}>
+            <div ref={ref} className={`sticky z-10 top-0`}>
+              <Header />
+            </div> 
+            <Outlet />
+          </div>
+        </UserProvider>
+      </SocketProvider>
+      
+      <ToastContainer />
+    </CommonContext.Provider>
+  )
 }

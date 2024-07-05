@@ -1,11 +1,10 @@
 import mongoose from 'mongoose'
 
 const Message = new mongoose.Schema({
-  content : String,
-  images : Array,
-  videos : Array,
+  type: String,
+  files: Array,
   user : String,
   groupChat : String,
-}, {timestamps : true})
+}, {timestamps : true, strict : false})
 
 export default mongoose.model('Messages', Message)

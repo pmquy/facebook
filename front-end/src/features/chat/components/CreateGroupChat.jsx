@@ -5,18 +5,20 @@ import GroupChatApi from '../services/groupChat'
 import {toast} from 'react-toastify'
 import { useQueryClient } from "react-query";
 import UserAccount from "../../../components/UserAccount";
+import { useUser } from "../../../hooks/user";
 
 export default function () {
-  const [ids, setIds] = useState(new Set())
+  const [ids, setIds] = useState([])
   const [open, setOpen] = useState(false)
-  const { users, user } = useContext(CommonContext)
+  const { users } = useContext(CommonContext)
+  const {user} = useUser()
   const ref = useRef(), nameRef = useRef()
   const queryClient = useQueryClient()
 
   const handleCreate = () => {
     GroupChatApi.create({
       name : nameRef.current.value,
-      users : [...ids]
+      users : ids
     })
       .then(() => {
         queryClient.invalidateQueries(['groupchats', user._id])
@@ -36,14 +38,8 @@ export default function () {
         {users.map(e => <div className={e._id == user._id ? 'hidden' : 'block'}>
           <div className="flex gap-5 justify-between">
             <UserAccount id={e._id}/>
-            {!ids.has(e._id) && <Button className={' btn-grey'} onClick={() => {
-              ids.add(e._id)
-              setIds(new Set(ids))
-            }}>Thêm</Button>}
-            {ids.has(e._id) && <Button className={' btn-grey'} onClick={() => {
-              ids.delete(e._id)
-              setIds(new Set(ids))
-            }}>Loại</Button>}
+            {!ids.includes(e._id) && <Button className={' dark:btn-grey btn-teal'} onClick={() => setIds([...ids, e._id])}>Thêm</Button>}
+            {ids.includes(e._id) && <Button className={' dark:btn-grey btn-teal'} onClick={() => {setIds(ids.filter(t => t != e._id))}}>Loại</Button>}
           </div>
         </div>)}
         <Button onClick={handleCreate} className={'btn-teal dark:btn-grey m-auto'}>Tạo nhóm chat</Button>

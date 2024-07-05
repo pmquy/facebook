@@ -1,34 +1,51 @@
 import Post from '../models/Post.js'
-import Image from '../models/Image.js'
-import {redisClient} from '../../app.js'
+import FileService from './file.js'
+import GroupService from '../services/group.js'
+import { redisClient } from '../../app.js'
 
 class Service {
-  get = async query => Post.find(query)
-  getById = async id => {
-    // let val = await redisClient.get('posts' + id)
-    // if(val) return JSON.parse(val)
-    const val = await Post.findById(id)
-    // redisClient.set('posts' + id, JSON.stringify(val))
-    return val
+  get = async query => {
+    return Post.find(query).select(['_id'])
   }
 
-  create = async data => Post.create(data)
+  getById = async id => {
+    const val = await redisClient.get('post' + id)
+    if (val) return JSON.parse(val)
+    return Post.findById(id)
+      .then(val => {
+        redisClient.set('post' + id, JSON.stringify(val))
+        return val
+      })
+  }
 
-  deleteById = async (user, id) => {
+  create = async (user, data) => {
+    if(data.group) {
+      return GroupService.haveRole(user, data.group, 'Member')
+        .then(() => Post.create(data))
+    } else {
+      return Post.create(data)
+    }
+  }
+
+  authorized = async (user, post) =>
+    this.getById(post)
+      .then(post => {
+        if (post.user != user) throw new Error()
+      })
+
+
+  deleteById = async id => {
     const post = await Post.findById(id)
-    if(post.user != user._id) throw new Error()
-    await Promise.all(post.images.map(e => Image.findByIdAndDelete(e)))
-    // redisClient.del('posts' + id)
+    await Promise.all(post.files.map(e => FileService.deleteById(e)))
+    redisClient.del('post' + id)
     return post.deleteOne()
   }
 
-  updateById = async (user, id, data) => {
+  updateById = async (id, data) => {
     const post = await Post.findById(id)
-    if(post.user != user._id) throw new Error()
-    await Promise.all(post.images.map(e => Image.findByIdAndDelete(e)))
-    const val = await post.updateOne(data, {new : true})
-    // redisClient.del('posts' + id)
-    return val
+    await Promise.all(post.files.map(e => FileService.deleteById(e)))
+    redisClient.del('post' + id)
+    return post.updateOne(data)
   }
 }
 

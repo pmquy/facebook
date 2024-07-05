@@ -1,6 +1,6 @@
 import SharePost from '../models/SharePost.js'
 import Joi from 'joi'
-import Image from '../models/Image.js'
+import File from '../models/File.js'
 
 const creatingPattern = Joi.object({
   content: Joi.string().required(),
@@ -43,7 +43,7 @@ class Controller {
     SharePost.findById(req.params.id)
       .then(val => {
         if (val.user == req.user._id) {
-          if (val.image) Image.findByIdAndDelete(val.image)
+          if (val.image) File.findByIdAndDelete(val.image)
           return val.deleteOne()
         }
         throw new Error()
@@ -55,7 +55,7 @@ class Controller {
     updatingPattern.validateAsync(req.body)
       .then(val => SharePost.findById(req.params.id)
         .then(data => {
-          if (val.image) Image.findByIdAndDelete(data.image)
+          if (val.image) File.findByIdAndDelete(data.image)
           if (data.user == req.user._id) return data.updateOne(val, { new: true })
           throw new Error()
         }))

@@ -45,16 +45,34 @@ input:-webkit-autofill:active {
   }
 
   .btn-teal {
-    @apply bg-teal text-white rounded-lg p-2 w-max btn hover:bg-black
+    @apply bg-teal text-white rounded-lg p-2 w-max btn hover:bg-black transition-colors duration-100
   }
 
   .btn-grey {
-    @apply bg-grey text-white rounded-lg p-2 w-max btn hover:bg-teal
+    @apply bg-grey text-white rounded-lg p-2 w-max btn hover:bg-teal transition-colors duration-100
+  }
+
+  .btn-black {
+    @apply bg-black text-white rounded-lg p-2 w-max btn hover:bg-teal transition-colors duration-100
   }
   
-  .btn-black {
-    @apply bg-black text-white rounded-lg p-2 w-max btn hover:bg-teal
+  .btn-white {
+    @apply bg-white text-black rounded-lg p-2 w-max btn hover:bg-teal hover:text-white transition-colors duration-100
   }
+
+  
+  .btn-black-n {
+    @apply bg-black text-white rounded-lg p-2 w-max
+  }
+  
+  .btn-teal-n {
+    @apply bg-teal text-white rounded-lg p-2 w-max
+  }
+
+  .btn-grey-n {
+    @apply bg-grey text-white rounded-lg p-2 w-max
+  }
+  
 
   .card {
     @apply rounded-lg bg-white box-shadow text-black

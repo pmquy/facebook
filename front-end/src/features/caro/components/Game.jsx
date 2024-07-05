@@ -1,8 +1,7 @@
 import {useQuery} from 'react-query'
 import GameApi from '../services/api'
 import { toast } from 'react-toastify'
-import { useContext } from 'react'
-import CommonContext from '../../../store/CommonContext'
+import { useUser } from '../../../hooks/user'
 
 const variants = [
   'after:absolute after:w-9 after:left-1/2 after:-translate-x-1/2 after:top-1/2 after:-translate-y-1/2 after:h-[1px] after:bg-blue-600 after:rotate-90',
@@ -12,7 +11,7 @@ const variants = [
 ]
 
 export default function ({id}) {  
-  const {user} = useContext(CommonContext)
+  const {user} = useUser()
   const query = useQuery({
     queryKey : ['carogame', id],
     queryFn : () => GameApi.getById(id)
