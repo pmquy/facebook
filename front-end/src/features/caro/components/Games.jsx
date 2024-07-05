@@ -1,12 +1,11 @@
-import { useContext } from 'react'
 import {useQuery} from 'react-query'
-import CommonContext from '../../../store/CommonContext'
 import GameApi from '../services/api'
 import { Link } from 'react-router-dom'
+import { useUser } from '../../../hooks/user'
 
 export default function () {
   
-  const {user} = useContext(CommonContext)
+  const {user} = useUser()
 
   const query = useQuery({
     queryKey : ['carogames', user._id],

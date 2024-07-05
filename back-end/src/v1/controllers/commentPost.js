@@ -1,32 +1,30 @@
 import CommentPost from '../models/CommentPost.js'
 import Joi from 'joi'
-import Image from '../models/Image.js'
+import File from '../models/File.js'
 import Notification from '../models/Notification.js'
 import PostService from '../services/post.js'
 import {io} from '../../app.js'
 
 const creatingPattern = Joi.object({
   content: Joi.string(),
-  images: Joi.when('content', {
+  files: Joi.when('content', {
     is: Joi.exist(),
     then: Joi.array().items(Joi.string()).default([]),
     otherwise: Joi.array().items(Joi.string()).min(1).required()
   }),
-  videos : Joi.array().items(Joi.string()),
   post: Joi.string().required(),
   comment: Joi.string().default(''),
 }).unknown(false).required()
 
 const updatingPattern = Joi.object({
   content: Joi.string(),
-  images: Joi.array().items(Joi.string()),
-  videos : Joi.array().items(Joi.string()),
+  files: Joi.array().items(Joi.string()),
 }).unknown(false).required()
 
 class Controller {
 
   get = (req, res, next) => {
-    CommentPost.find(req.query)
+    CommentPost.find(req.query).select(['_id'])
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
@@ -59,7 +57,7 @@ class Controller {
     CommentPost.findById(req.params.id)
       .then(async val => {
         if (val.user != req.user._id) throw new Error()
-        await Promise.all(val.images.map(e => Image.findByIdAndDelete(e)))
+        await Promise.all(val.files.map(e => File.findByIdAndDelete(e)))
         return val.deleteOne()
       })
       .then(val => res.status(200).send(val))
@@ -69,7 +67,7 @@ class Controller {
     updatingPattern.validateAsync(req.body)
       .then(val => CommentPost.findById(req.params.id)
         .then(async data => {
-          await Promise.all(data.images.map(e => Image.findByIdAndDelete(e)))
+          await Promise.all(val.files.map(e => File.findByIdAndDelete(e)))
           if (data.user == req.user._id) return data.updateOne(val, { new: true })
           throw new Error()
         }))

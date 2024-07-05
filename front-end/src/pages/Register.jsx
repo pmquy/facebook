@@ -1,30 +1,19 @@
 import { useEffect, useRef } from "react";
 import { RegisterForm } from "../features/account";
 
-export default function () {
-  const pRef1 = useRef(), cRef1 = useRef(), cRef2 = useRef()
+export default function Login() {
+
+  const ref = useRef()
 
   useEffect(() => {
-    const ob1 = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          pRef1.current.classList.remove('opacity-0')
-          cRef1.current.classList.remove('-translate-x-[1000px]')
-          cRef2.current.classList.remove('translate-x-[1000px]')
-        } else {
-          pRef1.current.classList.add('opacity-0')
-          cRef1.current.classList.add('-translate-x-[1000px]')
-          cRef2.current.classList.add('translate-x-[1000px]')
-        }
-      })
-    })
-    if (pRef1.current) ob1.observe(pRef1.current)
-  }, [])
+    if(ref.current) {
+      ref.current.classList.remove('-translate-y-[1000px]')
+      ref.current.classList.add('-translate-y-1/2')
+    }
+  },[])
 
-  return <div style={{ backgroundImage: 'url(/login_bg.jpg)' }} className=" content-center bg-cover bg-center bg-no-repeat min-h-screen p-10">
-    <div ref={pRef1} className="flex gap-20 rounded-lg opacity-0 overflow-x-hidden duration-1000 transition-all bg-white dark:bg-black justify-center p-10 items-center">
-      <img ref={cRef1} src="/login_side.png" className=" duration-1000 transition-all -translate-x-[1000px]" />
-      <div ref={cRef2} className=" duration-1000 transition-all translate-x-[1000px]"><RegisterForm /></div>
-    </div>
+  return <div className=" relative w-screen h-screen ">
+    <img className="absolute top-0 left-0 w-full h-full object-cover" src="/login_img.jpg"></img>
+    <div ref={ref} style={{ background: 'linear-gradient(to left top, rgb(255,255,255,0.2), rgb(0,173,181,0.2))' }} className=" bg-teal absolute top-1/2 transition-[transform] -translate-y-[1000px] duration-500 left-1/2 -translate-x-1/2 backdrop-blur-sm p-5 rounded-lg text-black max-h-full  overflow-auto max-sm:w-full"><RegisterForm/></div>
   </div>
 }

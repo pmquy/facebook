@@ -5,8 +5,7 @@ const CommentPost = new mongoose.Schema({
   post : String,
   comment : String,
   content : String,
-  images : Array,
-  videos : Array,
+  files: Array
 }, {timestamps : true})
 
 export default mongoose.model('CommentPosts', CommentPost)

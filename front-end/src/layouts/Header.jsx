@@ -6,20 +6,20 @@ import { MdOutlineOndemandVideo } from "react-icons/md";
 import { GrGroup } from "react-icons/gr";
 import { IoGameController } from "react-icons/io5";
 import { Link, useLocation } from "react-router-dom";
-import { getIndexFromPathName } from "../utils/path";
-import { useContext } from "react";
-import CommonContext from '../store/CommonContext'
+import { File } from "../components";
 import Notification from './Notification'
 import Messenger from './Messenger'
 import Menu from './Menu'
-import Image from "../components/Image";
+import { useUser } from "../hooks/user";
 
 export default function () {
-  const { user, darkMode } = useContext(CommonContext)
+  const {user} = useUser()
   const location = useLocation()
-  const index = getIndexFromPathName(location.pathname)
-  if(!index) return <></>
-  return <div className="sticky z-10 top-0 w-full flex justify-between p-2 dark:bg-black text-white bg-white border-b-2 border-teal">
+  const path = location.pathname
+  
+  if(path.startsWith('/login') || path.startsWith('/register')) return <></>
+
+  return <div className="w-full flex justify-between p-2 dark:bg-black text-white bg-white border-b-2 border-teal">
     <div className="flex gap-2 basis-1/3">
       <Link to={'/'}>
         <FaFacebook color="#00ADB5" className="w-12 h-12" />
@@ -30,20 +30,20 @@ export default function () {
     </div>
 
     <div className="flex gap-5 basis-1/3 max-lg:hidden">
-      <Link to={'/'} className={`py-2 px-10 group relative ${index == 1 ? 'bg-black dark:bg-white' : 'hover:bg-teal'} rounded-lg`}>
-        <FaHome className="w-8 h-8" color={index == 1 ? '#00ADB5' : `${darkMode ? '#EEEEEE' : '#222831'}`} />
+      <Link to={'/'} className={`py-2 px-10 group relative ${path == '/' ? 'bg-teal text-white' : 'hover:bg-teal hover:text-white text-black dark:text-white'} rounded-lg`}>
+        <FaHome className="w-8 h-8" />
       </Link>
-      <div className={`py-2 px-10 group relative ${index == 2 ? 'bg-black dark:bg-white' : 'hover:bg-teal'} rounded-lg`}>
-        <MdOutlineOndemandVideo className="w-8 h-8" color={index == 2 ? '#00ADB5' : `${darkMode ? '#EEEEEE' : '#222831'}`} />
+      <div className={`py-2 px-10 group relative ${path.startsWith('/watch') ? 'bg-teal text-white' : 'hover:bg-teal hover:text-white text-black dark:text-white'} rounded-lg`}>
+        <MdOutlineOndemandVideo className="w-8 h-8" />
       </div>
-      <div className={`py-2 px-10 group relative ${index == 3 ? 'bg-black dark:bg-white' : 'hover:bg-teal'} rounded-lg`}>
-        <CgShoppingCart className="w-8 h-8" color={index == 3 ? '#00ADB5' : `${darkMode ? '#EEEEEE' : '#222831'}`} />
+      <div className={`py-2 px-10 group relative ${path.startsWith('/market') ? 'bg-teal text-white' : 'hover:bg-teal hover:text-white text-black dark:text-white'} rounded-lg`}>
+        <CgShoppingCart className="w-8 h-8" />
       </div>
-      <div className={`py-2 px-10 group relative ${index == 4 ? 'bg-black dark:bg-white' : 'hover:bg-teal'} rounded-lg`}>
-        <GrGroup className="w-8 h-8" color={index == 4 ? '#00ADB5' : `${darkMode ? '#EEEEEE' : '#222831'}`} />
-      </div>
-      <Link to={'/carogames'} className={`py-2 px-10 group relative  ${index == 5 ? 'bg-black dark:bg-white' : 'hover:bg-teal'} rounded-lg `}>
-        <IoGameController className="w-8 h-8" color={index == 5 ? '#00ADB5' : `${darkMode ? '#EEEEEE' : '#222831'}`} />
+      <Link to={'/groups'} className={`py-2 px-10 group relative ${path.startsWith('/groups') ? 'bg-teal text-white' : 'hover:bg-teal hover:text-white text-black dark:text-white'} rounded-lg`}>
+        <GrGroup className="w-8 h-8" />
+      </Link>
+      <Link to={'/carogames'} className={`py-2 px-10 group relative  ${path.startsWith('/carogames') ? 'bg-teal text-white' : 'hover:bg-teal hover:text-white text-black dark:text-white'} rounded-lg `}>
+        <IoGameController className="w-8 h-8" />
       </Link>
     </div>
 
@@ -51,8 +51,8 @@ export default function () {
       <Menu />
       <Messenger />
       <Notification />
-      <Link to={'/user/' + user._id} className={`p-2 rounded-full hover:bg-white_0 relative group`}>
-        {user.avatar && <Image needToNavigate={false} id={user.avatar} className={'min-w-8 min-h-8 max-w-8 max-h-8 object-cover rounded-full'} />}
+      <Link to={'/users/' + user._id} className={`p-2 rounded-full hover:bg-white_0 relative group`}>
+        {user.avatar && <File needToNavigate={false} id={user.avatar} className={'min-w-8 min-h-8 max-w-8 max-h-8 object-cover rounded-full'} />}
       </Link>
     </div >
   </div >

@@ -4,9 +4,10 @@ import { useQuery, useQueryClient } from 'react-query'
 import { useContext, useMemo } from "react"
 import CommonContext from '../../../store/CommonContext'
 import CommentContext from "../store/CommentContext"
+import { useUser } from "../../../hooks/user"
 
 export default function () {
-  const { user } = useContext(CommonContext)
+  const { user } = useUser()
   const { comment } = useContext(CommentContext)
   const query = useQuery({
     queryKey: ['likecomments', { comment: comment._id }],

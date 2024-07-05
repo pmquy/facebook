@@ -2,8 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import Home from './pages/Home'
 import './index.css'
-import {RouterProvider, createBrowserRouter} from 'react-router-dom'
-import {QueryClient, QueryClientProvider} from 'react-query'
+import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import Layout from './layouts/Layout'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -12,65 +12,109 @@ import Friends from './pages/Friends'
 import Messenger from './pages/Messenger'
 import CaroGame from './pages/CaroGame'
 import CaroGames from './pages/CaroGames'
-import Landing from './pages/Landing'
-import ImageDetail from './pages/ImageDetail'
+import File from './pages/File'
+import Group from './pages/Group'
+import { GroupsLayout } from './features/group'
+import Note from './pages/NotePage'
+import GroupFeed from './pages/GroupFeed'
+import Post from './pages/Post'
+import GroupDiscover from './pages/GroupDiscover'
+
 
 const router = createBrowserRouter([
+  
   {
-    path : '/',
-    element : <Layout/>,
-    children : [
+    path: '',
+    element: <Layout />,
+    children: [
       {
-        path : '',
-        element : <Home/>
+        path: '',
+        element: <Home />
       },
       {
-        path : 'login',
-        element : <Login/>
+        path: 'users/:id',
+        element: <Account />
       },
       {
-        path : 'register',
-        element : <Register/>
+        path: 'posts/:id',
+        element: <Post/>
       },
       {
-        path : 'user/:id',
-        element : <Account/>
+        path: 'files/:id',
+        element: <File />
       },
       {
-        path : 'imagedetail/:id',
-        element : <ImageDetail/>
+        path: 'login',
+        element: <Login />
       },
       {
-        path : 'friends',
-        element : <Friends/>
+        path: 'register',
+        element: <Register />
       },
       {
-        path : 'messages',
-        element : <Messenger/>
+        path: 'friends',
+        element: <Friends />
       },
       {
-        path : 'carogames',
-        element : <CaroGames/>
+        path: 'messages',
+        element: <Messenger />
       },
       {
-        path : 'carogames/:id',
-        element : <CaroGame/>
+        path: 'carogames',
+        element: <CaroGames />
       },
       {
-        path : 'hello',
-        element : <Landing/>
+        path: 'carogames/:id',
+        element: <CaroGame />
+      },
+      {
+        path: 'groups',
+        element: <GroupsLayout />,
+        children: [,
+          {
+            path: 'feed',
+            element: <GroupFeed/>
+          },
+          {
+            path: 'discover',
+            element: <GroupDiscover/>
+          },
+          {
+            path: ':id/:sub',
+            element: <Group/>
+          },
+          {
+            path: '',
+            element: <Navigate to={'feed'}/>
+          }
+          ,
+          {
+            path: '*',
+            element: <Navigate to={'feed'}/>
+          }
+        ]
+      },
+      {
+        path: 'somestuffs/note',
+        element: <Note/>
       }
     ]
   }
 ])
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions : {
+    queries : {
+      refetchOnWindowFocus : false
+    }
+  }
+})
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router}>
-      </RouterProvider>    
+      </RouterProvider>
     </QueryClientProvider>
   </React.StrictMode>,
 )
