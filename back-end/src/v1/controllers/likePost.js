@@ -19,7 +19,7 @@ class Controller {
           Notification.create({
             content : `${req.user.firstName + ' ' + req.user.lastName} vừa thích bài viết của bạn`,
             user : post.user,
-            to : '/?open=' + post._id,
+            to : '/posts/' + post._id,
             key : JSON.stringify(['likeposts', { post: val.post }])
           })
             .then(() => io.emit('invalidate', ['notifications', post.user]))        

@@ -9,11 +9,8 @@ export default function ({ id }) {
   const user = users.filter(e => e._id == id)[0]
   return <div className="w-max">
     <Link to={'/users/' + id} className="flex gap-2 items-center">
-      {user.avatar ?
-        <File needToNavigate={false} id={user.avatar} className={'w-8 h-8 min-w-8 min-h-8 rounded-full object-cover'} />
-        :
-        <MdAccountCircle className="w-8 h-8" />
-      }
+      {user.avatar ? <File id={user.avatar} className={'w-8 h-8 min-w-8 min-h-8 rounded-full object-cover'} /> :
+        <MdAccountCircle className="w-8 h-8" />}
       <div className="text-1">{user.firstName + " " + user.lastName}</div>
     </Link>
   </div>
