@@ -18,15 +18,16 @@ export default function Post() {
   })
   if (query.isLoading || query.isError) return <></>
   const post = query.data
+  console.log(index)
 
   return <PostContext.Provider value={{ setCreate: () => { }, post: post, }}>
-    <div className=" fixed pt-16 h-screen w-screen top-0 left-0 flex gap-5">
+    <div className=" fixed pt-16 h-screen w-screen top-0 left-0 flex">
       {!!post.files.length && <div className="basis-1/2 max-lg:hidden relative">
-        <div className=" absolute w-full top-1/2 -translate-y-1/2">
+        <div className=" absolute w-full max-w-max left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 px-5">
           <File needToNavigate={true} id={post.files[index]} />
         </div>
-        <IoMdArrowDropleft onClick={() => setIndex(index - 1 + post.files.length) % post.files.length} className="btn-teal w-10 h-10 absolute left-5 top-1/2 -translate-y-1/2" />
-        <IoMdArrowDropright onClick={() => setIndex((index + 1) % post.files.length)} className="btn-teal w-10 h-10 absolute right-5 top-1/2 -translate-y-1/2" />
+        <IoMdArrowDropleft onClick={() => setIndex((index - 1 + post.files.length) % post.files.length)} className="btn-teal w-10 h-10 absolute left-10 top-1/2 -translate-y-1/2" />
+        <IoMdArrowDropright onClick={() => setIndex((index + 1) % post.files.length)} className="btn-teal w-10 h-10 absolute right-10 top-1/2 -translate-y-1/2" />
       </div>}
 
       <div className="flex flex-col gap-5 relative flex-grow overflow-y-auto bg-black">

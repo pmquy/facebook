@@ -1,8 +1,23 @@
-import { Posts, CreatePost } from '../features/post'
+import { Post, CreatePost, PostApi } from '../features/post'
 import { useQuery } from "react-query"
 import { File } from '../components'
 import { Link, useParams } from "react-router-dom"
 import { GroupApi, GroupContext, Members, RegisterGroup } from '../features/group'
+
+
+function Posts({ group }) {
+  const query = useQuery({
+    queryKey: ['posts', { group: group }],
+    queryFn: () => PostApi.get({ group: group })
+  })
+  if (query.isError || query.isLoading) return <></>
+  return <div className=' flex flex-col gap-3'>
+    <CreatePost />
+    {query.data.map(e => <div key={e._id}><Post id={e._id} /></div>)}
+    <div>Loading more posts</div>
+  </div>
+}
+
 
 export default function () {
   const params = useParams()
@@ -16,7 +31,7 @@ export default function () {
 
 
   return <GroupContext.Provider value={{ group: query.data }}>
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-3">
       <div className="card dark:card-black p-5 flex flex-col gap-5">
         <div className=" rounded-lg overflow-hidden" style={{ background: 'linear-gradient(to left top, #222831, #00ADB5)' }}>
           <div className="m-auto max-w-max"><File needToNavigate={true} id={query.data.avatar} /></div>
@@ -31,11 +46,13 @@ export default function () {
           <Link to={`/groups/${id}/files`} className={`${sub == 'files' ? 'btn-teal-n' : 'dark:btn-black btn-white'}`}>File</Link>
         </div>
       </div>
-      {query.data.role == '' ? <div className="card dark:card-black p-5 flex flex-col gap-5"><RegisterGroup id={id} /></div> :
+      {
+        query.data.role == '' ? <div className="card dark:card-black p-5 flex flex-col gap-5"><RegisterGroup id={id} /></div> :
         query.data.role == 'Requester' ? <div className=' card dark:card-black p-5'>Your request has been sent</div> :
-        sub == 'posts' ? <div><CreatePost /><Posts /></div> :
-          sub == 'members' ? <div><Members id={id} /></div> :
-          <div></div>}
+        sub == 'posts' ? <Posts group={id}/> :
+        sub == 'members' ? <div><Members id={id} /></div> :
+        <div></div>
+      }
     </div>
   </GroupContext.Provider>
 }

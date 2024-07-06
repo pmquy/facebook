@@ -5,7 +5,7 @@ class Service {
   getById = async id => {
     const val = await redisClient.get('file' + id)
     if (val) return JSON.parse(val)
-    File.findById(id)
+    return File.findById(id)
       .then(async val => {
         redisClient.set('file' + id, JSON.stringify(val))
         return val;
@@ -13,7 +13,7 @@ class Service {
   }
 
   deleteById = async id => {
-    File.findByIdAndDelete(id)
+    return File.findByIdAndDelete(id)
       .then(async val => {
         redisClient.del('file' + id)
         return val;
