@@ -1,19 +1,29 @@
-import { useContext, useEffect, useRef, useState } from "react"
-import CommonContext from "../../../store/CommonContext"
+import { Button, Card, Dialog, Divider, IconButton, Tooltip } from "@mui/material"
+import { useEffect, useRef, useState } from "react"
+import { FaMicrophone } from "react-icons/fa"
 import { MdVideoCall } from "react-icons/md"
-import { SlCallEnd } from "react-icons/sl"
+import { PiScreencastBold, PiVideoCameraFill } from "react-icons/pi"
+import { BsCopy, BsThreeDots } from "react-icons/bs"
 import { useQuery } from 'react-query'
-import api from '../services/message'
 import { toast } from 'react-toastify'
-import { FaChevronCircleLeft, FaChevronCircleRight } from "react-icons/fa"
-import { PiScreencastBold } from "react-icons/pi"
 import { useSocket } from "../../../hooks/socket"
 import { useUser } from "../../../hooks/user"
-import { FaMicrophone } from "react-icons/fa";
-import { PiVideoCameraFill } from "react-icons/pi";
+import api from '../services/message'
+import CreateMessage from "./CreateMessage"
+import Messages from "./Messages"
 
 const servers = {
   iceServers: [
+    { urls: "stun:stun.l.google.com:19302" },
+    { urls: "stun:stun.l.google.com:5349" },
+    { urls: "stun:stun1.l.google.com:3478" },
+    { urls: "stun:stun1.l.google.com:5349" },
+    { urls: "stun:stun2.l.google.com:19302" },
+    { urls: "stun:stun2.l.google.com:5349" },
+    { urls: "stun:stun3.l.google.com:3478" },
+    { urls: "stun:stun3.l.google.com:5349" },
+    { urls: "stun:stun4.l.google.com:19302" },
+    { urls: "stun:stun4.l.google.com:5349" },
     {
       urls: "stun:stun.relay.metered.ca:80",
     },
@@ -40,13 +50,11 @@ const servers = {
   ],
 }
 
-export default function ({ id }) {
-  const [open, setOpen] = useState(false)
-  const [others, setOthers] = useState({})
-  const { users, headerRef } = useContext(CommonContext)
+function Call({ id, setOpen }) {
   const { user } = useUser()
   const { socket } = useSocket()
-  const myVideoRef = useRef(), currentOtherRef = useRef(), ref = useRef(), streamRef = useRef()
+  const streamRef = useRef(), mainVideoRef = useRef(), myVideoRef = useRef(), ref = useRef(), othersRef = useRef({})
+  const [others, setOthers] = useState({})
   const [currentOther, setCurrentOther] = useState()
   const [isSharing, setIsSharing] = useState(false)
   const [withVideo, setWithVideo] = useState(true)
@@ -54,125 +62,85 @@ export default function ({ id }) {
 
   useEffect(() => {
     let listener
-    let temp_others = {}
-    const solve = async () => {
-      myVideoRef.current.srcObject = streamRef.current = await navigator.mediaDevices.getUserMedia({ audio: true, video: true })
 
-      listener = payload => {
+    console.log('call')
+
+    const solve = async () => {
+      myVideoRef.current.srcObject = mainVideoRef.current.srcObject = streamRef.current = await navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+
+      socket.emit('call', JSON.stringify({ type: 'join', user: user._id, displayName: user.firstName + ' ' + user.lastName, group: 'call' + id }))
+
+      listener = async payload => {
         payload = JSON.parse(payload)
         switch (payload.type) {
           case 'join': {
+            if (othersRef.current[payload.user]) break
             const pc = new RTCPeerConnection(servers)
             const remoteStream = new MediaStream()
-            temp_others = { ...temp_others, [payload.user]: { pc: pc, stream: remoteStream, user: users.filter(e => e._id == payload.user)[0] } }
+            othersRef.current[payload.user] = { pc: pc, stream: remoteStream, user: payload.displayName }
             streamRef.current.getTracks().forEach(track => pc.addTrack(track, streamRef.current))
             pc.ontrack = event => event.streams[0] && event.streams[0].getTracks().forEach(track => remoteStream.addTrack(track))
             pc.onicecandidate = event => event.candidate && socket.emit('call', JSON.stringify({ type: 'ice', group: 'call' + id, user: user._id, data: event.candidate, to: payload.user }))
-            pc.createOffer()
-              .then(offer => pc.setLocalDescription(offer))
-              .then(() => socket.emit('call', JSON.stringify({ type: 'offer', group: 'call' + id, user: user._id, data: pc.localDescription, to: payload.user })))
+            const offer = await pc.createOffer()
+            await pc.setLocalDescription(offer)
+            socket.emit('call', JSON.stringify({ type: 'offer', group: 'call' + id, user: user._id, displayName: user.firstName + ' ' + user.lastName, data: offer, to: payload.user }))
             break
           }
           case 'offer': {
-            if (payload.to != user._id) break
+            if (payload.to != user._id || othersRef.current[payload.user]) break
             const pc = new RTCPeerConnection(servers)
             const remoteStream = new MediaStream()
-            temp_others = { ...temp_others, [payload.user]: { pc: pc, stream: remoteStream, user: users.filter(e => e._id == payload.user)[0] } }
+            othersRef.current[payload.user] = { pc: pc, stream: remoteStream, user: payload.displayName }
             streamRef.current.getTracks().forEach(track => pc.addTrack(track, streamRef.current))
             pc.ontrack = event => event.streams[0] && event.streams[0].getTracks().forEach(track => remoteStream.addTrack(track))
             pc.onicecandidate = event => event.candidate && socket.emit('call', JSON.stringify({ type: 'ice', group: 'call' + id, user: user._id, data: event.candidate, to: payload.user }))
-            pc.setRemoteDescription(new RTCSessionDescription(payload.data))
-              .then(() => pc.createAnswer())
-              .then(answer => pc.setLocalDescription(answer))
-              .then(() => {
-                socket.emit('call', JSON.stringify({ type: 'answer', group: 'call' + id, user: user._id, data: pc.localDescription, to: payload.user }))
-                setOthers({ ...temp_others })
-              })
+            await pc.setRemoteDescription(new RTCSessionDescription(payload.data))
+            const answer = await pc.createAnswer()
+            await pc.setLocalDescription(answer)
+            socket.emit('call', JSON.stringify({ type: 'answer', group: 'call' + id, user: user._id, data: answer, to: payload.user }))
+            setOthers({ ...othersRef.current })
             break
           }
           case 'answer': {
-            if (payload.to != user._id) break
-            temp_others[payload.user].pc.setRemoteDescription(new RTCSessionDescription(payload.data))
-            setOthers({ ...temp_others })
+            if (payload.to != user._id || !othersRef.current[payload.user]) break
+            othersRef.current[payload.user].pc.setRemoteDescription(new RTCSessionDescription(payload.data))
+            setOthers({ ...othersRef.current })
             break
           }
           case 'ice': {
-            if (user._id != payload.to) break
-            temp_others[payload.user].pc.addIceCandidate(new RTCIceCandidate(payload.data))
+            if (user._id != payload.to || !othersRef.current[payload.user]) break
+            othersRef.current[payload.user].pc.addIceCandidate(new RTCIceCandidate(payload.data))
             break
           }
           case 'leave': {
-            delete temp_others[payload.user]
-            setOthers({ ...temp_others })
+            delete othersRef.current[payload.user]
+            setOthers({ ...othersRef.current })
             break
           }
         }
       }
+
       socket.on('call', listener)
-      socket.emit('call', JSON.stringify({ type: 'join', user: user._id, group: 'call' + id }))
+
     }
-    if (open) {
-      document.body.style.overflow = 'hidden'
-      headerRef.current.style['z-index'] = 5
-      solve()
-    }
+
+    solve()
+
     return () => {
-      document.body.style.overflow = 'auto'
-      headerRef.current.style['z-index'] = 10
+      console.log('leave')
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(e => e.stop())
-        socket.emit('call', JSON.stringify({ type: 'leave', user: user._id, group: 'call' + id }))
-        socket.off('call', listener)
-        setOthers({})
-        setIsSharing(false)
       }
+      othersRef.current = {}
+      socket.emit('call', JSON.stringify({ type: 'leave', user: user._id, group: 'call' + id }))
+      socket.off('call', listener)
     }
-  }, [open == 0, id])
+  }, [id])
 
   useEffect(() => {
     const a = Object.keys(others)
-    a.forEach((e, i) => ref.current.childNodes[i].childNodes[0].srcObject = others[e].stream)
-    if (!a.length) {
-      setCurrentOther(null)
-      if (currentOtherRef.current) currentOtherRef.current.srcObject = null
-    } else if (!currentOther) {
-      setCurrentOther(a[0])
-      if (currentOtherRef.current) currentOtherRef.current.srcObject = others[a[0]].stream
-    }
+    a.forEach((e, i) => ref.current.childNodes[i + 1].childNodes[0].srcObject = others[e].stream)
   }, [others, id])
-
-  const query = useQuery({
-    queryKey: ['messages', { groupChat: id, type: 'call' }],
-    queryFn: () => api.get({ groupChat: id, type: 'call' })
-  }, [id])
-
-  if (query.isError || query.isLoading) return <></>
-
-  const handleCall = () => {
-    if (!query.data.length || query.data[query.data.length - 1].status == "ended") {
-      const data = new FormData()
-      data.append('type', 'call')
-      data.append('groupChat', id)
-      data.append('status', "started")
-      api.create(data)
-        .then(() => setOpen(1))
-        .catch(err => toast(err.message, { type: 'error' }))
-    } else {
-      setOpen(1)
-    }
-  }
-
-  const handleClose = () => {
-    if (Object.keys(others).length == 0) {
-      const data = new FormData()
-      data.append('status', 'ended')
-      api.updateById(query.data[query.data.length - 1]._id, data)
-        .then(() => setOpen(false))
-        .catch(err => toast(err.message, { type: 'error' }))
-    } else {
-      setOpen(0)
-    }
-  }
 
   const handleShareScreen = async () => {
     try {
@@ -186,7 +154,6 @@ export default function ({ id }) {
         let videoSender = pc.getSenders().find(sender => sender.track?.kind === 'video')
         if (videoSender) videoSender.replaceTrack(videoTrack)
       })
-
       setIsSharing(!isSharing)
 
     } catch (error) {
@@ -197,16 +164,16 @@ export default function ({ id }) {
   const handleWithAudio = async () => {
     try {
       if (withAudio) {
-        streamRef.current.getAudioTracks()[0].stop()
-        streamRef.current.removeTrack(streamRef.current.getAudioTracks()[0])
-      } else {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-        const audioTrack = stream.getTracks()[0]
-        streamRef.current.addTrack(audioTrack)
         Object.keys(others).forEach(peerId => {
           const pc = others[peerId].pc
-          let audioSender = pc.getSenders().find(sender => sender.track?.kind === 'video')
-          if (audioSender) audioSender.replaceTrack(audioTrack)
+          let sender = pc.getSenders().find(sender => sender.track?.kind === 'audio')
+          if (sender?.track) sender.track.enabled = false
+        })
+      } else {
+        Object.keys(others).forEach(peerId => {
+          const pc = others[peerId].pc
+          let sender = pc.getSenders().find(sender => sender.track?.kind === 'audio')
+          if (sender?.track) sender.track.enabled = true
         })
       }
       setWithAudio(!withAudio)
@@ -219,16 +186,16 @@ export default function ({ id }) {
   const handleWithVideo = async () => {
     try {
       if (withVideo) {
-        streamRef.current.getVideoTracks()[0].stop()
-        streamRef.current.removeTrack(streamRef.current.getVideoTracks()[0])
-      } else {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true })
-        const videoTrack = stream.getTracks()[0]
-        streamRef.current.addTrack(videoTrack)
         Object.keys(others).forEach(peerId => {
           const pc = others[peerId].pc
-          let videoSender = pc.getSenders().find(sender => sender.track?.kind === 'video')
-          if (videoSender) videoSender.replaceTrack(videoTrack)
+          let sender = pc.getSenders().find(sender => sender.track?.kind === 'video')
+          if (sender?.track) sender.track.enabled = false
+        })
+      } else {
+        Object.keys(others).forEach(peerId => {
+          const pc = others[peerId].pc
+          let sender = pc.getSenders().find(sender => sender.track?.kind === 'video')
+          if (sender?.track) sender.track.enabled = true
         })
       }
       setWithVideo(!withVideo)
@@ -238,33 +205,122 @@ export default function ({ id }) {
     }
   }
 
+  const handleClose = () => {
+    if (Object.keys(others).length == 0) {
+      const data = new FormData()
+      data.append('status', 'ended')
+      api.updateById(query.data[query.data.length - 1]._id, data)
+        .then(() => setOpen(false))
+        .catch(err => toast(err.message, { type: 'error' }))
+    } else {
+      setOpen(false)
+    }
+  }
 
-  return <div>
-    <div className={`${open ? '' : 'hidden'} fixed z-10 left-0 top-0 w-screen h-screen bg-black_trans`}></div>
-    <div className={`${open ? '' : 'hidden'} card dark:card-black w-[80%] h-[80%] max-sm:w-screen max-sm:h-screen overflow-hidden fixed z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}>
-      <div className={`${open == 1 ? 'translate-x-0' : '-translate-x-full'} transition-all duration-500 absolute top-0 left-0 w-full h-full text-white`}>
-        <video className="object-cover h-full m-auto" ref={currentOtherRef} autoPlay={true} />
-        <video className={`object-cover object-center absolute duration-500 transition-all  ${currentOther ? 'right-0 top-0 border-4 border-teal h-[150px] w-[150px]' : 'top-0 left-1/2 -translate-x-1/2 h-full'} `} ref={myVideoRef} autoPlay={true} />
-        <FaChevronCircleRight onClick={() => setOpen(2)} className="w-10 h-10 btn-teal dark:btn-grey absolute top-1/2 -translate-y-1/2 right-5" />
-        {currentOther && <div className=" text-white absolute bottom-20 left-1/2 -translate-x-1/2">{others[currentOther]?.user?.firstName + ' ' + others[currentOther]?.user?.lastName}</div>}
-        <div className="flex gap-5 absolute bottom-5 left-1/2 -translate-x-1/2">
-          <SlCallEnd onClick={handleClose} className="w-10 h-10 btn-teal-n" />
-          <PiVideoCameraFill onClick={handleWithVideo} className={`w-10 h-10 ${withVideo ? 'btn-teal-n' : 'btn-black-n'}`} />
-          <PiScreencastBold onClick={handleShareScreen} className={`w-10 h-10 ${isSharing ? 'btn-teal-n' : 'btn-black-n'}`} />
-          <FaMicrophone onClick={handleWithAudio} className={`w-10 h-10 ${withAudio ? 'btn-teal-n' : 'btn-black-n'}`} />
-        </div>
-      </div>
-      <div className={`${open == 2 ? 'translate-x-0' : 'translate-x-full'} transition-all duration-500 absolute top-0 left-0 w-full h-full text-white`}>
-        <FaChevronCircleLeft onClick={() => setOpen(1)} className="w-10 h-10 btn-teal dark:btn-grey absolute top-1/2 -translate-y-1/2 left-5" />
-        <div className=" grid gap-5 overflow-y-auto max-h-full p-2" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }} ref={ref}>
-          {Object.keys(others).map(e => <div onClick={() => { setCurrentOther(e); setOpen(1) }} className="flex flex-col gap-2 overflow-hidden items-center m-auto w-max bg-grey rounded-lg cursor-pointer" key={e}>
-            <video autoPlay={true} className="w-[200px] h-[200px] object-cover" />
-            <div className="">{others[e].user.firstName + ' ' + others[e].user.lastName}</div>
-          </div>)}
-        </div>
-      </div>
+  return <div className={`bg-background text-onBackground rounded-lg w-full h-full fixed top-0 left-0 flex flex-col`}>
+    <div className="p-5 flex gap-5 items-center">
+      <div className="font-semibold">Backlog Lorem ipsum dolor sit amet consectetur</div>
+      <div className="p-1 rounded-3xl bg-surface text-onSurface shadow px-3">10:13:23</div>
     </div>
 
-    <MdVideoCall color={!query.data.length || query.data[query.data.length - 1].status == "ended" ? 'white' : '#222831'} onClick={handleCall} className="w-8 h-8" />
+    <Divider />
+
+    <div className="p-5 flex gap-10 grow overflow-y-hidden">
+
+      <div className="flex flex-col gap-5 basis-3/4 ">
+        
+        <div className="overflow-x-auto flex gap-5 shrink-0" ref={ref}>
+          <div className="overflow-hidden rounded-lg relative">
+            <video muted autoPlay={true} ref={myVideoRef} className="h-32 object-cover" />
+            <div className="absolute bottom-2 right-5 bg-black bg-opacity-30 px-5 rounded-3xl text-white">You</div>
+          </div>
+          {
+            Object.keys(others).map(e => <div onClick={() => { setCurrentOther(e); mainVideoRef.current.srcObject = others[e].stream }} className="overflow-hidden rounded-md relative" key={e}>
+              <video autoPlay={true} className="h-32 object-cover" />
+              <div className="absolute bottom-2 right-5 bg-black bg-opacity-30 px-5 rounded-3xl text-white" >{others[e].user}</div>
+            </div>)
+          }
+        </div>
+
+        <div className="bg-surface text-onSurface shadow rounded-lg grow overflow-y-hidden relative">
+          <video muted ref={mainVideoRef} className={`object-cover h-full mx-auto`} autoPlay={true} />
+          <div className="absolute bottom-2 right-5 bg-black bg-opacity-30 px-5 rounded-3xl text-white" >{others[currentOther]?.user}</div>
+        </div>
+
+        <div className="flex gap-5 shrink-0">
+          <div className="px-5 py-1 bg-surface text-onSurface shadow rounded-md flex gap-2 items-center">
+            <div>sfa-ate-ajh</div>
+            <Divider orientation="vertical" flexItem />
+            <IconButton>
+              <BsCopy className="w-4 h-4" />
+            </IconButton>
+          </div>
+          <div className="grow"></div>
+          <Button variant="outlined" onClick={handleWithVideo} color={withVideo ? 'primary' : 'inherit'}>
+            <PiVideoCameraFill className="w-4 h-4" />
+          </Button>
+          <Button variant="outlined" onClick={handleShareScreen} color={isSharing ? 'primary' : 'inherit'}>
+            <PiScreencastBold className="w-4 h-4" />
+          </Button>
+          <Button variant="outlined" onClick={handleWithAudio} color={withAudio ? 'primary' : 'inherit'}>
+            <FaMicrophone className="w-4 h-4" />
+          </Button>
+          <Button variant="outlined" color="primary">
+            <BsThreeDots className="w-4 h-4" />
+          </Button>
+          <div className="grow"></div>
+          <Button variant="outlined" onClick={handleClose} color="error">Leave call</Button>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-5 basis-1/4 p-5 bg-surface text-onSurface rounded-lg shadow">
+        <div className="flex items-center p-2 bg-background rounded-lg">
+          <div className="grow text-center font-semibold py-2 rounded-md bg-primary text-onPrimary">Group</div>
+          <div className="grow text-center font-semibold py-2 rounded-md">Personal</div>
+        </div>
+        <div className="overflow-y-auto grow pr-2">
+          <Messages id={id} />
+        </div>
+        <CreateMessage id={id} />
+      </div>
+
+    </div>
+  </div>
+}
+
+export default function ({ id }) {
+  const [open, setOpen] = useState(false)
+
+  const query = useQuery({
+    queryKey: ['call_status'],
+    queryFn: () => api.get({ q: { groupChat: id, type: 'call' }, limit: 1, page: 0 }).then(res => res.messages)
+  }, [id])
+
+  if (query.isError || query.isLoading) return <></>
+
+  const handleCall = () => {
+    if (!query.data.length || query.data[query.data.length - 1].status == "ended") {
+      const data = new FormData()
+      data.append('type', 'call')
+      data.append('groupChat', id)
+      data.append('status', "started")
+      api.create(data)
+        .then(() => setOpen(true))
+        .catch(err => toast(err.message, { type: 'error' }))
+    } else {
+      setOpen(true)
+    }
+  }
+
+  return <div>
+    <Dialog open={open}>
+      <Call id={id} setOpen={setOpen} />
+    </Dialog>
+
+    <Tooltip title={!query.data.length || query.data[query.data.length - 1].status == "ended" ? 'Bắt đầu cuộc gọi' : 'Tham gia cuộc gọi'}>
+      <IconButton onClick={handleCall} color={!query.data.length || query.data[query.data.length - 1].status == "ended" ? 'primary' : 'warning'}>
+        <MdVideoCall className="w-6 h-6" />
+      </IconButton>
+    </Tooltip>
   </div>
 }

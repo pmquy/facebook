@@ -1,6 +1,39 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* @config "../tailwind.config.js" */
+
+:root {
+  --primary: 15, 111, 236;
+  --background: 239, 242, 246;
+  --surface: 255, 255, 255;
+  --on-primary: 255, 255, 255;
+  --on-background: 103, 106, 121;
+  --on-surface: 103, 106, 121;
+}
+
+.dark {
+  --primary: 15, 111, 236;
+  --background: 18, 18, 18;
+  --surface: 33, 33, 33;
+  --on-primary: 217, 217, 217;
+  --on-background: 217, 217, 217;
+  --on-surface: 217, 217, 217;
+}
+
+@theme inline {
+  --color-primary: rgb(var(--primary));
+  --color-background: rgb(var(--background));
+  --color-surface: rgb(var(--surface));
+  --color-onPrimary: rgb(var(--on-primary));
+  --color-onBackground: rgb(var(--on-background));
+  --color-onSurface: rgb(var(--on-surface));
+}
+
+@layer components {
+  .card {
+    @apply bg-surface text-onSurface shadow rounded-md p-5;
+  }
+}
 
 html {
   scroll-behavior: smooth;
@@ -8,86 +41,17 @@ html {
 
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 /* Change the scrollbar track */
 ::-webkit-scrollbar-track {
-  background: #f2f2f2;
   border-top-right-radius: 6px;
   border-bottom-right-radius: 6px;
 }
 
 /* Change the scrollbar thumb */
 ::-webkit-scrollbar-thumb {
-  background: rgb(0 173 181);
+  background: rgb(var(--primary));
   border-radius: 8px;
 }
-
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px rgb(0 173 181) inset !important;
-}
-
-
-@layer utilities {
-  .box-shadow {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  }
-
-  .text-1 {
-    @apply uppercase font-semibold
-  }
-
-  .btn {
-    @apply select-none cursor-pointer
-  }
-
-  .btn-teal {
-    @apply bg-teal text-white rounded-lg p-2 w-max btn hover:bg-black transition-colors duration-100
-  }
-
-  .btn-grey {
-    @apply bg-grey text-white rounded-lg p-2 w-max btn hover:bg-teal transition-colors duration-100
-  }
-
-  .btn-black {
-    @apply bg-black text-white rounded-lg p-2 w-max btn hover:bg-teal transition-colors duration-100
-  }
-  
-  .btn-white {
-    @apply bg-white text-black rounded-lg p-2 w-max btn hover:bg-teal hover:text-white transition-colors duration-100
-  }
-
-  
-  .btn-black-n {
-    @apply bg-black text-white rounded-lg p-2 w-max
-  }
-  
-  .btn-teal-n {
-    @apply bg-teal text-white rounded-lg p-2 w-max
-  }
-
-  .btn-grey-n {
-    @apply bg-grey text-white rounded-lg p-2 w-max
-  }
-  
-
-  .card {
-    @apply rounded-lg bg-white box-shadow text-black
-  }
-  
-  .card-teal {
-    @apply rounded-lg bg-teal box-shadow text-white
-  }
-  
-  .card-grey {
-    @apply rounded-lg bg-grey box-shadow text-white
-  }
-  
-  .card-black {
-    @apply rounded-lg bg-black box-shadow text-white
-  }
-}
-

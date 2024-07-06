@@ -11,7 +11,12 @@ class Service {
   }
 
   getById = async id => {
-    const val = await User.findById(id).select('-password -phoneNumber -email')
+    const cache = await redisClient.get('user:' + id)
+    if (cache) return JSON.parse(cache) 
+    const val = (await User.findById(id).select('-password --email')).toObject()
+    val.avatar = await File.getById(val.avatar)
+    val.cover = await File.getById(val.cover)
+    redisClient.set('user:' + id, JSON.stringify(val))
     return val
   }
 
@@ -32,8 +37,10 @@ class Service {
   }
 
   update = async (user, data) => {
-    if (user.avatar) await File.deleteById(user.avatar)
-    return User.findByIdAndUpdate(user._id, data, { new: true })
+    if (data.avatar) File.deleteById(user.avatar).catch(() => { })
+    const val = await User.findByIdAndUpdate(user._id, data, { new: true })
+    redisClient.del('user:' + user._id)
+    return val
   }
 
   changePassword = async (user, val) => {

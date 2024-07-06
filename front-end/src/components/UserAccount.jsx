@@ -1,17 +1,20 @@
-import { useContext } from "react"
-import CommonContext from "../store/CommonContext"
-import { Link } from "react-router-dom"
 import { MdAccountCircle } from "react-icons/md"
-import File from './File'
+import { useQuery } from "react-query"
+import { Link } from "react-router-dom"
+import { UserApi } from '../features/account'
 
-export default function ({ id }) {
-  const { users } = useContext(CommonContext)
-  const user = users.filter(e => e._id == id)[0]
-  return <div className="w-max">
+export default function UserAccount({ id, displayName = true, size = '32px' }) {
+  const query = useQuery({
+    queryKey: ['user', id],
+    queryFn: () => UserApi.getById(id)
+  })
+
+  const user = query.data
+
+  return <div className="w-max font-semibold">
     <Link to={'/users/' + id} className="flex gap-2 items-center">
-      {user.avatar ? <File id={user.avatar} className={'w-8 h-8 min-w-8 min-h-8 rounded-full object-cover'} /> :
-        <MdAccountCircle className="w-8 h-8" />}
-      <div className="text-1">{user.firstName + " " + user.lastName}</div>
+      <img src={user?.avatar.url} className="rounded-full object-cover" style={{ width: size, height: size }} />
+      {displayName && <div>{user?.firstName + " " + user?.lastName}</div>}
     </Link>
   </div>
 }

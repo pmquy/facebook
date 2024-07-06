@@ -1,6 +1,6 @@
 import { useContext, useRef, useState } from "react"
 import CommonContext from "../../../store/CommonContext"
-import { Button, Input } from '../../../components/ui'
+import { Button, Input, Textarea } from '../../../components/ui'
 import CommentApi from "../services/CommentApi"
 import { toast } from 'react-toastify'
 import UserAccount from '../../../components/UserAccount'
@@ -11,6 +11,7 @@ import Upload from "../../../components/Upload"
 import { IoMdSend } from "react-icons/io";
 import { MdCancel } from "react-icons/md"
 import { useUser } from "../../../hooks/user"
+import { IconButton, TextField } from "@mui/material"
 
 export default function () {
   const { user } = useUser()
@@ -37,18 +38,19 @@ export default function () {
       .catch(err => toast(err.message, { type: 'error' }))
   }
 
-  return <div className={`flex relative flex-col gap-2 ${commentContext ? 'pl-8' : ''}`}>
-    {commentContext && <div className=" absolute left-0 top-4 border-teal w-8 border-t-2"></div>}
-    <UserAccount id={user._id} />
-    <div className="flex flex-col gap-3 p-2 rounded-lg border-teal border-2">
-      <Input autoFocus={true} placeholder={'Viết bình luận'} className={'bg-white dark:bg-black flex-grow'} ref={contentRef} />
-      <div className="flex gap-5 justify-between">
+  return <div className={`flex relative gap-2`}>
+    <UserAccount displayName={false} id={user._id} />
+    <div className="flex flex-col gap-2 rounded-lg bg-background text-onBackground grow py-2 px-3">
+      <TextField placeholder="Viết bình luận" variant="standard" multiline={true} inputRef={contentRef} />
+      <div className="flex gap-5 justify-between items-center">
         <div className="max-w-96">
-          <Upload files={files} setFiles={setFiles}/>
+          <Upload files={files} setFiles={setFiles} />
         </div>
         <div className="flex gap-5">
-          <IoMdSend onClick={handleComment} className=" w-6 h-6 bg-teal text-white hover:bg-black dark:bg-grey dark:hover:bg-teal rounded-lg p-1"/>
-          <MdCancel onClick={() => {if (commentContext) commentContext.setCreate(false); else postContext.setCreate(false)}} className=" w-6 h-6 bg-teal text-white hover:bg-black dark:bg-grey dark:hover:bg-teal rounded-lg p-1"/>
+          <IconButton color="primary" onClick={handleComment} >
+            <IoMdSend/>
+          </IconButton>
+          {(commentContext?.create || postContext?.create) && <MdCancel onClick={() => { if (commentContext) commentContext.setCreate(false); else postContext.setCreate(false) }} className=" w-6 h-6 bg-primary text-onPrimary hover:bg-secondary btn rounded-lg p-1" />}
         </div>
       </div>
     </div>

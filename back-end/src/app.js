@@ -15,16 +15,16 @@ import connect_redis from './v1/configs/init.redis.js'
 const redisClient = connect_redis()
 export {io, redisClient}
 
-// log request
-import morgan from 'morgan' 
-if(process.env.ENV == 'DEV') {
-    app.use(morgan('tiny'))
-}
+import init_cloudinary from './v1/configs/init.cloudinary.js'
+init_cloudinary()
+
+import morgan from 'morgan'
+app.use(morgan('tiny'))
 
 // handle cors
 import cors from 'cors'
 app.use(cors({
-    origin : process.env.CLIENT,
+    origin : process.env.CLIENT.split(','),
     credentials : true
 }))
 

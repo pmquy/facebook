@@ -1,9 +1,10 @@
 import mongoose from 'mongoose'
 
 const File = new mongoose.Schema({
-  data: Buffer,
+  url: String,
   type: String,
-  name: String
-})
+  name: String,
+  _system: String,
+}, { timestamps: true })
 
 export default mongoose.model('Files', File)

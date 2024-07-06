@@ -1,11 +1,12 @@
-import { Input, Button, FileInput } from '../../../components/ui'
-import { useContext, useRef, useState } from 'react'
-import api from '../services/api'
-import { toast } from 'react-toastify'
+import { Button, TextField } from '@mui/material'
+import { useRef, useState } from 'react'
+import { IoIosLock } from 'react-icons/io'
+import { MdEmail, MdPerson, MdPhoneIphone } from 'react-icons/md'
 import { useQueryClient } from 'react-query'
 import { Link, useNavigate } from 'react-router-dom'
-import { MdEmail, MdPerson, MdPhoneIphone } from 'react-icons/md'
-import { IoIosLock } from 'react-icons/io'
+import { toast } from 'react-toastify'
+import { FileInput } from '../../../components/ui'
+import api from '../services/api'
 
 export default function () {
   const navigate = useNavigate()
@@ -33,35 +34,51 @@ export default function () {
   }
 
   return <div className="flex flex-col gap-5">
-    <div className="flex gap-5 items-center justify-between">
-      <MdPhoneIphone className='w-6 h-6' />
-      <Input className="bg-white dark:bg-black text-black dark:text-white" name="phonenumber" placeholder={'Your phonenumber'} ref={phoneNumberRef} />
-    </div>
-    <div className="flex gap-5 items-center justify-between">
-      <MdEmail className='w-6 h-6' />
-      <Input className="bg-white dark:bg-black text-black dark:text-white" name="email" placeholder={'Your email'} ref={emailRef} />
-    </div>
-    <div className="flex gap-5 items-center justify-between">
-      <IoIosLock className='w-6 h-6' />
-      <Input className="bg-white dark:bg-black text-black dark:text-white" name="password" placeholder={'Your password'} type={'password'} ref={passwordRef} />
-    </div>
-    <div className="flex gap-5 items-center justify-between">
-      <IoIosLock className='w-6 h-6' />
-      <Input className="bg-white dark:bg-black text-black dark:text-white" name="repeatpassword" placeholder={'Repeat password'} type={'password'} ref={repeatPasswordRef} />
-    </div>
-    <div className="flex gap-5 items-center justify-between">
-      <MdPerson className='w-6 h-6' />
-      <Input className="bg-white dark:bg-black text-black dark:text-white" name="firstname" placeholder={'Your first name'} ref={firstNameRef} />
-    </div>
-    <div className="flex gap-5 items-center justify-between">
-      <MdPerson className='w-6 h-6' />
-      <Input className="bg-white dark:bg-black text-black dark:text-white" name="lastname" placeholder={'Your last name'} ref={lastNameRef} />
-    </div>
+
+    <div className="text-4xl font-bold text-center">Sign In</div>
+    <div>Already have an account? <Link to={'/login'} className="text-primary text-center">Sign in here</Link></div>
+
+    <TextField slotProps={{
+      input: {
+        startAdornment: <MdPhoneIphone className=' w-6 h-6 mr-5' />
+      }
+    }} className="grow" name="phonenumber" placeholder={'Your phone number'} inputRef={phoneNumberRef} />
+
+    <TextField slotProps={{
+      input: {
+        startAdornment: <MdEmail className=' w-6 h-6 mr-5' />
+      }
+    }} className="grow" name="email" type='email' placeholder={'Your email'} inputRef={emailRef} />
+
+    <TextField slotProps={{
+      input: {
+        startAdornment: <IoIosLock className=' w-6 h-6 mr-5' />
+      }
+    }} className="grow" name="password" placeholder={'Your password'} type={'password'} inputRef={passwordRef} />
+
+    <TextField slotProps={{
+      input: {
+        startAdornment: <IoIosLock className=' w-6 h-6 mr-5' />
+      }
+    }} className="grow" name="repeatpassword" placeholder={'Repeat password'} type={'password'} inputRef={repeatPasswordRef} />
+
+    <TextField slotProps={{
+      input: {
+        startAdornment: <MdPerson className=' w-6 h-6 mr-5' />
+      }
+    }} className="grow" name="firstname" placeholder={'Your first name'} inputRef={firstNameRef} />
+
+
+    <TextField slotProps={{
+      input: {
+        startAdornment: <MdPerson className=' w-6 h-6 mr-5' />
+      }
+    }} className="grow" name="lastname" placeholder={'Your last name'} inputRef={lastNameRef} />
+
     {image && <img src={URL.createObjectURL(image)} className='w-72 rounded-full h-72 object-cover m-auto'></img>}
     <div className="m-auto w-max">
       <FileInput className={'btn-teal dark:btn-grey'} onChange={e => setImage(e.target.files[0])} accept={'image/*'} />
     </div>
-    <Button onClick={handleRegister} className={'m-auto btn-teal dark:btn-grey'}>Tạo mới</Button>
-    <Link to={'/login'} className='text-1 hover:text-red_0 underline text-center'>Quay lại trang đăng nhập</Link>
+    <Button variant="contained" onClick={handleRegister}>Tạo mới</Button>
   </div>
 }

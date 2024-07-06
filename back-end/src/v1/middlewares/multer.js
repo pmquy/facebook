@@ -4,7 +4,7 @@ const storage = multer.diskStorage({
     cb(null, 'uploads')
   },
   filename: (req, file, cb) => {    
-    cb(null, Date.now().toString())
+    cb(null, file.originalname)
   }
 })
 const upload = multer({ storage: storage, limits : 10 * 1024})

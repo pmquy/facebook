@@ -2,6 +2,7 @@ import Joi from 'joi'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import UserService from '../services/user.js'
+import { stat } from 'fs'
 
 const creatingPattern = Joi.object({
   phoneNumber: Joi.string().trim().required().pattern(/^\d*$/),
@@ -16,10 +17,14 @@ const creatingPattern = Joi.object({
 
 const updatingPattern = Joi.object({
   phoneNumber: Joi.string().trim().pattern(/^\d*$/),
-  email: Joi.string().email().trim(),
   firstName: Joi.string().trim(),
   lastName: Joi.string().trim(),
   avatar: Joi.string(),
+  birthday: Joi.string().allow(''),
+  overview: Joi.string().allow(''),
+  occupation: Joi.string().allow(''),
+  address: Joi.string().allow(''),
+  status: Joi.string().allow(''),
 }).unknown(false).required()
 
 const loginPattern = Joi.object({
@@ -34,12 +39,7 @@ const changePasswordPattern = Joi.object({
   }).custom((value, helpers) => bcrypt.hashSync(value, Number.parseInt(process.env.SALT_ROUNDS))),
 }).unknown(false).required()
 
-const opt1 = {
-  maxAge: 1000 * 60 * 60 * 24 * 10,
-  httpOnly: false
-}
-
-const opt2 = {
+const option = {
   maxAge: 1000 * 60 * 60 * 24 * 10,
   httpOnly: true,
   sameSite: 'None',
@@ -49,7 +49,7 @@ const opt2 = {
 class Controller {
 
   get = async (req, res, next) => {
-    UserService.get(req.query)
+    UserService.get(JSON.parse(req.query.q))
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
@@ -59,7 +59,7 @@ class Controller {
     else next(new Error())
   }
 
-  getToken = _id => jwt.sign({ _id: _id }, process.env.TOKEN_SECRET, {expiresIn: process.env.TOKEN_EXPIRE_IN,})
+  #getToken = _id => jwt.sign({ _id: _id }, process.env.TOKEN_SECRET, { expiresIn: process.env.TOKEN_EXPIRE_IN, })
 
   getById = async (req, res, next) => {
     UserService.getById(req.params.id)
@@ -91,9 +91,10 @@ class Controller {
   login = async (req, res, next) => {
     loginPattern.validateAsync(req.body)
       .then(val => UserService.login(val.email, val.password))
-      .then(val => {
-        res.cookie('access_token', this.getToken(val.toObject()), process.env.ENV == "PRODUCTION" ? opt2 : opt1)
-        res.status(200).send(val)
+      .then(async val => {
+        const user = await UserService.getById(val._id)
+        res.cookie('access_token', this.#getToken(user._id), option)
+        res.status(200).send(user)
       })
       .catch(err => next(err))
   }

@@ -5,7 +5,7 @@ import { useQueryClient } from "react-query";
 import {toast} from 'react-toastify'
 import { MdDelete } from "react-icons/md";
 
-export default function () {
+export default function ({className}) {
   const {comment} = useContext(CommentContext)
   const queryClient = useQueryClient()
   const handleDelete = () => {
@@ -13,5 +13,5 @@ export default function () {
       .then(() => queryClient.invalidateQueries(['comments', { post: comment.post, comment: comment.comment }]))
       .catch(err => toast(err.message, { type: 'error' }))
   }
-  return <MdDelete onClick={handleDelete} className=" w-6 h-6 bg-teal text-white hover:bg-black rounded-lg p-1" color="#EEEEEE"/>
+  return <MdDelete onClick={handleDelete} className={`${className} w-6 h-6 rounded-lg p-1`} color="#EEEEEE"/>
 }

@@ -1,17 +1,15 @@
 import {useQueries} from 'react-query'
 import GroupChatApi from '../services/groupChat'
-import { useUser } from '../../../hooks/user'
 
-export default function ({cb}) {  
-  const {user} = useUser()
+export default function GroupChats ({cb}) {  
   const query = useQueries([
     {
-      queryKey : ['groupchats', user._id],
-      queryFn : () => GroupChatApi.get(),
+      queryKey : ['groupchats'],
+      queryFn : () => GroupChatApi.get({q : {}}),
     }
   ])
   if(query.some(e => e.isError || e.isLoading)) return <></>
-  return <div className='flex flex-col'>
+  return <div className='flex flex-col gap-2'>
     {query[0].data.map(cb)}
   </div>
 }

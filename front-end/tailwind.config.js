@@ -8,11 +8,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        'black': '#222831',
-        'grey': '#393E46',
-        'teal': '#00ADB5',
-        'white': '#EEEEEE',
-        'black_trans' : 'rgb(0,0,0,0.4)'
+        primary: withOpacity('--primary'),
+        background: withOpacity('--background'),
+        surface: withOpacity('--surface'),
+        onPrimary: withOpacity('--on-primary'),
+        onBackground: withOpacity('--on-background'),
+        onSurface: withOpacity('--on-surface'),
       },
       animation: {
         'like': 'like 1 0.5s linear'
@@ -23,7 +24,7 @@ export default {
 
           },
           '50%': {
-            'transform' : 'scaleX(1.2) rotate(-35deg) translateY(-2px)',            
+            'transform': 'scaleX(1.2) rotate(-35deg) translateY(-2px)',
           },
           '100%': {
 
@@ -35,3 +36,11 @@ export default {
   plugins: [],
 }
 
+function withOpacity(variableName) {
+  return ({ opacityValue }) => {
+    if (opacityValue !== undefined) {
+      return `rgba(var(${variableName}), ${opacityValue})`
+    }
+    return `rgb(var(${variableName}))`
+  }
+}

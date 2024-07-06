@@ -20,7 +20,7 @@ class Controller {
 
   getById = async (req, res, next) => {
     GroupService.getRole(req.user._id, req.params.id)
-      .then(role => GroupService.getById(req.params.id).then(val => res.status(200).json({ ...val.toObject(), role: role })))
+      .then(role => GroupService.getById(req.params.id).then(val => res.status(200).json({ ...val, role: role })))
       .catch(err => {
         console.log(err)
         next(err)
@@ -28,7 +28,7 @@ class Controller {
   }
 
   get = (req, res, next) => {
-    GroupService.get(req.query)
+    GroupService.get(JSON.parse(req.query.q))
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
@@ -85,7 +85,8 @@ class Controller {
   getPosts = async (req, res, next) => {
     try {
       const groups = await UserService.getGroups(req.user._id)
-      const val = await PostService.get({ group: { $in: groups} })
+      const query = JSON.parse(req.query.q); query.group = { $in: groups }
+      const val = await PostService.get(query, Number.parseInt(req.query.page), Number.parseInt(req.query.limit))
       res.status(200).send(val)
     } catch (error) {
       next(error)

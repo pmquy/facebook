@@ -16,6 +16,8 @@ import notification from './notification.js'
 import caroGame from './caroGame.js'
 import group from './group.js'
 
+
+router.get('/', (req, res) => res.send('Ping'))
 router.use('/users', user)
 router.use('/friends', auth, friend)
 router.use('/posts', auth, post)

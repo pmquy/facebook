@@ -74,7 +74,7 @@ const check = (arr) => {
 class Controller {
 
   get = (req, res, next) => {
-    CaroGame.find({ ...req.query, $or: [{ from: req.user._id }, { to: req.user._id }] })
+    CaroGame.find({ ...JSON.parse(req.query.q), $or: [{ from: req.user._id }, { to: req.user._id }] })
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }

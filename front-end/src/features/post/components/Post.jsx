@@ -1,110 +1,95 @@
-import { useQueries } from "react-query";
-import PostApi from "../services/PostApi";
-import { File } from "../../../components";
+import { memo, useContext, useEffect, useRef, useState } from "react";
+import { IoMdArrowDropright } from "react-icons/io";
+import { IoClose, IoCloseCircle } from "react-icons/io5";
+import { Link } from "react-router-dom";
+import { FilePreview } from "../../../components";
+import UserAccount from "../../../components/UserAccount";
+import CommonContext from "../../../store/CommonContext";
+import { getDiff, parseDate } from '../../../utils/parseDate';
+import { GroupAccount } from '../../group';
+import PostContext from '../store/PostContext';
+import { CommentPost, CommentPostDetail } from "./CommentPost";
 import Comments from "./Comments";
 import CreateComment from "./CreateComment";
-import UserAccount from "../../../components/UserAccount";
-import { useContext, useEffect, useRef, useState } from "react";
-import { parseDate } from '../../../utils/parseDate'
-import { IoCloseCircle } from "react-icons/io5";
-import LikePost from "./LikePost";
-import CommentPost from "./CommentPost";
+import { LikePost, LikePostDetail } from "./LikePost";
+import Live from "./Live";
+import SettingPost from "./SettingPost";
 import SharePost from "./SharePost";
-import PostContext from '../store/PostContext'
-import { GroupAccount } from '../../group'
-import DeletePost from "./DeletePost";
-import UpdatePost from "./UpdatePost";
-import { BsThreeDots } from "react-icons/bs";
-import { IoMdArrowDropright } from "react-icons/io";
-import { useUser } from "../../../hooks/user";
-import CommonContext from "../../../store/CommonContext";
-import { useNavigate } from "react-router-dom";
+import Vote from "./Vote";
+import { useQuery } from "react-query";
+import PostApi from "../services/PostApi";
+import { Dialog, IconButton } from '@mui/material'
 
-export default function ({ id }) {
+export default memo(function Post({ id, detail = false, onClose }) {
   const [open, setOpen] = useState(false)
-  const {headerRef} = useContext(CommonContext)
-  const navigate = useNavigate()
-  const ref = useRef()
-  const { user } = useUser()
-  const query = useQueries([
-    {
-      queryKey: ['post', id],
-      queryFn: () => PostApi.getById(id)
-    }
-  ])
+  const query = useQuery({
+    queryKey: ['post', id],
+    queryFn: () => PostApi.getById(id)
+  })
 
-  useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : 'auto'
-    headerRef.current.style['z-index'] = open ? 5 : 10
-  }, [open])
+  if (query.isLoading || query.isError) return <></>
 
-  if (query.some(e => e.isError || e.isLoading)) return <></>
-
-  const post = query[0].data
+  const post = query.data
 
   return <PostContext.Provider value={{ setCreate: setOpen, post: post, }}>
-    <div onClick={e => { if (!ref.current.contains(e.target)) setOpen(false) }} className={`fixed left-0 top-0 bg-black_trans z-10 w-screen h-screen ${open ? 'block' : 'hidden'}`} />
 
-    <div ref={ref} className={` card dark:card-black w-[90%] max-h-[80%] sm:max-w-[900px] max-sm:w-screen max-sm:max-h-screen fixed left-1/2 -translate-x-1/2 top-1/2 ${open ? ' -translate-y-1/2' : 'translate-y-[1000px]'} transition-transform duration-500 z-10  overflow-x-auto`}>
-      <div className="flex flex-col gap-5 relative">
-        <div className="p-5 flex flex-col gap-2  sticky z-10 border-b-2 border-white top-0 bg-teal text-white">
-          <div className="flex gap-5 justify-between">
-            <div className="flex gap-2">
-              <UserAccount id={post.user} />
-              {post.group && <IoMdArrowDropright className=" w-8 h-8" />}
-              {post.group && <GroupAccount id={post.group} />}
+    {!detail && <Dialog open={open} onClose={() => setOpen(false)}>
+      <div className={` bg-surface text-onSurface rounded-md w-[90%] max-h-[80%] sm:max-w-[900px] max-sm:w-screen max-sm:max-h-screen fixed left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2  overflow-y-auto`}>
+        <Post id={id} detail={true} onClose={() => setOpen(false)} />
+      </div>
+    </Dialog>}
+
+    <div className="flex flex-col bg-surface text-onSurface shadow rounded-md">
+
+      <div className={`flex flex-col gap-2  ${detail ? 'sticky z-10 top-0 bg-primary text-onPrimary p-3' : 'px-5 pt-5'} `}>
+        <div className="flex justify-between items-center">
+          <div className="flex gap-2 items-center flex-wrap">
+            <img src={post.user.avatar.url} alt="avatar" className="w-10 h-10 rounded-full object-cover" />
+            <div>
+              <div className="flex gap-2 font-semibold items-center">
+                <Link to={`/users/${post.user._id}`}>{post.user.firstName + ' ' + post.user.lastName}</Link>
+                <div>&#x2022;</div>
+                <div className="text-sm">{getDiff(post.createdAt)}</div>
+              </div>
+              <div className="text-sm">Web Developer at Webestica</div>
             </div>
-            <IoCloseCircle onClick={() => setOpen(false)} className="w-8 h-8" />
+            {post.group && <IoMdArrowDropright className=" w-6 h-6" />}
+            {post.group && <GroupAccount group={post.group} />}
           </div>
-          <div>Vào {parseDate(post.createdAt)}</div>
+          {detail ? <IconButton onClick={() => onClose(false)}><IoClose className="text-onPrimary" /></IconButton> : <SettingPost post={post} />}
         </div>
-        <div className="p-5 flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <div className=" whitespace-pre-line">{post.content}</div>
-            <div className="flex flex-wrap gap-2">
-              {post.files.map(e => <div onClick={() => navigate('/posts/' + id)} key={e}><File id={e} /></div>)}
-            </div>
-          </div>
-          <div className="border-t-2 border-teal"></div>
+      </div>
+
+      <div className="flex flex-col gap-5 p-5">
+        <div className=" whitespace-pre-line text-justify">{post.content}</div>
+        {!!post.files.length && <Link to={`/posts/${post._id}`}>
+          <div style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }} className="grid gap-2">{post.files.map(e => <div className="w-full h-full rounded-md overflow-hidden" key={e}><FilePreview id={e} /></div>)}</div>
+        </Link>}
+        {post.type === 'Live' && <Link to={`/posts/${post._id}`}><Live post={post} detail={false} /></Link>}
+
+        {post.type === 'Vote' && <Vote post={post} />}
+
+        <div className="flex flex-col gap-2">
           <div className="flex justify-between">
-            <LikePost />
-            <CommentPost />
-            <SharePost />
+            <LikePostDetail id={post._id} />
+            <CommentPostDetail id={post._id} />
           </div>
-          <CreateComment />
-          <Comments />
+          <div className="flex gap-2">
+            <LikePost id={post._id} detail={false} />
+            <div onClick={() => setOpen(!detail)}><CommentPost id={post._id} /></div>
+            <div className="grow"></div>
+            <SharePost id={post._id} />
+          </div>
         </div>
-      </div>
-    </div>
 
-    <div className="card dark:card-black p-5 flex flex-col gap-5">
-      <div className="flex justify-between items-center">
-        <div className="flex gap-1">
-          <UserAccount id={post.user} />
-          {post.group && <IoMdArrowDropright className=" w-8 h-8" />}
-          {post.group && <GroupAccount id={post.group} />}
-        </div>
-        {
-          user._id == post.user &&
-          <div className="group/1 relative">
-            <BsThreeDots className="w-8 h-8" />
-            <div className=" absolute z-10 flex flex-col rounded-lg right-0 transition-all duration-500 w-max max-h-0 overflow-hidden bg-grey group-hover/1:max-h-screen text-white">
-              <div className="hover:bg-teal"><DeletePost /></div>
-              <div className="hover:bg-teal"><UpdatePost /></div>
-            </div>
-          </div>
-        }
+
+        {detail && <div className="flex flex-col gap-5">
+          <CreateComment />
+          <Comments q={{ post: post._id, comment: "" }} />
+        </div>}
       </div>
-      <div>Vào {parseDate(post.createdAt)}</div>
-      <div onClick={() => setOpen(true)} className="flex flex-col gap-2">
-        <div className=" whitespace-pre-line">{post.content}</div>
-        {post.files[0] && <File id={post.files[0]} />}
-      </div>
-      <div className="flex justify-between">
-        <LikePost />
-        <CommentPost />
-        <SharePost />
-      </div>
+
+
     </div>
   </PostContext.Provider>
-}  
+})
