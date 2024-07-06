@@ -7,6 +7,7 @@ import getFiles from '../middlewares/getMedia.js'
 router.post('/create', upload.array('files'), getFiles, controller.create)
 router.get('/:id', controller.getById)
 router.put('/:id', upload.array('files'), getFiles, controller.updateById)
+router.put('/:id/vote', controller.voteById)
 router.delete('/:id', controller.deleteById)
 router.get('/', controller.get)
 

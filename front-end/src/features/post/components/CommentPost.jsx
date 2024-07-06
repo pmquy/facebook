@@ -1,23 +1,22 @@
-import { FaComment } from "react-icons/fa"
-import CommentApi from '../services/CommentApi'
+import { FaComment, FaRegComment } from "react-icons/fa"
 import { useQuery } from "react-query"
-import { useContext } from "react"
-import PostContext from "../store/PostContext"
+import CommentApi from '../services/CommentApi'
+import { Button } from "@mui/material"
 
-export default function () {
-  const { setCreate, post } = useContext(PostContext)
+export function CommentPostDetail({ id }) {
   const query = useQuery({
-    queryKey: ['comments', { post: post._id }],
-    queryFn: () => CommentApi.get({ post: post._id })
+    queryKey: ['commentposts', id],
+    queryFn: () => CommentApi.get({ q: { post: id } }),
+    initialData: []
   })
-
-  if (query.isError || query.isLoading) return <div className="flex animate-pulse gap-2 btn items-center p-2 rounded-lg hover:bg-white_1">
-    <FaComment className="w-6 h-6" color="black" />
-    <div>Bình luận</div>
+  return <div className="flex font-semibold items-center gap-1">
+    <FaComment className="w-4 h-4" />
+    {query.data.length}
   </div>
+}
 
-  return <div onClick={() => setCreate(true)} className="flex gap-1 btn  items-center p-2 rounded-lg hover:bg-white_1">
-    <FaComment className="w-6 h-6" color="#00ADB5" />
-    <div>({query.data.length})</div>
-  </div>
+export function CommentPost({ id }) {
+  return <Button startIcon={<FaRegComment/>}>
+    <div className="text-sm font-semibold capitalize">Comment</div>
+  </Button>
 }

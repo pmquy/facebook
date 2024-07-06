@@ -1,9 +1,18 @@
 import Group from "../models/Group.js"
 import RoleInGroup from "../models/RoleInGroup.js"
+import FileService from "./file.js"
+import { redisClient } from "../../app.js"
+
 
 class Controller {
   getById = async id => {
-    return Group.findById(id)
+    const cache = await redisClient.get('group:' + id)
+    if (cache) return JSON.parse(cache)
+    const group = (await Group.findById(id)).toObject()
+    group.avatar = await FileService.getById(group.avatar)
+    group.cover = await FileService.getById(group.cover)
+    redisClient.set('group:' + id, JSON.stringify(group))
+    return group
   }
 
   get = async query => {

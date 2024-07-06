@@ -1,8 +1,10 @@
 import {connect} from 'mongoose'
-const t = () => {
-    connect(process.env.MONGO_URI)
+
+
+export default function () {
+    connect(process.env.MONGO_URI, {
+        dbName: 'facebook'
+    })
         .then(() => console.log('Connect mongo successfully'))
         .catch(err => console.log(err.message))
 }
-
-export default t

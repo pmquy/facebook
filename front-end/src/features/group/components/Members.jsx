@@ -9,7 +9,7 @@ import GroupContext from "../store/GroupContext"
 export default function ({ id }) {
   const { group } = useContext(GroupContext)
   const query = useQuery({
-    queryKey: ['members', { group: id }],
+    queryKey: ['members', id],
     queryFn: () => GroupApi.getMembersById(id)
   })
   const queryClient = useQueryClient()
@@ -28,7 +28,7 @@ export default function ({ id }) {
       .catch(err => toast(err.message, { type: 'error' }))
   }
 
-  return <div className="card dark:card-black p-5 flex flex-col gap-5">
+  return <div className="bg-surface text-onSurface rounded-lg p-2 flex flex-col gap-5">
     {query.data.map(e => <div className=" flex gap-5 items-center" key={e._id}>
       <UserAccount id={e.user} />
       {<div>{e.role}</div>}

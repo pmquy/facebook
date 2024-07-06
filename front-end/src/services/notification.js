@@ -1,6 +1,8 @@
+import {parseQuery} from '../utils/parseQuery'
+
 class Api {
-  get = () =>
-    fetch(`${import.meta.env.VITE_SERVER_URL}notifications`, {
+  get = (query) =>
+    fetch(`${import.meta.env.VITE_SERVER_URL}notifications${parseQuery(query)}`, {
       credentials: 'include'
     })
       .then(async res => {

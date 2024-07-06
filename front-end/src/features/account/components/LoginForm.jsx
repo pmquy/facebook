@@ -1,18 +1,19 @@
-import { Input, Button } from '../../../components/ui'
-import { useContext, useRef } from 'react'
-import api from '../services/api'
-import {toast} from 'react-toastify'
+import { useRef } from 'react'
+import { IoIosLock } from "react-icons/io"
+import { MdEmail } from "react-icons/md"
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { MdEmail } from "react-icons/md";
-import { IoIosLock } from "react-icons/io";
+import { toast } from 'react-toastify'
 import { useUser } from '../../../hooks/user'
+import api from '../services/api'
+import { Checkbox, Button, TextField } from '@mui/material'
+
 
 export default function () {
-  const {setUser} = useUser()
+  const { setUser } = useUser()
   const navigate = useNavigate()
   const location = useLocation()
-  const emailRef = useRef(),
-    passwordRef = useRef()
+  const emailRef = useRef()
+  const passwordRef = useRef()
 
   const handleLogin = (e) => {
     e.preventDefault()
@@ -20,20 +21,34 @@ export default function () {
       email: emailRef.current.value,
       password: passwordRef.current.value,
     })
-      .then(user => {setUser(user); navigate(location.state?.url ? location.state.url : '/')})           
-      .catch(err => toast(err.message, {type : 'error'}))
+      .then(user => { setUser(user); navigate(location.state?.url ? location.state.url : '/') })
+      .catch(err => toast(err.message, { type: 'error' }))
   }
 
   return <form onSubmit={handleLogin} className="flex flex-col gap-5">
-    <div className="flex gap-5 items-center justify-between">
-      <MdEmail className=' w-6 h-6'/>
-      <Input className=" bg-white dark:bg-black text-black dark:text-white" name="email" placeholder='Your email' ref={emailRef}/>
+    <div className="text-4xl font-bold text-center">Sign In</div>
+    <div className=''>Don't have an account? <Link to={'/register'} className="text-primary text-center">Click here to sign up</Link></div>
+
+    <TextField slotProps={{
+      input: {
+        startAdornment: <MdEmail className=' w-6 h-6 mr-5' />
+      }
+    }} variant="outlined" className="grow" name="email" type='email' placeholder='Your email' inputRef={emailRef} />
+
+    <TextField slotProps={{
+      input: {
+        startAdornment: <IoIosLock className=' w-6 h-6 mr-5' />
+      }
+    }}
+      variant="outlined" className="grow" name="password" placeholder='Your password' type={'password'} inputRef={passwordRef} />
+
+    <div className="flex justify-between items-center">
+      <div className="flex items-center">
+        <Checkbox defaultChecked />
+        <div>Remember me?</div>
+      </div>
+      <Link to={'/forgot-password'} className='text-primary'>Forgot password?</Link>
     </div>
-    <div className="flex gap-5 items-center justify-between">
-      <IoIosLock className='w-6 h-6'/>
-      <Input className=" bg-white dark:bg-black text-black dark:text-white" name="password" placeholder='Your password' type={'password'} ref={passwordRef}/>
-    </div>
-    <Button onClick={handleLogin} className={'m-auto btn-teal dark:btn-grey'}>Đăng Nhập</Button>
-    <Link to={'/register'} className='hover:text-red_0 text-1 underline text-center'>Đăng kí tài khoản mới</Link>
+    <Button onClick={handleLogin} variant="contained">Đăng Nhập</Button>
   </form>
 }

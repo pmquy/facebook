@@ -23,7 +23,7 @@ const updatingPattern = Joi.object({
 class Controller {
 
   get = (req, res, next) =>
-    SharePost.find(req.query)
+    SharePost.find(JSON.parse(req.query.q))
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
 

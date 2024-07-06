@@ -3,6 +3,12 @@ import Joi from 'joi'
 import {io} from '../../app.js'
 
 const creatingPattern = Joi.object({
+  comment: Joi.string().required(),
+  type: Joi.string().required()
+}).unknown(false).required()
+
+
+const deletingPattern = Joi.object({
   comment: Joi.string().required()
 }).unknown(false).required()
 
@@ -14,14 +20,14 @@ class Controller {
       .catch(err => next(err))
 
   delete = (req, res, next) =>
-    creatingPattern.validateAsync(req.body)
+    deletingPattern.validateAsync(req.body)
       .then(val => LikeComment.deleteOne({ ...val, user: req.user._id }))
       .then(val => res.status(200).send(val))
       .then(() => io.emit('invalidate', ['likecomments', {comment : req.body.comment}]))
       .catch(err => next(err))
 
   get = (req, res, next) =>
-    LikeComment.find(req.query)
+    LikeComment.find(JSON.parse(req.query.q))
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
 }

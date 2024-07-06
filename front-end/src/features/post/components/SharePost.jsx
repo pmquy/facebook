@@ -1,18 +1,9 @@
-import { FaShare } from 'react-icons/fa'
-import { useQuery } from 'react-query'
-import ShareApi from '../services/ShareApi'
-import PostContext from "../store/PostContext"
-import { useContext } from 'react'
+import { Button } from '@mui/material'
+import { CiShare2 } from 'react-icons/ci'
 
-export default function () {
-  const { post } = useContext(PostContext)
-  const query = useQuery({
-    queryKey: ['shareposts', { post: post._id }],
-    queryFn: () => ShareApi.get({ post: post._id }),
-  })
+export default function ({id}) {
 
-  return <div className="flex gap-2 btn items-center p-2 rounded-lg hover:bg-white_1">
-    <FaShare className="w-6 h-6" color="#00ADB5" />
-    <div>({query?.data?.length})</div>
-  </div>
+  return <Button startIcon={<CiShare2/>}>
+    <div className='text-sm font-semibold capitalize'>Share</div>
+  </Button>
 }

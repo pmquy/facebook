@@ -1,6 +1,7 @@
 import PostService from '../services/post.js'
 import GroupService from '../services/group.js'
 import Joi from 'joi'
+import Post from '../models/Post.js'
 
 const creatingPattern = Joi.object({
   content: Joi.string(),
@@ -9,22 +10,37 @@ const creatingPattern = Joi.object({
     then: Joi.array().items(Joi.string()).default([]),
     otherwise: Joi.array().items(Joi.string()).min(1).required()
   }),
-  group: Joi.string().default('')
+  group: Joi.string().default(''),
+  type: Joi.string().default('Normal'),
+  status: Joi.when('type', {
+    is: "Live",
+    then: Joi.string().valid('Started').default('Started'),
+    otherwise: Joi.forbidden()
+  }),
+  options: Joi.when('type', {
+    is: 'Vote',
+    then: Joi.array().items(Joi.object({
+      content: Joi.string().required(),
+      votes: Joi.array().items(Joi.string()).default([])
+    })).min(2).required(),
+    otherwise: Joi.forbidden()
+  })
 }).unknown(false).required()
 
 const updatingPattern = Joi.object({
   content: Joi.string(),
   files: Joi.array().items(Joi.string()),
+  status: Joi.string()
 }).unknown(false).required()
 
 class Controller {
   get = async (req, res, next) => {
     try {
-      if(req.query.group) await GroupService.haveRole(req.user._id, req.query.group, 'Member')
-      const val = await PostService.get(req.query)
+      if (req.query.group) await GroupService.haveRole(req.user._id, req.query.group, 'Member')
+      const val = await PostService.get(JSON.parse(req.query.q), Number.parseInt(req.query.page), Number.parseInt(req.query.limit))
       res.status(200).send(val)
     } catch (error) {
-      next(error)      
+      next(error)
     }
   }
 
@@ -35,10 +51,13 @@ class Controller {
       .catch(err => next(err))
   }
 
-  getById = (req, res, next) => {
-    PostService.getById(req.params.id)
-      .then(val => res.status(200).send(val))
-      .catch(err => next(err))
+  getById = async (req, res, next) => {
+    try {
+      const post = await PostService.getById(req.params.id)
+      res.status(200).send(post)
+    } catch (error) {
+      next(error)
+    }
   }
 
   deleteById = (req, res, next) => {
@@ -54,6 +73,17 @@ class Controller {
       .then(val => PostService.updateById(req.params.id, val))
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
+  }
+
+  voteById = async (req, res, next) => {
+    try {
+      const post = await Post.findOne({ _id: req.params.id, type: 'Vote' })
+      if(req.body.type === 'remove') await post.updateOne({$pull: { [`options.${req.body.option}.votes`]: req.user._id }})
+      else await post.updateOne({$addToSet: { [`options.${req.body.option}.votes`]: req.user._id }})
+      res.status(200).send(post)
+    } catch (error) {
+      next(error)
+    }
   }
 }
 

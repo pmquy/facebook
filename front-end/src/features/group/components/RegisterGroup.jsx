@@ -11,5 +11,5 @@ export default function ({id}) {
       .then(() => queryClient.invalidateQueries(['group', id]))
       .catch((err) => toast('Bạn đã yêu cầu tham gia nhóm này', {type : 'error'}))
   }
-  return <Button onClick={handleRegister} className={'btn-teal dark:btn-grey'}>Gửi yêu cầu</Button>
+  return <Button onClick={handleRegister} className={'btn-primary'}>Gửi yêu cầu</Button>
 }

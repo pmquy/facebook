@@ -3,7 +3,8 @@ import Joi from 'joi'
 import File from '../models/File.js'
 import Notification from '../models/Notification.js'
 import PostService from '../services/post.js'
-import {io} from '../../app.js'
+import CommentService from '../services/comment.js'
+import { io } from '../../app.js'
 
 const creatingPattern = Joi.object({
   content: Joi.string(),
@@ -23,14 +24,22 @@ const updatingPattern = Joi.object({
 
 class Controller {
 
-  get = (req, res, next) => {
-    CommentPost.find(req.query).select(['_id'])
-      .then(val => res.status(200).send(val))
-      .catch(err => next(err))
+  get = async (req, res, next) => {
+    try {
+      const page = Number.parseInt(req.query.page)
+      const limit = Number.parseInt(req.query.limit)
+      const q = JSON.parse(req.query.q)
+      const comments = await CommentPost.find(q).skip(page * limit).limit(limit)
+      const count = await CommentPost.countDocuments(q)
+      const hasMore = count > (page + 1) * limit
+      res.status(200).send({ comments, hasMore })
+    } catch (error) {
+      next(error)
+    }
   }
 
   getById = (req, res, next) =>
-    CommentPost.findById(req.params.id)
+    CommentService.findById(req.params.id)
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
 
@@ -39,17 +48,8 @@ class Controller {
       .then(val => CommentPost.create({ ...val, user: req.user._id }))
       .then(async val => {
         res.status(200).send(val)
-        const post = await PostService.getById(val.post)        
-        if(post.user != req.user._id) {
-          Notification.create({
-            content : `${req.user.firstName + ' ' + req.user.lastName} vừa bình luận bài viết của bạn`,
-            user : post.user,
-            to : '/?open=' + post._id,
-            key : JSON.stringify(['comments', { post: val.post, comment: val.comment }])
-          })
-            .then(() => io.emit('invalidate', ['notifications', post.user]))        
-        }
-      })   
+        io.to(`post-${val.post}`).emit('new_comment', val)
+      })
       .catch(err => next(err))
   }
 

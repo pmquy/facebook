@@ -5,6 +5,11 @@ import Notification from '../models/Notification.js'
 import PostService from '../services/post.js'
 
 const creatingPattern = Joi.object({
+  post: Joi.string().required(),
+  type: Joi.string().required()
+}).unknown(false).required()
+
+const deletingPattern = Joi.object({
   post: Joi.string().required()
 }).unknown(false).required()
 
@@ -19,7 +24,7 @@ class Controller {
           Notification.create({
             content : `${req.user.firstName + ' ' + req.user.lastName} vừa thích bài viết của bạn`,
             user : post.user,
-            to : '/?open=' + post._id,
+            to : '/posts/' + post._id,
             key : JSON.stringify(['likeposts', { post: val.post }])
           })
             .then(() => io.emit('invalidate', ['notifications', post.user]))        
@@ -28,13 +33,13 @@ class Controller {
       .catch(err => next(err))
 
   delete = (req, res, next) =>
-    creatingPattern.validateAsync(req.body)
+    deletingPattern.validateAsync(req.body)
       .then(val => LikePost.deleteOne({ ...val, user: req.user._id }))
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
 
   get = (req, res, next) =>
-    LikePost.find(req.query)
+    LikePost.find(JSON.parse(req.query.q))
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
 }

@@ -1,20 +1,46 @@
-import { useContext, useRef } from 'react'
-import { useQuery } from 'react-query'
-import { GroupContext } from '../../group'
+import { useMutation } from 'react-query'
 import PostApi from '../services/PostApi'
 import Post from './Post'
+import { useEffect, useRef, useState } from 'react'
 
-export default function () {
-  const groupContext = useContext(GroupContext)
-  const ref = useRef()
-  const query = useQuery({
-    queryKey: ['posts', groupContext ? { group: groupContext.group._id } : {}],
-    queryFn: () => PostApi.get(groupContext ? { group: groupContext.group._id } : {})
+const LIMIT = 3
+
+export default function Posts({query = {}, api = PostApi.get}) {
+  const hasMoreRef = useRef(true)
+  const pageRef = useRef(0)
+  const [posts, setPosts] = useState([])
+  const loadingRef = useRef()
+
+  const mutation = useMutation({
+    mutationFn: () => api({ page: pageRef.current, limit: LIMIT, q: query }),
+    onSuccess: data => {
+      hasMoreRef.current = data.hasMore
+      pageRef.current += 1
+      setPosts(prev => [...prev, ...data.posts])
+    }
   })
-  if (query.isError || query.isLoading) return <></>
 
-  return <div className='flex flex-col gap-5 my-5'>
-    {query.data.map(e => <div key={e._id}><Post id={e._id} /></div>)}
-    <div ref={ref}>Loading more posts</div>
+  useEffect(() => {
+    pageRef.current = 0
+    hasMoreRef.current = true
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting && hasMoreRef.current) mutation.mutate()
+      })
+    }, {
+      rootMargin: '200px'
+    })
+    if (loadingRef.current) observer.observe(loadingRef.current)
+
+    return () => {
+      if (loadingRef.current) observer.unobserve(loadingRef.current)
+      observer.disconnect()
+    }
+  }, [])
+
+  return <div className='flex flex-col gap-5'>
+    {posts.length === 0 && <div className='text-center font-semibold'>No posts</div>}
+    {posts.map(e => <div key={e._id}><Post id={e._id} /></div>)}
+    <div ref={loadingRef}></div>
   </div>
 }
