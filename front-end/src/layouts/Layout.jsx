@@ -9,7 +9,7 @@ import { createTheme, ThemeProvider } from "@mui/material";
 import Header from "./Header";
 
 export default function () {
-  const [darkMode, setDarkMode] = useState(localStorage.getItem('darkmode') ? localStorage.getItem('darkmode') === 'true' : window.matchMedia('"(prefers-color-scheme: dark)"'))
+  const [darkMode, setDarkMode] = useState(localStorage.getItem('darkmode') === 'true')
   const ref = useRef()
 
   useEffect(() => {

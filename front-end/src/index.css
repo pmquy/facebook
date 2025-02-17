@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-/* @config "../tailwind.config.js" */
-
 :root {
   --primary: 15, 111, 236;
   --background: 239, 242, 246;
@@ -20,20 +18,7 @@
   --on-surface: 217, 217, 217;
 }
 
-@theme inline {
-  --color-primary: rgb(var(--primary));
-  --color-background: rgb(var(--background));
-  --color-surface: rgb(var(--surface));
-  --color-onPrimary: rgb(var(--on-primary));
-  --color-onBackground: rgb(var(--on-background));
-  --color-onSurface: rgb(var(--on-surface));
-}
-
-@layer components {
-  .card {
-    @apply bg-surface text-onSurface shadow rounded-md p-5;
-  }
-}
+@custom-variant dark (&:where(.dark, .dark *));
 
 html {
   scroll-behavior: smooth;
@@ -54,4 +39,25 @@ html {
 ::-webkit-scrollbar-thumb {
   background: rgb(var(--primary));
   border-radius: 8px;
+}
+
+@theme inline {
+  --color-primary: rgb(var(--primary));
+  --color-background: rgb(var(--background));
+  --color-surface: rgb(var(--surface));
+  --color-onPrimary: rgb(var(--on-primary));
+  --color-onBackground: rgb(var(--on-background));
+  --color-onSurface: rgb(var(--on-surface));
+}
+
+
+
+@layer components {
+  .card {
+    @apply bg-surface text-onSurface shadow rounded-md p-5 max-sm:p-3;
+  }
+
+  .heading {
+    @apply font-semibold text-gray-700 dark:text-gray-100;
+  }
 }

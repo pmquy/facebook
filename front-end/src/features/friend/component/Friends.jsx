@@ -5,7 +5,7 @@ import { useUser } from '../../../hooks/user'
 
 export default function Friends() {
 
-  const user = useUser()
+  const {user} = useUser()
 
   const query = useQuery({
     queryKey: ['friends'],

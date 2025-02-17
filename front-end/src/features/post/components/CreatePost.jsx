@@ -117,8 +117,8 @@ export default function CreatePost() {
   }
 
   return <div className="flex flex-col gap-10 rounded-md p-5 bg-surface text-onSurface shadow">
-    <Dialog open={type} onClose={() => setType(null)}>
-      <div className={`left-1/2 -translate-x-1/2 top-1/2 fixed z-10 -translate-y-1/2 transition-transform duration-500 bg-surface text-onSurface rounded-lg p-5 max-h-[80%] w-[90%] max-sm:max-w-screen sm:max-w-[500px] max-sm:max-h-screen max-sm:w-screen overflow-y-auto flex flex-col gap-5`}>
+    <Dialog open={!!type} onClose={() => setType(null)}>
+      <div className={`left-1/2 -translate-x-1/2 top-1/2 fixed -translate-y-1/2 card max-h-[80%] w-[90%] max-sm:max-w-screen sm:max-w-[500px] max-sm:max-h-screen max-sm:w-screen overflow-y-auto flex flex-col gap-5`}>
         <div className="absolute right-5 top-5">
           <IconButton onClick={() => setType(null)} color='primary'><IoClose /></IconButton>
         </div>

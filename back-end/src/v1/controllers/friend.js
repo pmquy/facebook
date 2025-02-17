@@ -1,9 +1,10 @@
 import Friend from '../models/Friend.js'
 import User from '../models/User.js'
+import FriendService from '../services/friend.js'
 
 class Controller {
   get = (req, res, next) => {
-    Friend.find({ ...JSON.parse(req.query.q), $or: [{ sender: req.user._id }, { receiver: req.user._id }] })
+    FriendService.get({ ...JSON.parse(req.query.q), $or: [{ sender: req.user._id }, { receiver: req.user._id }] })
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
@@ -17,37 +18,34 @@ class Controller {
   }
 
   create = (req, res, next) => {
-    Friend.create({
+    FriendService.create({
       sender: req.user._id,
       receiver: req.params.id,
-      status: 0,
     })
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
 
   accept = (req, res, next) => {
-    Friend.findOneAndUpdate({
-      sender: req.params.id,
-      receiver: req.user._id,
-      status: 0,
-    }, { status: 1 })
+    FriendService.accept({ sender: req.params.id, receiver: req.user._id, })
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
 
-  cancel = (req, res, next) => {
-    Friend.deleteMany({
-      $or: [{
+  cancel = async (req, res, next) => {
+    try {
+      await FriendService.deleteOne({
         sender: req.user._id,
         receiver: req.params.id,
-      }, {
+      })
+      await FriendService.deleteOne({
         sender: req.params.id,
         receiver: req.user._id,
-      }]
-    })
-      .then(val => res.status(200).send(val))
-      .catch(err => next(err))
+      })
+      res.status(200).send("OK")
+    } catch(error) {
+      next(error)
+    }
   }
 
 }

@@ -18,6 +18,9 @@ import Messenger from './pages/Messenger'
 import Note from './pages/NotePage'
 import Post from './pages/Post'
 import Register from './pages/Register'
+import Story from './pages/Story'
+import Events from './pages/Events'
+import Event from './pages/Event'
 
 const router = createBrowserRouter([
   
@@ -28,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: '',
         element: <Home />
+      },
+      {
+        path: 'stories',
+        element: <Story />
       },
       {
         path: 'users/:id',
@@ -52,6 +59,14 @@ const router = createBrowserRouter([
       {
         path: 'friends',
         element: <Friends />
+      },
+      {
+        path: 'events',
+        element: <Events />
+      },
+      {
+        path: 'events/:id',
+        element: <Event />
       },
       {
         path: 'messages',

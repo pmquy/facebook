@@ -18,11 +18,11 @@ export default function GroupsLayout() {
   return <GroupsContext.Provider value={{ groups: query.data }}>
     <div className="flex bg-background gap-5 py-5 sm:px-3 max-w-[1300px] mx-auto max-lg:flex-col">
 
-      <div className="basis-1/4">
+      <div className="basis-1/4 shrink-0">
         <MainNavBar />
       </div>
 
-      <div className={`basis-3/4`}>
+      <div className={`grow`}>
         <Outlet />
       </div>
 

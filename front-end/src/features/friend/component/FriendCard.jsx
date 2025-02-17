@@ -66,6 +66,7 @@ export default function FriendCard({ id, _status = "suggested" }) {
         {status === "sending" && <div>Đã gửi lời mời kết bạn</div>}
         {status === "sending" && <Button onClick={cancel} variant="outlined"><div className="text-sm capitalize">Thu hồi</div></Button>}
         {status === "accepted" && <div>Các bạn đã là bạn bè</div>}
+        {status === "accepted" && <Button onClick={cancel} variant="outlined"><div className="text-sm capitalize">Hủy kết bạn</div></Button>}
         {status === "rejected" && <div>Đã xoá lời mời</div>}
         {status === "requested" && <Button onClick={accept} variant="outlined"><div className="text-sm capitalize">Chấp nhận</div></Button>}
         {status === "requested" && <Button onClick={reject} variant="outlined"><div className="text-sm capitalize">Từ chối</div></Button>}

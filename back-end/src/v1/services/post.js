@@ -2,7 +2,8 @@ import Post from '../models/Post.js'
 import FileService from './file.js'
 import GroupService from '../services/group.js'
 import UserService from '../services/user.js'
-import { redisClient } from '../../app.js'
+import Redis from '../configs/init.redis.js'
+
 
 
 class Service {
@@ -14,12 +15,12 @@ class Service {
   }
 
   getById = async id => {
-    const cache = await redisClient.get('post:' + id)
+    const cache = await Redis.client.get('post:' + id)
     if (cache) return JSON.parse(cache)
     const val = (await Post.findById(id)).toObject()
     val.user = await UserService.getById(val.user)
     if(val.group) val.group = await GroupService.getById(val.group)
-    redisClient.set('post:' + id, JSON.stringify(val))
+    Redis.client.set('post:' + id, JSON.stringify(val))
     return val
   }
 
@@ -38,14 +39,14 @@ class Service {
   deleteById = async id => {
     const post = await Post.findById(id)
     await Promise.all(post.files.map(e => FileService.deleteById(e)))
-    redisClient.del('post:' + id)
+    Redis.client.del('post:' + id)
     return post.deleteOne()
   }
 
   updateById = async (id, data) => {
     const post = await Post.findById(id)
     Promise.all(post.files.map(e => FileService.deleteById(e)))
-    redisClient.del('post:' + id)
+    Redis.client.del('post:' + id)
     return post.updateOne(data)
   }
 }

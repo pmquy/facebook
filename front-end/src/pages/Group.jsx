@@ -3,26 +3,48 @@ import { Post, CreatePost, PostApi } from '../features/post'
 =======
 import { Button, Divider, IconButton } from "@mui/material"
 import { BsThreeDots } from "react-icons/bs"
->>>>>>> ee36890 (fix:redis)
+import { IoCalendarNumberOutline, IoLocationOutline, IoPerson } from "react-icons/io5"
 import { useQuery } from "react-query"
 import { Link, useParams } from "react-router-dom"
+import { FilePreview } from "../components"
 import { GroupApi, GroupContext, Members } from '../features/group'
-import { CreatePost, Posts } from '../features/post'
+import { AttendEvent, CreateEvent, CreatePost, Posts, EventWrapper } from '../features/post'
 
-
-function Posts({ group }) {
-  const query = useQuery({
-    queryKey: ['posts', { group: group }],
-    queryFn: () => PostApi.get({ group: group })
-  })
-  if (query.isError || query.isLoading) return <></>
-  return <div className=' flex flex-col gap-3'>
-    <CreatePost />
-    {query.data.map(e => <div key={e._id}><Post id={e._id} /></div>)}
-    <div>Loading more posts</div>
+function Events({group, events, loadMore, hasMore }) {
+  return <div className="flex flex-col gap-5">
+    <div className="rounded-md bg-surface text-onSurface shadow overflow-hidden flex flex-col gap-8 p-5">
+      <div className="justify-between flex">
+        <div className="text-xl font-semibold">Discover Events</div>
+        <CreateEvent data={{group: group}}/>
+      </div>
+      {
+        events.map(e =>
+          <div key={e._id} className="flex gap-5 items-center">
+            <div className="w-20 h-20 rounded-md overflow-hidden" >
+              <FilePreview id={e.cover}/>
+            </div>
+            <div className="flex flex-col gap-2">
+              <Link to={`/events/${e._id}`} className="text-xl font-semibold">{e.title}</Link>
+              <div className="flex gap-1 items-center text-sm">
+                <IoCalendarNumberOutline className="w-4 h-4" />
+                <div>{e.time}</div>
+                <IoLocationOutline className="w-4 h-4 ml-4" />
+                <div>{e.location}</div>
+                <IoPerson className="w-4 h-4 ml-4" />
+                <div>{e.attendees.length} going</div>
+              </div>
+            </div>
+            <div className="grow"></div>
+            <div className="w-max"><AttendEvent event={e} /></div>
+          </div>
+        )
+      }
+      {hasMore && <Button onClick={loadMore} variant="outlined" color="primary">
+        <div className="capitalize">Load more events</div>
+      </Button>}
+    </div>
   </div>
 }
-
 
 export default function () {
   const params = useParams()
@@ -111,6 +133,8 @@ export default function () {
         </div>}
 
         {sub === 'connections' && <Members id={id} />}
+
+        {sub === "events" && <EventWrapper query={{group: id}}><Events group={id}/></EventWrapper>}
       </div>
 >>>>>>> ee36890 (fix:redis)
     </div>
