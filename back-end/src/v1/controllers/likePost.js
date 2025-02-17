@@ -1,4 +1,4 @@
-import {io} from '../../app.js'
+import Socket from '../configs/init.socket.js'
 import LikePost from '../models/LikePost.js'
 import Joi from 'joi'
 import Notification from '../models/Notification.js'
@@ -27,7 +27,7 @@ class Controller {
             to : '/posts/' + post._id,
             key : JSON.stringify(['likeposts', { post: val.post }])
           })
-            .then(() => io.emit('invalidate', ['notifications', post.user]))        
+            .then(() => Socket.io.emit('invalidate', ['notifications', post.user]))        
         }
       })            
       .catch(err => next(err))

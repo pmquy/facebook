@@ -15,7 +15,7 @@ export function LikePostDetail({ id, popup = true }) {
     initialData: []
   })
   const group = useMemo(() => Map.groupBy(query.data, ({ type }) => type), [query.data])
-  const [open, setOpen] = useState()
+  const [open, setOpen] = useState(false)
   const [type, setType] = useState(emotions[0])
 
   return <div>

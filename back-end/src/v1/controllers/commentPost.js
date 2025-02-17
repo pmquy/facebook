@@ -1,10 +1,8 @@
-import CommentPost from '../models/CommentPost.js'
 import Joi from 'joi'
+import Socket from '../configs/init.socket.js'
+import CommentPost from '../models/CommentPost.js'
 import File from '../models/File.js'
-import Notification from '../models/Notification.js'
-import PostService from '../services/post.js'
 import CommentService from '../services/comment.js'
-import { io } from '../../app.js'
 
 const creatingPattern = Joi.object({
   content: Joi.string(),
@@ -48,7 +46,7 @@ class Controller {
       .then(val => CommentPost.create({ ...val, user: req.user._id }))
       .then(async val => {
         res.status(200).send(val)
-        io.to(`post-${val.post}`).emit('new_comment', val)
+        Socket.io.to(`post-${val.post}`).emit('new_comment', val)
       })
       .catch(err => next(err))
   }

@@ -29,7 +29,7 @@ export default function Post() {
 
     <div className="basis-3/4 overflow-hidden">
       <PostContext.Provider value={{ post: post }}>
-        <div className="flex flex-col gap-5 relative bg-surface shadow text-onSurface rounded-md p-5">
+        <div className="flex flex-col gap-5 relative card">
           <div>Ngày đăng: {new Date(post.createdAt).toLocaleString()}</div>
           {post.content && <div className=" whitespace-pre-line text-justify font-semibold text-xl">{post.content}</div>}
 

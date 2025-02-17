@@ -1,6 +1,6 @@
 import Joi from 'joi'
 import GroupChat from '../models/GroupChat.js'
-import { redisClient } from '../../app.js'
+import Redis from '../configs/init.redis.js'
 
 const creatingPattern = Joi.object({
   name: Joi.string().default('Nhóm Chat').required(),
@@ -18,7 +18,7 @@ class Controller {
       const query = JSON.parse(req.query.q)
       query.users = { $in: [req.user._id] }
       let data = await GroupChat.find(query)
-      data = await Promise.all(data.map(e => redisClient.get(`last_message_${e._id}`)
+      data = await Promise.all(data.map(e => Redis.client.get(`last_message_${e._id}`)
         .then(val => { return { ...e.toObject(), lastMessage: JSON.parse(val) } }).catch(() => e)))
       data.sort((a, b) => new Date(b.lastMessage?.createdAt) - new Date(a.lastMessage?.createdAt))
       res.status(200).send(data)

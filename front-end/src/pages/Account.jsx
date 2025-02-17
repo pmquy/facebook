@@ -4,12 +4,13 @@ import { IoMdClose, IoMdHeart } from "react-icons/io";
 import { IoBagCheck, IoBagOutline, IoCalendar, IoCalendarClearOutline, IoCalendarNumberOutline, IoHeartOutline, IoLocation, IoLocationOutline, IoMailOutline, IoPerson } from "react-icons/io5";
 import { MdEdit, MdMessage, MdOutlineComment, MdPersonRemove, MdPhoneAndroid } from "react-icons/md";
 import { useQuery } from "react-query";
-import { useParams, useSearchParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { UserApi } from "../features/account";
 import CreatePost from '../features/post/components/CreatePost';
-import Posts from '../features/post/components/Posts';
+import { Posts, CreateEvent, EventWrapper } from '../features/post';
 import { useUser } from "../hooks/user";
 import { getDiff } from "../utils/parseDate";
+import { FilePreview } from "../components";
 
 function Overview({ account, user, setUser }) {
   const ref = useRef()
@@ -42,7 +43,7 @@ function Overview({ account, user, setUser }) {
   </div>
 }
 
-function Wrapper({account, user, setUser, data}) {
+function Wrapper({ account, user, setUser, data }) {
   const ref = useRef()
   const isMe = user?._id == account._id
   const [edit, setEdit] = useState(false)
@@ -72,6 +73,42 @@ function Wrapper({account, user, setUser, data}) {
         {isMe && <IconButton onClick={() => setEdit(true)}><MdEdit className="w-4 h-4" /></IconButton>}
       </div>
     }
+  </div>
+}
+
+export function Events({ events, loadMore, hasMore }) {
+  return <div className="flex flex-col gap-5">
+    <div className="rounded-md bg-surface text-onSurface shadow overflow-hidden flex flex-col gap-8 p-5">
+      <div className="justify-between flex">
+        <div className="text-xl font-semibold">Discover Events</div>
+        <CreateEvent />
+      </div>
+      {
+        events.map(e =>
+          <div key={e._id} className="flex gap-5 items-center">
+            <div className="w-20 h-20 rounded-md overflow-hidden" >
+              <FilePreview id={e.cover}/>
+            </div>
+            <div className="flex flex-col gap-2">
+              <Link to={`/events/${e._id}`} className="text-xl font-semibold">{e.title}</Link>
+              <div className="flex gap-1 items-center text-sm">
+                <IoCalendarNumberOutline className="w-4 h-4" />
+                <div>{e.time}</div>
+                <IoLocationOutline className="w-4 h-4 ml-4" />
+                <div>{e.location}</div>
+                <IoPerson className="w-4 h-4 ml-4" />
+                <div>{e.attendees.length} going</div>
+              </div>
+            </div>
+            <div className="grow"></div>
+            <IconButton><MdEdit className="w-4 h-4" /></IconButton>
+          </div>
+        )
+      }
+      {hasMore && <Button onClick={loadMore} variant="outlined" color="primary">
+        <div className="capitalize">Load more events</div>
+      </Button>}
+    </div>
   </div>
 }
 
@@ -177,7 +214,7 @@ export default function () {
             <div className="flex gap-2 items-center rounded-md border-2 py-1 px-3">
               <IoCalendarClearOutline className="w-6 h-6 my-1" />
               <div>Join on:</div>
-              <div className="font-semibold">{new Date(account.createdAt).toLocaleDateString('vi-VN', {day:"2-digit", month: "short", year: "numeric"})}</div>
+              <div className="font-semibold">{new Date(account.createdAt).toLocaleDateString('vi-VN', { day: "2-digit", month: "short", year: "numeric" })}</div>
             </div>
           </div>
         </div>
@@ -288,56 +325,7 @@ export default function () {
         </div>
       </div>}
 
-      {searchParams.get('q') === "Events" && <div className="flex flex-col gap-5">
-        <div className="rounded-md bg-surface text-onSurface shadow overflow-hidden flex flex-col gap-8 p-5">
-          <div className="justify-between flex">
-            <div className="text-xl font-semibold">Discover Events</div>
-            <Button variant="outlined" color="primary">
-              <div className="capitalize">Create events</div>
-            </Button>
-          </div>
-          <div className="py-2 px-5 border-2 border-green-400 rounded-md text-green-600 flex gap-5 bg-green-100 items-center">
-            <div><div className="font-semibold">Upcoming event:</div> The learning conference on Sep 19 2024</div>
-            <Button color="inherit">
-              <div className="capitalize">View event</div>
-            </Button>
-            <div className="grow"></div>
-            <IconButton>
-              <IoMdClose className="w-4 h-4" />
-            </IconButton>
-          </div>
-          {
-            new Array(5).fill({
-              title: "Comedy at the park",
-              createdAt: Date.now(),
-              location: "New York",
-              image: "https://social.webestica.com/assets/images/avatar/01.jpg",
-              population: 250,
-            })
-              .map(e =>
-                <div className="flex gap-5 items-center">
-                  <img src={e.image} className="w-20 h-20 rounded-md" />
-                  <div className="flex flex-col gap-2">
-                    <div className="text-xl font-semibold">{e.title}</div>
-                    <div className="flex gap-1 items-center text-sm">
-                      <IoCalendarNumberOutline className="w-4 h-4" />
-                      <div>{new Date(e.createdAt).toLocaleString('vi-VN')}</div>
-                      <IoLocationOutline className="w-4 h-4 ml-4" />
-                      <div>{e.location}</div>
-                      <IoPerson className="w-4 h-4 ml-4" />
-                      <div>{e.population} going</div>
-                    </div>
-                  </div>
-                  <div className="grow"></div>
-                  <IconButton><MdEdit className="w-4 h-4" /></IconButton>
-                </div>
-              )
-          }
-          <Button variant="outlined" color="primary">
-            <div className="capitalize">Load more events</div>
-          </Button>
-        </div>
-      </div>}
+      {searchParams.get('q') === "Events" && <EventWrapper><Events/></EventWrapper>}
 
       {searchParams.get('q') === "Activity" && <div className="flex flex-col gap-5">
         <div className="rounded-md bg-surface text-onSurface shadow overflow-hidden flex flex-col gap-8 p-5">

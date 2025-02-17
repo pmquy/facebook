@@ -1,6 +1,6 @@
 import LikeComment from '../models/LikeComment.js'
 import Joi from 'joi'
-import {io} from '../../app.js'
+import Socket from '../configs/init.socket.js'
 
 const creatingPattern = Joi.object({
   comment: Joi.string().required(),
@@ -23,7 +23,7 @@ class Controller {
     deletingPattern.validateAsync(req.body)
       .then(val => LikeComment.deleteOne({ ...val, user: req.user._id }))
       .then(val => res.status(200).send(val))
-      .then(() => io.emit('invalidate', ['likecomments', {comment : req.body.comment}]))
+      .then(() => Socket.io.emit('invalidate', ['likecomments', {comment : req.body.comment}]))
       .catch(err => next(err))
 
   get = (req, res, next) =>

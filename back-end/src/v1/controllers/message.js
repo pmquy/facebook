@@ -1,7 +1,8 @@
 import Joi from 'joi'
 import Message from '../models/Message.js'
 import GroupChat from '../models/GroupChat.js'
-import { io, redisClient } from '../../app.js'
+import Redis from '../configs/init.redis.js'
+import Socket from '../configs/init.socket.js'
 
 const creatingPattern = Joi.object({
   type: Joi.string().required(),
@@ -47,9 +48,9 @@ class Controller {
       if (!group.users.includes(req.user._id)) throw new Error('You must join this group')
       const data = await Message.create({ ...val, user: req.user._id })
       res.status(200).send(data)
-      io.to(`group_chat_${data.groupChat}`).emit('create_message', data)
+      Socket.io.to(`group_chat_${data.groupChat}`).emit('create_message', data)
       data.user = req.user.lastName
-      redisClient.set(`last_message_${data.groupChat}`, JSON.stringify(data))
+      Redis.client.set(`last_message_${data.groupChat}`, JSON.stringify(data))
     } catch (error) {
       next(error)
     }
@@ -63,7 +64,7 @@ class Controller {
         throw new Error()
       })
       .then(val => {
-        io.emit('invalidate', ['messages', { groupChat: req.body.groupChat }])
+        Socket.io.emit('invalidate', ['messages', { groupChat: req.body.groupChat }])
         res.status(200).send(val)
       })
       .catch(err => next(err))

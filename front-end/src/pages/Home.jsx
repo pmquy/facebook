@@ -15,11 +15,11 @@ export default function () {
       <Posts query={{}} />
     </div>
     <div className="basis-1/4 shrink-0 flex lg:flex-col max-md:flex-col gap-5">
-      <div className="bg-surface text-onSurface rounded-md shadow p-5 flex flex-col gap-5 max-lg:basis-1/2">
+      <div className="card flex flex-col gap-5 max-lg:basis-1/2">
         <div className="font-bold">Who to follow</div>
         {
           [1, 2, 3].map(e => (
-            <div className="gap-3 flex items-center">
+            <div key={e} className="gap-3 flex items-center">
               <img src="https://social.webestica.com/assets/images/avatar/04.jpg" className="w-10 h-10 rounded-full" />
               <div className="flex flex-col">
                 <div className="font-semibold">John Doe</div>
@@ -36,11 +36,11 @@ export default function () {
         <Button variant="outlined">View more</Button>
       </div>
 
-      <div className="bg-surface text-onSurface rounded-md shadow  p-5 flex flex-col gap-5 max-lg:basis-1/2">
+      <div className="card flex flex-col gap-5 max-lg:basis-1/2">
         <div className="font-bold">Today's news</div>
         {
           [1, 2, 3].map(e => (
-            <div>
+            <div key={e}>
               <Link to={'#'} className="font-semibold hover:text-primary">Ten questions you should answer truthfully</Link>
               <div className="text-sm">2 hours ago</div>
             </div>
