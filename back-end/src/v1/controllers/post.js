@@ -24,7 +24,11 @@ const creatingPattern = Joi.object({
       votes: Joi.array().items(Joi.string()).default([])
     })).min(2).required(),
     otherwise: Joi.forbidden()
-  })
+  }),
+  ref: Joi.object({
+    type: Joi.string().valid('Post', 'Event').required(),
+    id: Joi.string().required()
+  }).unknown(false)
 }).unknown(false).required()
 
 const updatingPattern = Joi.object({
@@ -77,9 +81,7 @@ class Controller {
 
   voteById = async (req, res, next) => {
     try {
-      const post = await Post.findOne({ _id: req.params.id, type: 'Vote' })
-      if(req.body.type === 'remove') await post.updateOne({$pull: { [`options.${req.body.option}.votes`]: req.user._id }})
-      else await post.updateOne({$addToSet: { [`options.${req.body.option}.votes`]: req.user._id }})
+      const post = await PostService.voteById(req.params.id, { ...req.body, user: req.user._id })
       res.status(200).send(post)
     } catch (error) {
       next(error)

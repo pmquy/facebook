@@ -1,20 +1,17 @@
-import { Button, IconButton } from "@mui/material";
+import { Button } from "@mui/material";
 import { useState } from "react";
 import { IoCalendarNumberOutline, IoLocationOutline } from "react-icons/io5";
-import { MdShare } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { FilePreview } from "../components";
 import MainNavBar from "../components/MainNavBar";
-import { AttendEvent } from "../features/post";
-import CreateEvent from "../features/post/components/CreateEvent";
-import EventsWrapper from "../features/post/components/EventsWrapper";
+import { AttendEvent, SharePost, CreateEvent, EventsWrapper } from "../features/post";
 
 function EventCard({ event }) {
 
   return <div className="overflow-hidden rounded-md border-2">
     <div className="h-40 w-full"><FilePreview id={event.cover} /></div>
-    <div className="p-4 flex flex-col gap-4">
-      <Link to={`/events/${event._id}`} className="font-semibold hover:text-primary max-w-full overflow-hidden text-ellipsis text-nowrap">{event.title}</Link>
+    <div className="p-4 flex flex-col gap-3">
+      <Link to={`/events/${event._id}`} className="heading hover:text-primary max-w-full overflow-hidden text-ellipsis text-nowrap">{event.title}</Link>
 
       <div className="text-sm">
         <div className="flex gap-2 items-center">
@@ -39,12 +36,11 @@ function EventCard({ event }) {
 
       <div className="flex gap-5">
         <AttendEvent event={event} />
-        <IconButton color="primary"><MdShare className="w-5 h-5" /></IconButton>
+        <SharePost id={event._id} type="Event" />
       </div>
     </div>
   </div>
 }
-
 
 function Events({ events, loadMore, hasMore }) {
 

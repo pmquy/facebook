@@ -1,16 +1,15 @@
 import { Button, Divider, IconButton, TextField } from "@mui/material";
 import { useRef, useState } from "react";
-import { IoMdClose, IoMdHeart } from "react-icons/io";
-import { IoBagCheck, IoBagOutline, IoCalendar, IoCalendarClearOutline, IoCalendarNumberOutline, IoHeartOutline, IoLocation, IoLocationOutline, IoMailOutline, IoPerson } from "react-icons/io5";
+import { IoMdHeart } from "react-icons/io";
+import { IoBagCheck, IoBagOutline, IoCalendar, IoCalendarClearOutline, IoCalendarNumberOutline, IoHeartOutline, IoLocation, IoLocationOutline, IoPerson } from "react-icons/io5";
 import { MdEdit, MdMessage, MdOutlineComment, MdPersonRemove, MdPhoneAndroid } from "react-icons/md";
 import { useQuery } from "react-query";
 import { Link, useParams, useSearchParams } from "react-router-dom";
+import { FilePreview } from "../components";
 import { UserApi } from "../features/account";
-import CreatePost from '../features/post/components/CreatePost';
-import { Posts, CreateEvent, EventWrapper } from '../features/post';
+import { CreateEvent, CreatePost, Posts } from '../features/post';
 import { useUser } from "../hooks/user";
 import { getDiff } from "../utils/parseDate";
-import { FilePreview } from "../components";
 
 function Overview({ account, user, setUser }) {
   const ref = useRef()

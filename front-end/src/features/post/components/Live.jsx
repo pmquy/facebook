@@ -191,7 +191,7 @@ function Started({ post, detail = true }) {
   }
 
   return <div className="relative">
-    <video className="w-full rounded-md" ref={videoRef} autoPlay muted={role === "HOST"} controls={role === "CLIENT"}></video>
+    <video className="w-full" ref={videoRef} autoPlay muted={role === "HOST"} controls={role === "CLIENT"}></video>
     {!!messages.length && <div className="absolute bottom-0 max-h-[50%] overflow-y-auto w-full p-5 flex flex-col gap-2 bg-black/10  overscroll-contain">
       {messages.map((e, i) => <div key={i}><Message message={e} /></div>)}
     </div>}
@@ -214,7 +214,7 @@ function Stopped({ post }) {
   const videoRef = useRef()
 
   return <div className="relative">
-    <video className="w-full m-auto" ref={videoRef} autoPlay controls></video>
+    <video className="w-full m-auto rounded-md" ref={videoRef} autoPlay controls></video>
     <div className="absolute top-2 left-2">
       <div className=" p-2 rounded-lg font-semibold bg-slate-600 text-onPrimary">Đã kết thúc</div>
     </div>

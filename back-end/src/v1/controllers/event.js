@@ -1,7 +1,8 @@
 import Event from '../models/Event.js';
 import Joi from 'joi';
-import {Types} from 'mongoose';
+import { Types } from 'mongoose';
 import GroupService from '../services/group.js';
+import FileService from '../services/file.js';
 
 const creatingPattern = Joi.object({
   title: Joi.string().required(),
@@ -34,11 +35,11 @@ class Controller {
     }
   }
 
-  async get(req,res, next) {
-    const page = req.query.page ? Number.parseInt(req.query.page) : 0
-    const limit = req.query.limit ? Number.parseInt(req.query.limit) : 10
-    const query = req.query.q ? JSON.parse(req.query.q) : {}
+  async get(req, res, next) {
     try {
+      const page = req.query.page ? Number.parseInt(req.query.page) : 0
+      const limit = req.query.limit ? Number.parseInt(req.query.limit) : 10
+      const query = req.query.q ? JSON.parse(req.query.q) : {}
       const events = await Event.aggregate([
         {
           $match: query
@@ -51,7 +52,7 @@ class Controller {
         },
         {
           $addFields: {
-            isAttendee: { $in: [req.user._id.toString(), "$attendees"] }
+            isAttendee: { $in: [req.user._id, "$attendees"] }
           }
         }
       ])
@@ -70,12 +71,13 @@ class Controller {
         { $match: { _id: Types.ObjectId.createFromHexString(req.params.id) } },
         {
           $addFields: {
-            isAttendee: { $in: [req.user._id.toString(), "$attendees"] }
+            isAttendee: { $in: [req.user._id, "$attendees"] }
           }
         }
       ]))[0]
-      if(!event) throw new Error('Event not found')
-      event.group = await GroupService.getById(event.group)
+      if (!event) throw new Error('Event not found')
+      if (event.group) event.group = await GroupService.getById(event.group)
+      event.cover = await FileService.getById(event.cover)
       res.status(200).json(event)
     } catch (err) {
       next(err)

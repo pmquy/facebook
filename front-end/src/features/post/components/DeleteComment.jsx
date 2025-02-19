@@ -7,10 +7,9 @@ import { MdDelete } from "react-icons/md";
 
 export default function ({className}) {
   const {comment} = useContext(CommentContext)
-  const queryClient = useQueryClient()
   const handleDelete = () => {
     CommentApi.deleteById(comment._id)
-      .then(() => queryClient.invalidateQueries(['comments', { post: comment.post, comment: comment.comment }]))
+      .then(() => {})
       .catch(err => toast(err.message, { type: 'error' }))
   }
   return <MdDelete onClick={handleDelete} className={`${className} w-6 h-6 rounded-lg p-1`} color="#EEEEEE"/>

@@ -49,6 +49,14 @@ class Service {
     Redis.client.del('post:' + id)
     return post.updateOne(data)
   }
+
+  voteById = async (id, data) => {
+    const post = await Post.findOne({ _id: id, type: 'Vote' })
+    if (data.type === 'remove') await post.updateOne({ $pull: { [`options.${data.option}.votes`]: data.user } })
+    else await post.updateOne({ $addToSet: { [`options.${data.option}.votes`]: data.user } })
+    await Redis.client.del('post:' + id)
+    return post
+  }
 }
 
 

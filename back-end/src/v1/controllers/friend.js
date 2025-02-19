@@ -3,10 +3,30 @@ import User from '../models/User.js'
 import FriendService from '../services/friend.js'
 
 class Controller {
-  get = (req, res, next) => {
-    FriendService.get({ ...JSON.parse(req.query.q), $or: [{ sender: req.user._id }, { receiver: req.user._id }] })
-      .then(val => res.status(200).send(val))
-      .catch(err => next(err))
+  async get (req, res, next) {
+    try {
+      const page = req.query.page ? Number.parseInt(req.query.page) : 0
+      const limit = req.query.limit ? Number.parseInt(req.query.limit) : 10
+      const query = req.query.q ? JSON.parse(req.query.q) : {}
+      query.$or = [{ sender: req.user._id }, { receiver: req.user._id }]
+      const friends = await Friend.aggregate([
+        {
+          $match: query
+        },
+        {
+          $skip: page * limit,
+        },
+        {
+          $limit: limit
+        }
+      ])
+      res.status(200).json({
+        friends,
+        hasMore: await Friend.countDocuments(query) > (page + 1) * limit
+      })
+    } catch (err) {
+      next(err)
+    }
   }
 
   getSuggested = async (req, res, next) => {

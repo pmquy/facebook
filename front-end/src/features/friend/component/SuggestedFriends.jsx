@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query'
 import api from '../services/api'
-import FriendCard from './FriendCard'
+import {FriendCard} from './Friends'
 
 export default function () {
 

@@ -232,12 +232,12 @@ function Call({ id, setOpen }) {
         <div className="overflow-x-auto flex gap-5 shrink-0" ref={ref}>
           <div className="overflow-hidden rounded-lg relative">
             <video muted autoPlay={true} ref={myVideoRef} className="h-32 object-cover" />
-            <div className="absolute bottom-2 right-5 bg-black bg-opacity-30 px-5 rounded-3xl text-white">You</div>
+            <div className="absolute text-white h-1/3 bg-linear-to-b from-transparent to-black left-0 right-0 bottom-0 text-center" >You</div>
           </div>
           {
             Object.keys(others).map(e => <div onClick={() => { setCurrentOther(e); mainVideoRef.current.srcObject = others[e].stream }} className="overflow-hidden rounded-md relative" key={e}>
               <video autoPlay={true} className="h-32 object-cover" />
-              <div className="absolute bottom-2 right-5 bg-black bg-opacity-30 px-5 rounded-3xl text-white" >{others[e].user}</div>
+              <div className="absolute text-white h-1/3 bg-linear-to-b from-transparent to-black left-0 right-0 bottom-0 text-center" >{others[e].user}</div>
             </div>)
           }
         </div>
