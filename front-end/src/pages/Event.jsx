@@ -1,15 +1,12 @@
-import { Button, Divider } from "@mui/material";
+import { Divider } from "@mui/material";
 import { IoLocationOutline } from "react-icons/io5";
 import { TbUserPlus, TbUsers, TbWorld } from "react-icons/tb";
 import { useQuery } from "react-query";
 import { Link, useParams } from "react-router-dom";
 import { FilePreview } from "../components";
 import MainNavBar from "../components/MainNavBar";
-import EventApi from "../features/post/services/EventApi";
-import EventsWrapper from "../features/post/components/EventsWrapper";
-import { AttendEvent } from "../features/post";
 import { GroupAccount } from "../features/group";
-
+import { AttendEvent, EventsWrapper, EventApi} from "../features/post";
 
 function RelatedEvents({ events }) {
   return <div className="flex gap-3 flex-col">
@@ -48,8 +45,9 @@ export default function Page() {
     </div>
 
     <div className="flex flex-col gap-5 grow">
+
       <div className="rounded-md overflow-hidden relative">
-        <div className="w-full h-72 object-cover"><FilePreview id={event.cover} /></div>
+        <img src={event.cover.url} className="w-full h-72 object-cover" />
         <div className="absolute min-w-24 left-5 top-5 rounded-md bg-surface text-onSurface p-1">
           <div className="text-sm text-center bg-primary px-2 py-1 rounded-t-md text-onPrimary">{date.toLocaleDateString("en-US", { weekday: "long" })}</div>
           <div className="font-semibold p-1 text-center">{date.toLocaleDateString("en-US", { month: "short", day: "2-digit" })}</div>

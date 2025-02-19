@@ -15,13 +15,29 @@ const updatingPattern = Joi.object({
 class Controller {
   get = async (req, res, next) => {
     try {
-      const query = JSON.parse(req.query.q)
+      const page = req.query.page ? Number.parseInt(req.query.page) : 0
+      const limit = req.query.limit ? Number.parseInt(req.query.limit) : 10
+      const query = req.query.q ? JSON.parse(req.query.q) : {}
       query.users = { $in: [req.user._id] }
-      let data = await GroupChat.find(query)
-      data = await Promise.all(data.map(e => Redis.client.get(`last_message_${e._id}`)
-        .then(val => { return { ...e.toObject(), lastMessage: JSON.parse(val) } }).catch(() => e)))
-      data.sort((a, b) => new Date(b.lastMessage?.createdAt) - new Date(a.lastMessage?.createdAt))
-      res.status(200).send(data)
+      let groupchats = await GroupChat.aggregate([
+        {
+          $match: query
+        }, 
+        {
+          $sort: { updatedAt: -1 },
+        },
+        {
+          $skip: page * limit
+        },
+        {
+          $limit: limit
+        },
+      ])
+
+      res.status(200).send({
+        groupchats,
+        hasMore: await GroupChat.countDocuments(query) > (page + 1) * limit
+      })
     } catch (err) {
       next(err)
     }

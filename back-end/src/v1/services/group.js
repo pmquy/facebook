@@ -3,8 +3,6 @@ import RoleInGroup from "../models/RoleInGroup.js"
 import FileService from "./file.js"
 import Redis from '../configs/init.redis.js'
 
-
-
 class Controller {
   getById = async id => {
     const cache = await Redis.client.get('group:' + id)

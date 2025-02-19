@@ -2,8 +2,7 @@ import { IconButton } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { MdArrowForward, MdKeyboardArrowLeft, MdKeyboardArrowRight, MdPause } from "react-icons/md";
 import { useQuery } from "react-query";
-import { StoryWrapper } from "../features/post";
-import CreateStory from "../features/post/components/CreateStory";
+import { StoryWrapper, CreateStory } from "../features/post";
 import FileApi from "../services/file";
 import { getDiff } from "../utils/parseDate";
 import { BsThreeDots } from "react-icons/bs";
@@ -45,19 +44,6 @@ function Story({ stories, loadMore, hasMore }) {
       setSub(sub - 1)
     }
   }
-
-  // useEffect(() => {
-  //   if (story) {
-  //     [...ref.current.children].forEach((e, i) => {
-  //       if (i <= sub) {
-  //         e.children[0].style.width = '100%'
-  //       } else {
-  //         e.children[0].style.width = '0%'
-  //       }
-  //     })
-  //   }
-  // }, [sub, story])
-
 
   return <div className="flex gap-5 py-5 sm:px-3 max-w-[1300px] mx-auto max-lg:flex-col h-[calc(100vh-4rem)]">
 

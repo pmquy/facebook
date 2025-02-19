@@ -5,20 +5,20 @@ import { useQuery } from "react-query"
 import { Link, useParams } from "react-router-dom"
 import { FilePreview } from "../components"
 import { GroupApi, GroupContext, Members } from '../features/group'
-import { AttendEvent, CreateEvent, CreatePost, Posts, EventWrapper } from '../features/post'
+import { AttendEvent, CreateEvent, CreatePost, Posts } from '../features/post'
 
-function Events({group, events, loadMore, hasMore }) {
+function Events({ group, events, loadMore, hasMore }) {
   return <div className="flex flex-col gap-5">
     <div className="rounded-md bg-surface text-onSurface shadow overflow-hidden flex flex-col gap-8 p-5">
       <div className="justify-between flex">
         <div className="text-xl font-semibold">Discover Events</div>
-        <CreateEvent data={{group: group}}/>
+        <CreateEvent data={{ group: group }} />
       </div>
       {
         events.map(e =>
           <div key={e._id} className="flex gap-5 items-center">
             <div className="w-20 h-20 rounded-md overflow-hidden" >
-              <FilePreview id={e.cover}/>
+              <FilePreview id={e.cover} />
             </div>
             <div className="flex flex-col gap-2">
               <Link to={`/events/${e._id}`} className="text-xl font-semibold">{e.title}</Link>
@@ -62,24 +62,28 @@ export default function () {
       <div className="rounded-md bg-surface text-onSurface overflow-hidden">
         <img src={group.avatar ? group.avatar.url : 'https://social.webestica.com/assets/images/bg/01.jpg'} className="w-full h-40 object-cover"></img>
         <div className="p-5 flex flex-col gap-5">
-          <div className="flex gap-2 items-center">
-            <img src={group.avatar ? group.avatar.url : 'https://social.webestica.com/assets/images/avatar/01.jpg'} className="w-20 h-20 rounded-full object-cover"></img>
-            <div className="ml-5">
-              <div className="text-xl font-semibold">{group.name}</div>
-              <div className="flex gap-2 items-center">
-                <div className="">Private group</div>
-                <div className="">&#x2022;</div>
-                <div className="">2372 members</div>
+          <div className="flex gap-2 md:items-center justify-between max-md:flex-col">
+            <div className="flex gap-2 items-center">
+              <img src={group.avatar ? group.avatar.url : 'https://social.webestica.com/assets/images/avatar/01.jpg'} className="w-20 h-20 rounded-full object-cover"></img>
+              <div className="ml-5">
+                <div className="text-xl font-semibold">{group.name}</div>
+                <div className="flex gap-2 items-center">
+                  <div className="">Private group</div>
+                  <div className="">&#x2022;</div>
+                  <div className="">2372 members</div>
+                </div>
               </div>
             </div>
-            <div className="grow"></div>
-            <Button variant="outlined" color="primary">Joined</Button>
-            <Button variant="outlined" color="success">Invite</Button>
-            <IconButton><BsThreeDots className="w-4 h-4" /></IconButton>
+            <div className="flex gap-2 items-center">
+              <Button variant="outlined" color="primary">Joined</Button>
+              <Button variant="outlined" color="success">Invite</Button>
+              <div className="grow"></div>
+              <IconButton><BsThreeDots className="w-4 h-4" /></IconButton>
+            </div>
           </div>
           <div className="flex gap-5 relative items-center">
             {
-              new Array(9).fill(0).map((e, i) => <div className="h-8">
+              new Array(5).fill(0).map((e, i) => <div className="h-8">
                 <img className="w-8 h-8 absolute rounded-full border-2 border-surface object-cover" src={`https://social.webestica.com/assets/images/avatar/0${i + 1}.jpg`}></img>
               </div>)
             }
@@ -106,7 +110,7 @@ export default function () {
 
         {sub === 'connections' && <Members id={id} />}
 
-        {sub === "events" && <EventWrapper query={{group: id}}><Events group={id}/></EventWrapper>}
+        {sub === "events" && <EventWrapper query={{ group: id }}><Events group={id} /></EventWrapper>}
       </div>
     </div>
   </GroupContext.Provider>

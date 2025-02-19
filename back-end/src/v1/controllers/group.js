@@ -1,3 +1,4 @@
+import Event from '../models/Event.js'
 import GroupService from '../services/group.js'
 import PostService from '../services/post.js'
 import UserService from '../services/user.js'
@@ -27,10 +28,13 @@ class Controller {
       })
   }
 
-  get = (req, res, next) => {
-    GroupService.get(JSON.parse(req.query.q))
-      .then(val => res.status(200).send(val))
-      .catch(err => next(err))
+  get = async (req, res, next) => {
+    try {
+      const val = await GroupService.get(JSON.parse(req.query.q))
+      res.status(200).send(val)
+    } catch(err) {
+      next(err)
+    }
   }
 
   create = (req, res, next) => {

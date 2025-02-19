@@ -2,10 +2,9 @@ import { Button, Chip, Dialog, IconButton, TextField } from '@mui/material'
 import { useContext, useRef, useState } from 'react'
 import { FaFilePen } from "react-icons/fa6"
 import { IoClose } from "react-icons/io5"
-import { MdAccountCircle, MdAdd, MdClose, MdForum, MdImage, MdVideoCall } from 'react-icons/md'
+import { MdAdd, MdClose, MdForum, MdImage, MdVideoCall } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { FilePreview, UserAccount } from '../../../components'
 import Upload from '../../../components/Upload'
 import { useUser } from '../../../hooks/user'
 import { GroupContext } from '../../group'
@@ -22,7 +21,6 @@ function NormalPost({ handleCreatePost }) {
 
   const onSubmit = () => {
     const formData = new FormData()
-    console.log(contentRef.current.value)
     if (contentRef.current.value) formData.append('content', contentRef.current.value)
     files.forEach(e => formData.append('files', e))
     handleCreatePost(formData)
@@ -41,7 +39,6 @@ function NormalPost({ handleCreatePost }) {
   </div>
 }
 
-
 function LivePost({ handleCreatePost }) {
   const contentRef = useRef()
 
@@ -56,7 +53,6 @@ function LivePost({ handleCreatePost }) {
     <Button onClick={onSubmit} variant='contained'>Start</Button>
   </div>
 }
-
 
 function VotePost({ handleCreatePost }) {
   const contentRef = useRef(), optionRef = useRef()

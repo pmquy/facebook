@@ -18,7 +18,14 @@ const Post = new mongoose.Schema({
       content: String,
       votes: [String]
     }, { _id: false })
-  ]
+  ],
+  ref: new mongoose.Schema({
+    type: {
+      type: String,
+      enum: ["Post", "Event"]
+    },
+    id: String
+  }, { _id: false }),
 }, {timestamps : true})
 
 export default mongoose.model('Posts', Post)

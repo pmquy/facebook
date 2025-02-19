@@ -30,7 +30,7 @@ export default function MainNavBar() {
       </div>
     </div>
     {open && <div className="fixed z-10 bg-black/30 lg:hidden top-0 left-0 w-full h-full"></div>}
-    <div className={`bg-surface text-onSurface rounded-md shadow max-lg:fixed top-0 left-0 z-10 max-lg:w-[350px] max-lg:p-5 max-lg:h-full overflow-y-auto transition-transform duration-500 ${open ? 'max-lg:translate-x-0' : 'max-lg:-translate-x-full'}`}>
+    <div className={`bg-surface text-onSurface rounded-md shadow max-lg:fixed top-0 left-0 z-10 max-lg:w-[80%] max-lg:p-5 max-lg:h-full overflow-y-auto transition-transform duration-500 ${open ? 'max-lg:translate-x-0' : 'max-lg:-translate-x-full'}`}>
       <div className="lg:hidden mb-5 text-end"><IconButton onClick={() => setOpen(false)}><MdClose className="w-6 h-6" /></IconButton></div>
       <img className="h-16 object-cover w-full " src={user.cover.url}></img>
       <img src={user.avatar.url} className="h-20 w-20 border-2 overflow-hidden object-cover rounded-md border-primary -translate-y-1/3 m-auto"></img>
