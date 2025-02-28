@@ -1,9 +1,10 @@
-import { Button, Card, Dialog, Divider, IconButton, Tooltip } from "@mui/material"
+import { Dialog, Divider } from "@mui/material"
+import { Button, Tag, Tooltip } from "antd"
 import { useEffect, useRef, useState } from "react"
+import { BsCopy, BsThreeDots } from "react-icons/bs"
 import { FaMicrophone } from "react-icons/fa"
 import { MdVideoCall } from "react-icons/md"
 import { PiScreencastBold, PiVideoCameraFill } from "react-icons/pi"
-import { BsCopy, BsThreeDots } from "react-icons/bs"
 import { useQuery } from 'react-query'
 import { toast } from 'react-toastify'
 import { useSocket } from "../../../hooks/socket"
@@ -66,12 +67,36 @@ function Call({ id, setOpen }) {
     console.log('call')
 
     const solve = async () => {
-      myVideoRef.current.srcObject = mainVideoRef.current.srcObject = streamRef.current = await navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+      myVideoRef.current.srcObject = mainVideoRef.current.srcObject = streamRef.current = await navigator.mediaDevices.getUserMedia({ audio: true, video: true }).catch(err => {
+        const fakeStream = new MediaStream();
+        const ctx = document.createElement('canvas').getContext('2d');
+        ctx.canvas.width = 640;
+        ctx.canvas.height = 480;
+        let i = 0;
+        setInterval(() => {
+          ctx.fillStyle = "#222";
+          ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+          ctx.fillStyle = "#fff";
+          ctx.font = "30px Arial";
+          ctx.fillText("No Camera " + i++, 220, 240);
+        }, 1000);
+        const stream = ctx.canvas.captureStream(10);
+        fakeStream.addTrack(stream.getVideoTracks()[0]);
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const dst = audioCtx.createMediaStreamDestination();
+        oscillator.connect(dst);
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.01);
+        fakeStream.addTrack(dst.stream.getAudioTracks()[0]);
+        return fakeStream;
+      })
 
       socket.emit('call', JSON.stringify({ type: 'join', user: user._id, displayName: user.firstName + ' ' + user.lastName, group: 'call' + id }))
 
       listener = async payload => {
         payload = JSON.parse(payload)
+        console.log(payload)
         switch (payload.type) {
           case 'join': {
             if (othersRef.current[payload.user]) break
@@ -79,7 +104,10 @@ function Call({ id, setOpen }) {
             const remoteStream = new MediaStream()
             othersRef.current[payload.user] = { pc: pc, stream: remoteStream, user: payload.displayName }
             streamRef.current.getTracks().forEach(track => pc.addTrack(track, streamRef.current))
-            pc.ontrack = event => event.streams[0] && event.streams[0].getTracks().forEach(track => remoteStream.addTrack(track))
+            pc.ontrack = event => event.streams[0] && event.streams[0].getTracks().forEach(track => {
+              console.log('track', track)
+              remoteStream.addTrack(track)
+            })
             pc.onicecandidate = event => event.candidate && socket.emit('call', JSON.stringify({ type: 'ice', group: 'call' + id, user: user._id, data: event.candidate, to: payload.user }))
             const offer = await pc.createOffer()
             await pc.setLocalDescription(offer)
@@ -92,7 +120,10 @@ function Call({ id, setOpen }) {
             const remoteStream = new MediaStream()
             othersRef.current[payload.user] = { pc: pc, stream: remoteStream, user: payload.displayName }
             streamRef.current.getTracks().forEach(track => pc.addTrack(track, streamRef.current))
-            pc.ontrack = event => event.streams[0] && event.streams[0].getTracks().forEach(track => remoteStream.addTrack(track))
+            pc.ontrack = event => event.streams[0] && event.streams[0].getTracks().forEach(track => {
+              console.log('track', track)
+              remoteStream.addTrack(track)
+            })
             pc.onicecandidate = event => event.candidate && socket.emit('call', JSON.stringify({ type: 'ice', group: 'call' + id, user: user._id, data: event.candidate, to: payload.user }))
             await pc.setRemoteDescription(new RTCSessionDescription(payload.data))
             const answer = await pc.createAnswer()
@@ -218,17 +249,11 @@ function Call({ id, setOpen }) {
   }
 
   return <div className={`bg-background text-onBackground rounded-lg w-full h-full fixed top-0 left-0 flex flex-col`}>
-    <div className="p-5 flex gap-5 items-center">
-      <div className="font-semibold">Backlog Lorem ipsum dolor sit amet consectetur</div>
-      <div className="p-1 rounded-3xl bg-surface text-onSurface shadow px-3">10:13:23</div>
-    </div>
-
-    <Divider />
 
     <div className="p-5 flex gap-10 grow overflow-y-hidden">
 
       <div className="flex flex-col gap-5 basis-3/4 ">
-        
+
         <div className="overflow-x-auto flex gap-5 shrink-0" ref={ref}>
           <div className="overflow-hidden rounded-lg relative">
             <video muted autoPlay={true} ref={myVideoRef} className="h-32 object-cover" />
@@ -244,32 +269,24 @@ function Call({ id, setOpen }) {
 
         <div className="bg-surface text-onSurface shadow rounded-lg grow overflow-y-hidden relative">
           <video muted ref={mainVideoRef} className={`object-cover h-full mx-auto`} autoPlay={true} />
-          <div className="absolute bottom-2 right-5 bg-black bg-opacity-30 px-5 rounded-3xl text-white" >{others[currentOther]?.user}</div>
+          <div className="absolute bottom-2 right-5">
+            <Tag color="blue" >{others[currentOther]?.user}</Tag>
+          </div>
         </div>
 
         <div className="flex gap-5 shrink-0">
           <div className="px-5 py-1 bg-surface text-onSurface shadow rounded-md flex gap-2 items-center">
             <div>sfa-ate-ajh</div>
             <Divider orientation="vertical" flexItem />
-            <IconButton>
-              <BsCopy className="w-4 h-4" />
-            </IconButton>
+            <Button icon={<BsCopy />} className="!rounded-full" type="text"/>
           </div>
           <div className="grow"></div>
-          <Button variant="outlined" onClick={handleWithVideo} color={withVideo ? 'primary' : 'inherit'}>
-            <PiVideoCameraFill className="w-4 h-4" />
-          </Button>
-          <Button variant="outlined" onClick={handleShareScreen} color={isSharing ? 'primary' : 'inherit'}>
-            <PiScreencastBold className="w-4 h-4" />
-          </Button>
-          <Button variant="outlined" onClick={handleWithAudio} color={withAudio ? 'primary' : 'inherit'}>
-            <FaMicrophone className="w-4 h-4" />
-          </Button>
-          <Button variant="outlined" color="primary">
-            <BsThreeDots className="w-4 h-4" />
-          </Button>
+          <Button icon={<PiVideoCameraFill />} onClick={handleWithVideo} type={withVideo ? 'primary' : ''} />
+          <Button icon={<PiScreencastBold />} onClick={handleShareScreen} type={isSharing ? 'primary' : ''} />
+          <Button icon={<FaMicrophone />} onClick={handleWithAudio} type={withAudio ? 'primary' : ''} />
+          <Button type="primary" icon={<BsThreeDots />} className="!rounded-full  "></Button>
           <div className="grow"></div>
-          <Button variant="outlined" onClick={handleClose} color="error">Leave call</Button>
+          <Button onClick={handleClose} type="primary" danger>Leave call</Button>
         </div>
       </div>
 
@@ -313,14 +330,13 @@ export default function ({ id }) {
   }
 
   return <div>
-    <Dialog open={open}>
-      <Call id={id} setOpen={setOpen} />
+    <Dialog open={open} >
+      <Call key={id} id={id} setOpen={setOpen} />
     </Dialog>
 
     <Tooltip title={!query.data.length || query.data[query.data.length - 1].status == "ended" ? 'Bắt đầu cuộc gọi' : 'Tham gia cuộc gọi'}>
-      <IconButton onClick={handleCall} color={!query.data.length || query.data[query.data.length - 1].status == "ended" ? 'primary' : 'warning'}>
-        <MdVideoCall className="w-6 h-6" />
-      </IconButton>
+      <Button size="small" icon={<MdVideoCall />} className="!rounded-full" onClick={handleCall} danger={query.data[query.data.length - 1]?.status !== "ended"}>
+      </Button>
     </Tooltip>
   </div>
 }
