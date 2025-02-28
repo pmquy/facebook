@@ -32,7 +32,7 @@ class Controller {
   }
 
   constructor() {
-    this.#init()
+    // this.#init()
   }
 
   async create(req, res, next) {
@@ -40,7 +40,7 @@ class Controller {
       const value = await creatingPattern.validateAsync(req.body);
       value.user = req.user._id;
       const story = await Story.create(value);
-      await RabbitMQ.channel.publish('create_story', 'story', Buffer.from(JSON.stringify({ user: req.user._id, _id: story._id.toString() })));
+      // await RabbitMQ.channel.publish('create_story', 'story', Buffer.from(JSON.stringify({ user: req.user._id, _id: story._id.toString() })));
       res.status(201).json(story);
     } catch (error) {
       next(error);
