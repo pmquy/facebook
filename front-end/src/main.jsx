@@ -1,120 +1,118 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import Home from './pages/Home'
-import './index.css'
-import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from 'react-query'
-import Layout from './layouts/Layout'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import Account from './pages/Account'
-import Friends from './pages/Friends'
-import Messenger from './pages/Messenger'
-import CaroGame from './pages/CaroGame'
-import CaroGames from './pages/CaroGames'
-import File from './pages/File'
-import Group from './pages/Group'
-import { GroupsLayout } from './features/group'
-import Note from './pages/NotePage'
-import GroupFeed from './pages/GroupFeed'
-import Post from './pages/Post'
-import GroupDiscover from './pages/GroupDiscover'
-
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { GroupsLayout } from "./features/group";
+import "./index.css";
+import Layout from "./layouts/Layout";
+import Account from "./pages/Account";
+import CaroGame from "./pages/CaroGame";
+import CaroGames from "./pages/CaroGames";
+import File from "./pages/File";
+import Friends from "./pages/Friends";
+import Group from "./pages/Group";
+import Groups from "./pages/Groups";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Messenger from "./pages/Messenger";
+import Note from "./pages/NotePage";
+import Post from "./pages/Post";
+import Register from "./pages/Register";
+import Story from "./pages/Story";
+import Events from "./pages/Events";
+import Event from "./pages/Event";
 
 const router = createBrowserRouter([
-  
   {
-    path: '',
+    path: "",
     element: <Layout />,
     children: [
       {
-        path: '',
-        element: <Home />
+        path: "",
+        element: <Home />,
       },
       {
-        path: 'users/:id',
-        element: <Account />
+        path: "stories",
+        element: <Story />,
       },
       {
-        path: 'posts/:id',
-        element: <Post/>
+        path: "users/:id",
+        element: <Account />,
       },
       {
-        path: 'files/:id',
-        element: <File />
+        path: "posts/:id",
+        element: <Post />,
       },
       {
-        path: 'login',
-        element: <Login />
+        path: "files/:id",
+        element: <File />,
       },
       {
-        path: 'register',
-        element: <Register />
+        path: "login",
+        element: <Login />,
       },
       {
-        path: 'friends',
-        element: <Friends />
+        path: "register",
+        element: <Register />,
       },
       {
-        path: 'messages',
-        element: <Messenger />
+        path: "friends",
+        element: <Friends />,
       },
       {
-        path: 'carogames',
-        element: <CaroGames />
+        path: "events",
+        element: <Events />,
       },
       {
-        path: 'carogames/:id',
-        element: <CaroGame />
+        path: "events/:id",
+        element: <Event />,
       },
       {
-        path: 'groups',
+        path: "messages",
+        element: <Messenger />,
+      },
+      {
+        path: "carogames",
+        element: <CaroGames />,
+      },
+      {
+        path: "carogames/:id",
+        element: <CaroGame />,
+      },
+      {
+        path: "groups",
         element: <GroupsLayout />,
-        children: [,
+        children: [
           {
-            path: 'feed',
-            element: <GroupFeed/>
+            path: "",
+            element: <Groups />,
           },
           {
-            path: 'discover',
-            element: <GroupDiscover/>
+            path: ":id",
+            element: <Group />,
           },
-          {
-            path: ':id/:sub',
-            element: <Group/>
-          },
-          {
-            path: '',
-            element: <Navigate to={'feed'}/>
-          }
-          ,
-          {
-            path: '*',
-            element: <Navigate to={'feed'}/>
-          }
-        ]
+        ],
       },
       {
-        path: 'somestuffs/note',
-        element: <Note/>
-      }
-    ]
-  }
-])
+        path: "somestuffs/note",
+        element: <Note />,
+      },
+    ],
+  },
+]);
 
 const queryClient = new QueryClient({
-  defaultOptions : {
-    queries : {
-      refetchOnWindowFocus : false
-    }
-  }
-})
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router}>
-      </RouterProvider>
+      <RouterProvider router={router}></RouterProvider>
     </QueryClientProvider>
-  </React.StrictMode>,
-)
+  </React.StrictMode>
+);

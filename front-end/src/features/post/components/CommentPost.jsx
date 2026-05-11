@@ -1,23 +1,17 @@
-import { FaComment } from "react-icons/fa"
-import CommentApi from '../services/CommentApi'
-import { useQuery } from "react-query"
+import { Button } from "antd"
 import { useContext } from "react"
+import { FaComment, FaRegComment } from "react-icons/fa"
 import PostContext from "../store/PostContext"
 
-export default function () {
-  const { setCreate, post } = useContext(PostContext)
-  const query = useQuery({
-    queryKey: ['comments', { post: post._id }],
-    queryFn: () => CommentApi.get({ post: post._id })
-  })
+export function CommentPostDetail({ post }) {
+  return <Button type="text" icon={<FaComment/>}>
+    {post.comment_total}
+  </Button>
+}
 
-  if (query.isError || query.isLoading) return <div className="flex animate-pulse gap-2 btn items-center p-2 rounded-lg hover:bg-white_1">
-    <FaComment className="w-6 h-6" color="black" />
-    <div>Bình luận</div>
-  </div>
-
-  return <div onClick={() => setCreate(true)} className="flex gap-1 btn  items-center p-2 rounded-lg hover:bg-white_1">
-    <FaComment className="w-6 h-6" color="#00ADB5" />
-    <div>({query.data.length})</div>
-  </div>
+export function CommentPost({ id }) {
+  const { setCreate } = useContext(PostContext)
+  return <Button onClick={setCreate} type="text" icon={<FaRegComment />}>
+    <div className="text-sm font-semibold capitalize">Comment</div>
+  </Button>
 }

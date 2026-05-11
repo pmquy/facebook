@@ -15,8 +15,14 @@ import message from './message.js'
 import notification from './notification.js'
 import caroGame from './caroGame.js'
 import group from './group.js'
+import story from './story.js'
+import event from './event.js'
 
+
+router.get('/', (req, res) => res.send('Ping'))
 router.use('/users', user)
+router.use('/story', auth, story)
+router.use('/event', auth, event)
 router.use('/friends', auth, friend)
 router.use('/posts', auth, post)
 router.use('/files', auth, file)

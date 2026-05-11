@@ -1,30 +1,49 @@
-import { useSearchParams } from 'react-router-dom'
-import { GroupChats, CreateGroupChat, Messages, CreateMessage, GroupHeader } from '../features/chat'
-import { FaCircleArrowLeft } from "react-icons/fa6";
+import { Button, Card, Input, Tag } from "antd";
+import { PiArrowLeftThin } from "react-icons/pi";
+import { useSearchParams } from 'react-router-dom';
+import { CreateGroupChat, CreateMessage, GroupChatCard, GroupChatsWrapper, GroupHeader, Messages } from '../features/chat';
 
-export default function () {
+function Messenger({ groupchats, loadMore, hasMore }) {
+
   const [param, setParam] = useSearchParams()
+  const id = param.get('id')
 
-  return <div className='flex fixed z-[5] top-0 left-0 w-screen h-screen pt-16 gap-5'>
-
-    <div className={`flex flex-col p-5 gap-5 h-full min-w-80 ${param.get('id') ? 'max-md:hidden' : 'flex-grow'}`}>
-      <CreateGroupChat />
-      <div className=' bg-grey dark:bg-teal rounded-lg overflow-hidden'>
-        <GroupChats cb={e => <div className={` btn ${param.get('id') == e._id ? 'bg-teal dark:bg-black' : 'hover:bg-teal dark:hover:bg-black'} text-white text-1 px-5 py-2`} onClick={() => { param.set('id', e._id); setParam(param) }} key={e._id}>{e.name}</div>} />
+  return <div className='p-3 bg-background h-[calc(100vh-4rem)] max-w-[1200px] mx-auto flex gap-5'>
+    <div
+      className={` max-h-full flex flex-col gap-5 w-96 bg-surface text-onSurface p-5 rounded ${id ? 'max-md:hidden' : 'grow'}`}>
+      <div className="flex justify-between items-center gap-3">
+        <div className="flex gap-3 items-center ">
+          <div className=" font-semibold">Active chats</div>
+          <Tag color="green">{groupchats.length}</Tag>
+          <div className="grow"></div>
+        </div>
+        <CreateGroupChat />
+      </div>
+      <Input.Search placeholder="Search" />
+      <div className="flex flex-col gap-3 overflow-y-auto">
+        {
+          groupchats.map(e => <div className={`${id == e._id ? 'bg-primary/30' : 'hover:bg-background'} cursor-pointer `} onClick={() => { param.set('id', e._id); setParam(param) }} key={e._id}>
+            <GroupChatCard groupchat={e} />
+          </div>)
+        }
       </div>
     </div>
 
-    {param.get('id') && <div className={`${param.get('id') ? '' : 'max-md:hidden'} flex-grow flex flex-col gap-5 overflow-y-auto border-l-teal border-l-2`}>
-      <div className="sticky z-[1] bg-teal p-5 top-0 text-white flex justify-between">
-        <FaCircleArrowLeft className='w-8 h-8' color='white' onClick={() => { param.delete('id'); setParam(param) }} />
-        <GroupHeader id={param.get('id')} />
+    {id && <div className={`${id ? '' : 'max-md:hidden'} bg-surface text-onSurface grow flex flex-col max-h-full`}>
+      <div className="sticky z-1 text-primary p-3 top-0 flex justify-between border-b-1 border-onSurface/30">
+        <Button className="!rounded-full" icon={<PiArrowLeftThin />} type="primary" size="small" onClick={() => { param.delete('id'); setParam(param) }} />
+        <GroupHeader id={id} />
       </div>
-      <div className="p-5 flex-grow">
-        <Messages id={param.get('id')} />
+      <div className="grow p-3 overflow-y-auto">
+        <Messages key={id} id={id} />
       </div>
-      <div className="p-3">
-        <CreateMessage id={param.get('id')} />
-      </div>
+      <div className=" bg-surface text-onSurface p-5 border-t-1 border-onSurface/30"><CreateMessage id={id} /></div>
     </div>}
   </div>
+}
+
+export default function Page() {
+  return <GroupChatsWrapper>
+    <Messenger />
+  </GroupChatsWrapper>
 }

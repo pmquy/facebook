@@ -2,8 +2,10 @@ import { useState } from "react"
 import { FaCircleInfo } from "react-icons/fa6"
 import { useQuery } from "react-query"
 import api from '../services/groupChat'
+import { Button } from "antd";
+import { IoInformation } from "react-icons/io5";
 
-export default function GroupInfo({id}) {
+export default function GroupInfo({ id }) {
   const [open, setOpen] = useState(false)
   const query = useQuery({
     queryKey: ['group', id],
@@ -11,9 +13,10 @@ export default function GroupInfo({id}) {
   })
 
   return <div className=" relative">
-    <FaCircleInfo onClick={() => setOpen(!open)} className="w-8 h-8"/>
+    <Button size="small" type="primary" onClick={() => setOpen(!open)} icon={<IoInformation />} className="!rounded-full">
+    </Button>
     <div className={`absolute right-0 ${open ? '' : ' translate-x-'}`}>
-      
+
     </div>
   </div>
 };

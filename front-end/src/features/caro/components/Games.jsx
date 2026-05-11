@@ -9,7 +9,7 @@ export default function () {
 
   const query = useQuery({
     queryKey : ['carogames', user._id],
-    queryFn : () => GameApi.get()
+    queryFn : () => GameApi.get({q : {}})
   })
   
   if(query.isError || query.isLoading) return <></>

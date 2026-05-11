@@ -1,4 +1,4 @@
-import {io, redisClient} from '../../app.js'
+import Socket from '../configs/init.socket.js'
 import CaroGame from '../models/CaroGame.js'
 import Joi from 'joi'
 const m = 30, n = 30, w = 5;
@@ -74,7 +74,7 @@ const check = (arr) => {
 class Controller {
 
   get = (req, res, next) => {
-    CaroGame.find({ ...req.query, $or: [{ from: req.user._id }, { to: req.user._id }] })
+    CaroGame.find({ ...JSON.parse(req.query.q), $or: [{ from: req.user._id }, { to: req.user._id }] })
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
   }
@@ -106,7 +106,7 @@ class Controller {
         if (val.turn != req.user._id) throw new Error('Lượt của đối thủ')
         if (val.content[req.body.i][req.body.j]) throw new Error('Nước đi không hợp lệ')
         val.content[req.body.i][req.body.j] = req.user._id == val.from ? 'x' : 'o'
-        io.emit('invalidate', ['carogame', val._id.toString()])        
+        Socket.io.emit('invalidate', ['carogame', val._id.toString()])        
         return val.updateOne({
           content: val.content,
           turn: req.user._id == val.from ? val.to : val.from,

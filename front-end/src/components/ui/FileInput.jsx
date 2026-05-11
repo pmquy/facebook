@@ -1,10 +1,14 @@
+import { Button, Tooltip } from "antd"
 import React, { useRef } from "react"
-import Button from './Button'
+import { MdUpload } from "react-icons/md"
 
-export default ({children,className , ...props}) => {    
+export default ({ children, className, ...props }) => {
   const ref = useRef()
   return <div>
     <input type="file" multiple={true} hidden ref={ref} {...props}></input>
-    <Button className={`${className} w-full`} onClick={() => ref.current.click()}>{children ? children : 'Thêm ảnh'}</Button>
+    <Tooltip title="Upload file">
+      <Button type="text" icon={<MdUpload />} onClick={() => ref.current.click()}>
+      </Button>
+    </Tooltip>
   </div>
 }

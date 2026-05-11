@@ -1,9 +1,9 @@
-import CommentPost from '../models/CommentPost.js'
 import Joi from 'joi'
+import Socket from '../configs/init.socket.js'
+import CommentPost from '../models/CommentPost.js'
 import File from '../models/File.js'
-import Notification from '../models/Notification.js'
-import PostService from '../services/post.js'
-import {io} from '../../app.js'
+import CommentService from '../services/comment.js'
+import Redis from '../configs/init.redis.js'
 
 const creatingPattern = Joi.object({
   content: Joi.string(),
@@ -23,46 +23,51 @@ const updatingPattern = Joi.object({
 
 class Controller {
 
-  get = (req, res, next) => {
-    CommentPost.find(req.query).select(['_id'])
-      .then(val => res.status(200).send(val))
-      .catch(err => next(err))
+  get = async (req, res, next) => {
+    try {
+      const page = Number.parseInt(req.query.page)
+      const limit = Number.parseInt(req.query.limit)
+      const q = JSON.parse(req.query.q)
+      const comments = await CommentPost.find(q).skip(page * limit).limit(limit)
+      const count = await CommentPost.countDocuments(q)
+      const hasMore = count > (page + 1) * limit
+      res.status(200).send({ comments, hasMore })
+    } catch (error) {
+      next(error)
+    }
   }
 
   getById = (req, res, next) =>
-    CommentPost.findById(req.params.id)
+    CommentService.findById(req.params.id)
       .then(val => res.status(200).send(val))
       .catch(err => next(err))
 
-  create = (req, res, next) => {
-    creatingPattern.validateAsync(req.body)
-      .then(val => CommentPost.create({ ...val, user: req.user._id }))
-      .then(async val => {
-        res.status(200).send(val)
-        const post = await PostService.getById(val.post)        
-        if(post.user != req.user._id) {
-          Notification.create({
-            content : `${req.user.firstName + ' ' + req.user.lastName} vừa bình luận bài viết của bạn`,
-            user : post.user,
-            to : '/?open=' + post._id,
-            key : JSON.stringify(['comments', { post: val.post, comment: val.comment }])
-          })
-            .then(() => io.emit('invalidate', ['notifications', post.user]))        
-        }
-      })   
-      .catch(err => next(err))
+  create = async (req, res, next) => {
+    try {
+      const data = await creatingPattern.validateAsync(req.body)
+      const val = await CommentPost.create({ ...data, user: req.user._id })
+      await Redis.client.json.numIncrBy('post:' + data.post, '$.comment_total', 1)
+      res.status(200).send(val)
+      Socket.io.to(`post-${val.post}`).emit('new_comment', val)
+    } catch (error) {
+      next(error)
+    }
   }
 
-  deleteById = (req, res, next) =>
-    CommentPost.findById(req.params.id)
-      .then(async val => {
-        if (val.user != req.user._id) throw new Error()
-        await Promise.all(val.files.map(e => File.findByIdAndDelete(e)))
-        return val.deleteOne()
-      })
-      .then(val => res.status(200).send(val))
-      .catch(err => next(err))
+  deleteById = async (req, res, next) => {
+    try {
+      const val = await CommentPost.findById(req.params.id)
+      if (val.user != req.user._id) throw new Error()
+      await Promise.all(val.files.map(e => File.findByIdAndDelete(e)))
+      await Redis.client.json.numIncrBy('post:' + val.post, '$.comment_total', -1)
+      await val.deleteOne()
+      res.status(200).send(val)
+    } catch (error) {
+      next(error)
+    }
 
+  }
+  
   updateById = (req, res, next) =>
     updatingPattern.validateAsync(req.body)
       .then(val => CommentPost.findById(req.params.id)

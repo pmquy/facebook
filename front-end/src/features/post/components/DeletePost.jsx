@@ -1,15 +1,13 @@
 import { useContext } from "react";
-import PostContext from "../store/PostContext";
+import { toast } from 'react-toastify';
 import PostApi from "../services/PostApi";
-import { useQueryClient } from "react-query";
-import {toast} from 'react-toastify'
+import PostContext from "../store/PostContext";
 
 export default function () {
   const {post} = useContext(PostContext)
-  const queryClient = useQueryClient()
   const handleDelete = () => {
     PostApi.deleteById(post._id)
-      .then(() => queryClient.invalidateQueries(['posts']))
+      .then(() => {})
       .catch(err => toast(err.message, { type: 'error' }))
   }
   return <div className="p-2 btn" onClick={handleDelete}>Xóa</div>

@@ -32,6 +32,20 @@ class Api {
         if (res.ok) return res.json()
         return res.json().then(res => { throw new Error(res.error.message) })
       })
+  
+  voteById = async (id, data) =>
+    fetch(`${import.meta.env.VITE_SERVER_URL}posts/${id}/vote`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    })
+      .then(async res => {
+        if (res.ok) return res.json()
+        return res.json().then(res => { throw new Error(res.error.message) })
+      })
 
   getById = async id =>
     fetch(`${import.meta.env.VITE_SERVER_URL}posts/${id}`, {

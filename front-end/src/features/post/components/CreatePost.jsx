@@ -1,58 +1,181 @@
-import { useContext, useEffect, useRef, useState } from 'react'
-import { MdAccountCircle } from 'react-icons/md'
-import { Button, Textarea } from '../../../components/ui'
-import PostApi from '../services/PostApi'
-import { toast } from 'react-toastify'
-import { UserAccount } from '../../../components'
-import { GroupContext } from '../../group'
-import { IoCloseCircle } from "react-icons/io5";
-import { useQueryClient } from 'react-query'
-import { File } from '../../../components'
-import Upload from '../../../components/Upload'
-import { useUser } from '../../../hooks/user'
-import CommonContext from '../../../store/CommonContext'
+import { Upload as AntdUpload, Button, Form, Input, Modal } from "antd";
+import { useContext, useState } from "react";
+import { MdAdd, MdClose, MdForum, MdImage, MdInbox, MdVideoCall, } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import Upload from "../../../components/Upload";
+import { useUser } from "../../../hooks/user";
+import { GroupContext } from "../../group";
+import PostApi from "../services/PostApi";
 
-export default function () {
-  const { user } = useUser()
-  const groupContext = useContext(GroupContext)
-  const {headerRef} = useContext(CommonContext)
-  const [open, setOpen] = useState(false)
-  const [files, setFiles] = useState([])
-  const queryClient = useQueryClient()
-  const ref = useRef(), contentRef = useRef()
+function NormalPost({ files, setFiles }) {
+  return (
+    <div className="flex flex-col gap-3">
+      <Form.Item name={"content"} noStyle>
+        <Input placeholder="Viết nội dung" />
+      </Form.Item>
+      <Form.Item name={"files"} noStyle>
+        <AntdUpload.Dragger
+          defaultFileList={[]}
+          name="files"
+          accept="image/*,video/*,audio/*,application/pdf"
+          beforeUpload={(file) => {
+            setFiles((prev) => [...prev, file]);
+            return false;
+          }}
+          onRemove={(file) => {
+            setFiles((prev) => prev.filter((e) => e.name !== file.name));
+          }}
+        >
+          <p className="ant-upload-drag-icon">
+            <MdInbox />
+          </p>
+          <p className="ant-upload-text">
+            Click or drag file to this area to upload
+          </p>
+          <p className="ant-upload-hint">
+            Support for a single or bulk upload. Strictly prohibited from
+            uploading company data or other banned files.
+          </p>
+        </AntdUpload.Dragger>
+      </Form.Item>
+      <Upload files={files} setFiles={setFiles} />
+    </div>
+  );
+}
 
-  useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : 'auto'
-    headerRef.current.style['z-index'] = open ? 5 : 10
-  }, [open])
+function LivePost() {
+  return (
+    <div className="flex flex-col gap-5">
+      <Form.Item name={"content"} noStyle>
+        <Input placeholder={"Tiêu đề buổi live"} />
+      </Form.Item>
+    </div>
+  );
+}
 
-  const handleCreatePost = () => {
-    const formData = new FormData()
-    if (contentRef.current.value) formData.append('content', contentRef.current.value)
-    if (groupContext) formData.append('group', groupContext.group._id)
-    files.forEach(e => formData.append('files', e))
-    PostApi.create(formData)
-      .then(() => {
-        setFiles([])
-        contentRef.current.value = ''
-        setOpen(false)
-        queryClient.invalidateQueries(['posts', groupContext ? { group: groupContext.group._id } : {}])
-      })
-      .catch(err => toast(err.message, { type: 'error' }))
+function VotePost({ files, setFiles }) {
+
+  return (
+    <div className="flex flex-col gap-5">
+      <Form.Item name={"content"} noStyle>
+        <Input placeholder="Viết nội dung" />
+      </Form.Item>
+
+      <Form.List name="options" noStyle rules={[{ required: true, message: "Vui lòng nhập ít nhất một lựa chọn" }]}>
+        {(fields, { add, remove }, { errors }) => (
+          <>
+            {fields.map((field) => (
+              <div className="flex gap-2" key={field.key}>
+                <Form.Item
+                  name={[field.name, "content"]}
+                  rules={[{ required: true, message: "Vui lòng nhập lựa chọn" }]}
+                  noStyle
+                >
+                  <Input placeholder="Nhập lựa chọn" />
+                </Form.Item>
+                <Button
+                  danger
+                  icon={<MdClose />}
+                  onClick={() => remove(field.name)}
+                />
+              </div>
+            ))}
+
+            <Form.Item noStyle>
+              <Button type="primary" onClick={() => add()} icon={<MdAdd />}>
+                Thêm lựa chọn
+              </Button>
+            </Form.Item>
+          </>
+        )}
+      </Form.List>
+
+      <Upload files={files} setFiles={setFiles} />
+    </div>
+  );
+}
+
+export default function CreatePost() {
+  const { user } = useUser();
+  const [form] = Form.useForm();
+  const groupContext = useContext(GroupContext);
+  const [type, setType] = useState();
+  const [files, setFiles] = useState([]);
+  const navigate = useNavigate();
+
+  const onFinish = async (values) => {
+    try {
+      const formData = new FormData();
+      formData.append("type", type);
+      groupContext && formData.append("group", groupContext.group._id);
+      values.content && formData.append("content", values.content);
+      values.files && values.files.fileList.forEach((file) => formData.append("files", file.originFileObj));
+      values.options && values.options.forEach((e, i) =>
+        formData.append(`options[${i}][content]`, e.content)
+      );
+      files.forEach((file) => formData.append("files", file));
+      const res = await PostApi.create(formData);
+      setType(null);
+      if (res.type === "Live") navigate(`/posts/${res._id}`);
+    } catch (error) {
+      toast(error.message, { type: "error" });
+    }
   }
 
-  return <div className='flex card dark:card-black gap-5 items-center p-5'>
-    {open && <div onClick={e => { if (!ref.current.contains(e.target)) setOpen(false) }} className={`z-10 top-0 left-0 w-screen h-screen fixed bg-black_trans`}></div>}
-    <div ref={ref} className={`left-1/2 -translate-x-1/2 top-1/2 fixed z-10 ${open ? '-translate-y-1/2' : 'translate-y-[1000px]'} transition-transform duration-500 card dark:card-black p-5 max-h-[80%] w-[90%] max-sm:max-w-screen sm:max-w-[500px] max-sm:max-h-screen max-sm:w-screen overflow-y-auto flex flex-col gap-5`}>
-      <IoCloseCircle onClick={() => setOpen(false)} className='w-10 h-10 absolute right-5 top-5 btn-teal dark:btn-grey' />
-      <UserAccount id={user._id} />
-      <div className="border-2 border-teal p-2 rounded-lg">
-        <Textarea placeholder={'Viết nội dung'} className={'w-full bg-white dark:bg-black'} autoFocus={true} ref={contentRef} />
-        <Upload files={files} setFiles={setFiles}/>
+  return (
+    <>
+      <Modal onOk={() => form.submit()} open={!!type} onCancel={() => setType(null)} okText="Đăng" cancelText="Hủy">
+        <Form onFinish={onFinish} form={form} className="flex flex-col gap-3">
+          <div className="flex gap-2 items-center">
+            <img
+              className={"w-8 h-8 overflow-hidden rounded-full object-cover"}
+              src={user.avatar.url}
+            />
+            <div className="font-semibold">
+              {user.firstName} {user.lastName}
+            </div>
+          </div>
+          {type === "Normal" && <NormalPost files={files} setFiles={setFiles} />}
+          {type === "Live" && <LivePost/>}
+          {type === "Vote" && <VotePost files={files} setFiles={setFiles} />}
+        </Form>
+      </Modal>
+
+      <div className="flex flex-col gap-10 rounded-md p-5 bg-surface text-onSurface shadow">
+        <div className="flex gap-5 items-center">
+          <img
+            className={"w-8 h-8 overflow-hidden rounded-full object-cover"}
+            src={user.avatar.url}
+          />
+          <div
+            className="bg-background grow py-2 px-5 cursor-pointer select-none rounded-3xl text-onBackground active:bg-background/70"
+            onClick={() => setType("Normal")}
+          >
+            Share your thoughts...
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => setType("Live")}
+            icon={<MdVideoCall color="#dc2626" />}
+          >
+            Trực tiếp
+          </Button>
+          <Button
+            onClick={() => setType("Normal")}
+            icon={<MdImage color="#2563eb" />}
+          >
+            Hình ảnh/Video
+          </Button>
+          <Button
+            onClick={() => setType("Vote")}
+            icon={<MdForum color="#16a34a" />}
+          >
+            Bình chọn
+          </Button>
+        </div>
       </div>
-      <Button onClick={handleCreatePost} className={'m-auto btn-teal dark:btn-grey'}>Đăng</Button>
-    </div>
-    {user.avatar ? <File needToNavigate={false} id={user.avatar} className={'min-w-8 min-h-8 max-w-8 max-h-8 object-cover rounded-full'} /> : <MdAccountCircle className='w-8 h-8' />}
-    <div onClick={() => setOpen(true)} className='btn p-2 rounded-xl flex-grow border-2 border-teal'>Bạn đang nghĩ gì thế</div>
-  </div>
+    </>
+  );
 }

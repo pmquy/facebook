@@ -1,10 +1,17 @@
 import CreatePost from "./components/CreatePost";
 import PostApi from './services/PostApi'
-import Post from "./components/Post";
-import LikePost from "./components/LikePost";
-import SharePost from "./components/SharePost";
-import CommentPost from "./components/CommentPost";
+import EventApi from "./services/EventApi";
 import PostContext from "./store/PostContext";
 import Comments from "./components/Comments";
+import Posts from "./components/Posts";
+import Live from "./components/Live";
 
-export {CreatePost, PostApi, Post, LikePost, SharePost, CommentPost, PostContext, Comments}
+export * from "./components/Post";
+export * from "./components/LikePost";
+export * from "./components/CommentPost";
+export * from './components/Story'
+export * from "./components/Vote";
+export * from './components/Event'
+export * from './components/SharePost'
+
+export {CreatePost, PostApi, PostContext, Comments, Posts, Live, EventApi,}

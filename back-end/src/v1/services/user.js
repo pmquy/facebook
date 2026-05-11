@@ -1,5 +1,5 @@
 import User from '../models/User.js'
-import { redisClient } from '../../app.js'
+import Redis from '../configs/init.redis.js'
 import RoleInGroup from '../models/RoleInGroup.js'
 import bcrypt from 'bcrypt'
 import File from '../services/file.js'
@@ -11,7 +11,12 @@ class Service {
   }
 
   getById = async id => {
-    const val = await User.findById(id).select('-password -phoneNumber -email')
+    const cache = await Redis.client.json.get('user:' + id, "$")
+    if (cache) cache
+    const val = (await User.findById(id).select('-password --email')).toObject()
+    val.avatar = await File.getById(val.avatar)
+    val.cover = await File.getById(val.cover)
+    Redis.client.json.set('user:' + id, "$", val)
     return val
   }
 
@@ -32,8 +37,10 @@ class Service {
   }
 
   update = async (user, data) => {
-    if (user.avatar) await File.deleteById(user.avatar)
-    return User.findByIdAndUpdate(user._id, data, { new: true })
+    if (data.avatar) File.deleteById(user.avatar).catch(() => { })
+    const val = await User.findByIdAndUpdate(user._id, data, { new: true })
+    Redis.client.del('user:' + user._id)
+    return val
   }
 
   changePassword = async (user, val) => {

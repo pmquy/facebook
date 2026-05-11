@@ -1,7 +1,7 @@
 import Joi from 'joi'
 import Message from '../models/Message.js'
 import GroupChat from '../models/GroupChat.js'
-import { io } from '../../app.js'
+import Socket from '../configs/init.socket.js'
 
 const creatingPattern = Joi.object({
   type: Joi.string().required(),
@@ -20,10 +20,20 @@ const updatingPattern = Joi.object({
 }).unknown(true).required()
 
 class Controller {
-  get = (req, res, next) =>
-    Message.find(req.query).select('_id')
-      .then(val => res.status(200).send(val))
-      .catch(err => next(err))
+
+  get = async (req, res, next) => {
+    try {
+      const page = Number.parseInt(req.query.page)
+      const limit = Number.parseInt(req.query.limit)
+      const query = JSON.parse(req.query.q)
+      const count = await Message.countDocuments(query)
+      const messages = await Message.find(query).skip(Math.max(count - (page + 1) * limit, 0)).limit(limit)
+      const hasMore = count > (page + 1) * limit
+      res.status(200).json({ messages, hasMore })
+    } catch (err) {
+      next(err)
+    }
+  }
 
   getById = (req, res, next) =>
     Message.findById(req.params.id)
@@ -36,8 +46,9 @@ class Controller {
       const group = await GroupChat.findById(req.body.groupChat)
       if (!group.users.includes(req.user._id)) throw new Error('You must join this group')
       const data = await Message.create({ ...val, user: req.user._id })
+      await GroupChat.findByIdAndUpdate(data.groupChat, { lastMessage: data._id.toString() })
       res.status(200).send(data)
-      io.emit('invalidate', ['messages', { groupChat: val.groupChat }])
+      Socket.io.to(`group_chat_${data.groupChat}`).emit('create_message', data)
     } catch (error) {
       next(error)
     }
@@ -51,7 +62,7 @@ class Controller {
         throw new Error()
       })
       .then(val => {
-        io.emit('invalidate', ['messages', { groupChat: req.body.groupChat }])
+        Socket.io.emit('invalidate', ['messages', { groupChat: req.body.groupChat }])
         res.status(200).send(val)
       })
       .catch(err => next(err))

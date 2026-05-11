@@ -1,7 +1,7 @@
 class Api {
   getFileById = id =>
     fetch(`${import.meta.env.VITE_SERVER_URL}files/${id}`, {
-      credentials: 'include'
+      credentials: 'include',
     })
       .then(async res => {
         if (res.ok) return res.json()

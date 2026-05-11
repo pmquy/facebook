@@ -1,12 +1,14 @@
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
-import { LikePost, PostApi, CommentPost, SharePost, PostContext, Comments } from "../features/post";
-import { File, UserAccount } from "../components";
-import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
-import { GroupAccount } from "../features/group";
-import { parseDate } from "../utils/parseDate";
-import CreateComment from "../features/post/components/CreateComment";
+import { Button, Divider } from "antd";
 import { useState } from "react";
+import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
+import { useQuery } from "react-query";
+import { Link, useParams } from "react-router-dom";
+import { FileDetail } from "../components";
+import MainNavBar from "../components/MainNavBar";
+import { GroupAccount } from "../features/group";
+import { Comments, Live, PostAction, PostApi, PostContext, Vote } from "../features/post";
+import CreateComment from "../features/post/components/CreateComment";
+import { getDiff } from "../utils/parseDate";
 
 export default function Post() {
   const params = useParams()
@@ -20,42 +22,57 @@ export default function Post() {
   const post = query.data
   console.log(index)
 
-  return <PostContext.Provider value={{ setCreate: () => { }, post: post, }}>
-    <div className=" fixed pt-16 h-screen w-screen top-0 left-0 flex">
-      {!!post.files.length && <div className="basis-1/2 max-lg:hidden relative">
-        <div className=" absolute w-full max-w-max left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 px-5">
-          <File needToNavigate={true} id={post.files[index]} />
-        </div>
-        <IoMdArrowDropleft onClick={() => setIndex((index - 1 + post.files.length) % post.files.length)} className="btn-teal w-10 h-10 absolute left-10 top-1/2 -translate-y-1/2" />
-        <IoMdArrowDropright onClick={() => setIndex((index + 1) % post.files.length)} className="btn-teal w-10 h-10 absolute right-10 top-1/2 -translate-y-1/2" />
-      </div>}
+  return <div className="flex bg-background gap-5 sm:px-3 py-5 max-w-[1300px] mx-auto max-lg:flex-col">
 
-      <div className="flex flex-col gap-5 relative flex-grow overflow-y-auto bg-black">
-        <div className="p-5 flex flex-col gap-2 sticky z-10 border-b-2 border-white top-0 bg-teal text-white">
-          <div className="flex gap-5 justify-between">
-            <div className="flex gap-2">
-              <UserAccount id={post.user} />
-              {post.group && <IoMdArrowDropright className=" w-8 h-8" />}
-              {post.group && <GroupAccount id={post.group} />}
-            </div>
-          </div>
-          <div>Vào {parseDate(post.createdAt)}</div>
-        </div>
-        <div className="flex flex-col gap-5 p-5">
-          <div className=" whitespace-pre-line text-2xl">{post.content}</div>
-          <div className=" flex flex-col gap-5 lg:hidden">
-            {post.files.map(e => <div className=" max-w-96" key={e}><File id={e} needToNavigate={true} /></div>)}
-          </div>
-          <hr />
-          <div className="flex justify-between">
-            <LikePost />
-            <CommentPost />
-            <SharePost />
-          </div>
-          <CreateComment />
-          <Comments />
-        </div>
-      </div>
+    <div className="basis-1/4">
+      <MainNavBar />
     </div>
-  </PostContext.Provider>
+
+    <div className="basis-3/4 overflow-hidden">
+      <PostContext.Provider value={{ post: post }}>
+        <div className="flex flex-col gap-5 relative card">
+          <div className="text-sm">Ngày đăng: {new Date(post.createdAt).toLocaleString()}</div>
+          {post.content && <div className=" whitespace-pre-line text-justify heading">{post.content}</div>}
+
+          {!!post.files.length && <div className="relative rounded-md overflow-hidden">
+            <Link to={`/files/${post.files[index]}`}><FileDetail id={post.files[index]} /></Link>
+            <div className="absolute left-5 top-1/2 -translate-y-1/2">
+              <Button disabled={index === 0} variant="contained" onClick={() => setIndex((index - 1 + post.files.length) % post.files.length)}>
+                <IoMdArrowDropleft className="w-6 h-6" />
+              </Button>
+            </div>
+
+            <div className="absolute right-5 top-1/2 -translate-y-1/2">
+              <Button disabled={index === post.files.length - 1} variant="contained" onClick={() => setIndex((index + 1) % post.files.length)}>
+                <IoMdArrowDropright className="w-6 h-6" />
+              </Button>
+            </div>
+          </div>}
+
+          {post.type == 'Live' && <div><Live post={post} /></div>}
+
+          <div className="flex gap-2 items-center flex-wrap">
+            <img src={post.user.avatar.url} alt="avatar" className="w-10 h-10 rounded-full object-cover" />
+            <div>
+              <div className="flex gap-2 font-semibold items-center">
+                <Link to={`/users/${post.user._id}`}>{post.user.firstName + ' ' + post.user.lastName}</Link>
+                <div>&#x2022;</div>
+                <div className="text-sm">{getDiff(post.createdAt)}</div>
+              </div>
+              <div className="text-sm">Web Developer at Webestica</div>
+            </div>
+            {post.group && <IoMdArrowDropright className=" w-6 h-6" />}
+            {post.group && <GroupAccount group={post.group} />}
+          </div>
+          {post.type == 'Vote' && <div className=""><Vote post={post} /></div>}
+          <Divider/>
+          <PostAction post={post} />
+          <CreateComment />
+          <Comments q={{ post: id, comment: "" }} />
+
+        </div>
+      </PostContext.Provider>
+    </div>
+
+  </div>
 };

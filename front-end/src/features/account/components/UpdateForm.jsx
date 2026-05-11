@@ -2,10 +2,8 @@ import { Input, Button, FileInput } from '../../../components/ui'
 import { useEffect, useRef, useState } from 'react'
 import api from '../services/api'
 import { toast } from 'react-toastify'
-import { useQuery } from 'react-query'
 import FileApi from '../../../services/file'
 import { useUser } from '../../../hooks/user'
-import File from '../../../components/File'
 
 export default function () {
   const { user, setUser } = useUser()
@@ -15,18 +13,10 @@ export default function () {
     firstNameRef = useRef(),
     lastNameRef = useRef()
 
-  const query = useQuery({
-    queryKey: ['file', user.avatar],
-    queryFn: () => FileApi.getFileById(user.avatar).then(data => new File([new Uint8Array(data.data.data)], data.name, { type: data.type }))
-  })
-
   useEffect(() => {
-    if (!query.isLoading && !query.isError) {
-      setImage(query.data)
-    }
-  }, [query.isLoading])
-
-  if (query.isLoading || query.isError) return <></>
+    FileApi.getFileById(user.avatar).then(data => new File([new Uint8Array(data.data.data)], data.name, { type: data.type }))
+      .then(setImage)
+  }, [])
 
   const handleUpdate = () => {
     const formData = new FormData()
@@ -42,7 +32,7 @@ export default function () {
       })
       .catch(err => toast(err.message, { type: 'error' }))
   }
-
+  
   return <div className="flex flex-col justify-center gap-5 card dark:card-black p-5">
     <div className="flex gap-5 items-center justify-between">
       <div className='text-1'>Số điện thoại</div>
@@ -61,9 +51,7 @@ export default function () {
       <Input className="bg-white border-teal border-2 dark:bg-black" defaultValue={user.lastName} ref={lastNameRef} />
     </div>
     {image && <img src={URL.createObjectURL(image)} className='w-72 rounded-full h-72 object-cover m-auto'></img>}
-    <div className="m-auto">
-      <FileInput className="btn-teal dark:btn-grey" accept={'image/*'} onChange={e => setImage(URL.createObjectURL(e.target.files[0]))} />
-    </div>
+    <FileInput className="btn-teal dark:btn-grey" accept={'image/*'} onChange={e => setImage(e.target.files[0])} />
     <Button onClick={handleUpdate} className={'m-auto btn-teal dark:btn-grey'}>Cập Nhật</Button>
   </div>
 }

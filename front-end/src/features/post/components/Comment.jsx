@@ -1,50 +1,69 @@
-import UserAccount from "../../../components/UserAccount";
-import { File } from "../../../components";
-import CommentApi from '../services/CommentApi'
+import { Button, Skeleton } from "antd";
+import { memo, useState } from "react";
+import { BsThreeDots } from "react-icons/bs";
 import { useQuery } from "react-query";
-import {  useState } from "react";
-import CreateComment from './CreateComment'
-import Comments from './Comments'
-import LikeComment from "./LikeComment";
-import CommentContext from '../store/CommentContext'
-import UpdateComment from "./UpdateComment";
-import DeleteComment from "./DeleteComment";
-import { FaReply } from "react-icons/fa";
-import { MdEdit } from "react-icons/md";
+import { Link } from "react-router-dom";
+import { FilePreview } from "../../../components";
 import { useUser } from "../../../hooks/user";
+import { getDiff } from "../../../utils/parseDate";
+import CommentApi from '../services/CommentApi';
+import CommentContext from '../store/CommentContext';
+import Comments from './Comments';
+import CreateComment from './CreateComment';
+import { LikeComment, LikeCommentDetail } from "./LikeComment";
+import UpdateComment from "./UpdateComment";
+import { formatDate } from "@/utils";
 
-export default function ({ id }) {
+export default memo(function ({ id }) {
   const { user } = useUser()
   const [create, setCreate] = useState(false)
   const [update, setUpdate] = useState(false)
+  const [open, setOpen] = useState(false)
+
   const query = useQuery({
     queryKey: ['comment', id],
-    queryFn: () => CommentApi.getById(id),
+    queryFn: () => CommentApi.getById(id)
   })
-  if (query.isLoading || query.isError) return <div></div>
+
+  if (query.isLoading || query.isError) return <Skeleton active className="w-full h-16" />;
+
   const comment = query.data
+
   return <CommentContext.Provider value={{ setCreate: setCreate, setUpdate: setUpdate, comment: comment }}>
-    <div className={`flex flex-col`}>
-      <div className="relative">
-        <UserAccount id={comment.user} />
-        {comment.comment && <div className=" absolute left-0 top-1/2 -tranlsate-y-1/2 border-teal -translate-x-full w-8 border-t-2"></div>}
+    <div className="flex flex-col gap-3">
+      <div className="flex gap-2">
+        <img src={comment.user.avatar.url} alt="avatar" className="w-8 h-8 object-cover rounded-full" />
+        {update ?
+          <div className=""><UpdateComment /></div> :
+          <div className="flex flex-col gap-2 w-max">
+            <div className="flex gap-2 items-center">
+              <div className="flex flex-col gap-2">
+                <div className="flex gap-2 font-semibold items-center">
+                  <Link to={`/users/${comment.user._id}`}>{comment.user.firstName + ' ' + comment.user.lastName}</Link>
+                  <div>&#x2022;</div>
+                  <div className="text-xs">{formatDate(comment.createdAt, "fromNow")}</div>
+                </div>
+                {comment.content && <div className="bg-background text-onBackground p-2 rounded-e-md rounded-b-md whitespace-pre-line">{comment.content}</div>}
+                {comment.files.map(e => <Link to={`/files/${e}`} className="max-w-60 rounded-md overflow-hidden" key={e}><FilePreview id={e} /></Link>)}
+              </div>
+              <div className="relative btn">
+                <BsThreeDots onClick={() => setOpen(prev => !prev)} className="w-6 h-6 hover:bg-background p-1 rounded-full" />
+                {open && <div className="absolute left-8 w-max bg-surface shadow text-onSurface top-0 font-semibold flex flex-col">
+                  <div className="p-2 hover:bg-background">Ẩn bình luận</div>
+                  {comment.user == user._id && <button className="p-2 hover:bg-background">Xoá</button>}
+                  {comment.user == user._id && <button className="p-2 hover:bg-background" onClick={() => setUpdate(true)}>Chỉnh sửa</button>}
+                </div>}
+              </div>
+            </div>
+            <div className="flex items-center">
+              <LikeComment id={comment._id} />
+              <Button type="text" onClick={() => setCreate(true)} ><div className="text-sm capitalize font-semibold">Reply</div></Button>
+              <LikeCommentDetail id={comment._id} />
+            </div>
+          </div>}
       </div>
-      {update ? <div className="my-2"><UpdateComment /></div> :
-        <div className="flex mt-2 flex-col gap-2 p-3 my-2 card-teal w-max text-white">
-          <div className=" whitespace-pre-line">{comment.content}</div>
-          {comment.files.map(e => <div className="max-w-96" key={e}><File needToNavigate={true} id={e} /></div>)}
-          <div className="flex mt-2 gap-3 items-center">
-            <LikeComment />
-            <FaReply className=" w-6 h-6 bg-teal text-white hover:bg-black rounded-lg p-1" color="#EEEEEE" onClick={() => setCreate(true)} />
-            {comment.user == user._id && <DeleteComment />}
-            {comment.user == user._id && <MdEdit onClick={() => setUpdate(true)} className=" w-6 h-6 bg-teal text-white hover:bg-black rounded-lg p-1" color="#EEEEEE" />}
-          </div>
-        </div>
-      }
-      <div className="border-l-2 border-teal flex flex-col gap-2">
-        {create && <CreateComment />}
-        <Comments />
-      </div>
+      {create && <div className="pl-10"><CreateComment /></div>}
+      <div className="pl-10"><Comments q={{ comment: comment._id, post: comment.post }} limit={2} /></div>
     </div>
   </CommentContext.Provider>
-}
+})
