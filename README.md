@@ -1,91 +1,88 @@
-# 🚀 Enterprise-Grade Social Media Platform
+# 🚀 Enterprise-Grade Social Media Platform (Facebook Clone)
 
-A high-performance, scalable social networking platform built with a modern tech stack. This project demonstrates advanced backend architecture, real-time communication, and professional DevOps practices.
+A highly scalable, feature-rich social networking platform built with a modern distributed architecture. This project comprehensively demonstrates both foundational social networking features (CRUD, Authentication, Graph connections) and advanced engineering practices (**AI/ML Recommendation Engines**, **WebRTC Live Streaming**, **Real-time Event-Driven Architecture**, and **Microservices Orchestration**).
 
 ---
 
-## 🌟 Features & Technical Implementation
+## 🌟 Comprehensive Features & Technical Implementation
 
-Dưới đây là danh sách chi tiết tất cả các tính năng và kỹ thuật (tech stack) được áp dụng trong dự án:
+Hệ thống được thiết kế đầy đủ các tính năng của một mạng xã hội thực tế, kết hợp với các công nghệ chuyên sâu:
 
-### 👤 1. Identity & Security (Quản lý định danh & Bảo mật)
-- **Tính năng:** Đăng ký, Đăng nhập, Quản lý phiên làm việc (Session) an toàn, Phân quyền người dùng.
+### 🧠 1. AI-Powered Recommendation Engine (Python Microservice)
+- **Tính năng:** Đề xuất bài viết (News Feed) thông minh được cá nhân hóa, dự đoán sở thích dựa trên hành vi người dùng, thời gian xem, và các mối quan hệ mạng lưới.
 - **Kỹ thuật áp dụng:**
-  - **Stateless Authentication:** Sử dụng **JSON Web Tokens (JWT)** để xác thực không lưu trạng thái trên server.
-  - **Password Hashing:** Mã hóa mật khẩu một chiều sử dụng thuật toán **Bcrypt** với salt rounds = 10.
-  - **Request Validation:** Chuẩn hóa và xác thực dữ liệu đầu vào (Payload Validation) thông qua middleware **Joi**, ngăn chặn NoSQL Injection và dữ liệu rác.
-  - **Environment Configuration:** Quản lý cấu hình nhạy cảm qua biến môi trường (`dotenv`), tách biệt config giữa Dev và Prod.
-  - **CORS & Cookies:** Quản lý chia sẻ tài nguyên chéo nguồn (`cors`) và phân tích cookies (`cookie-parser`).
+  - **Hybrid Recommendation Model:** Kết hợp sức mạnh của 3 thuật toán trong một microservice bằng Flask:
+    - **Content-Based Filtering (CBF):** Sử dụng `SentenceTransformer` (SBERT) trích xuất đặc trưng văn bản và tính `Cosine Similarity`.
+    - **Graph-Based Scoring (EdgeRank & PageRank):** Phân tích đồ thị kết nối bạn bè bằng `NetworkX`, chấm điểm tương tác (Like, Share, Watch Time) theo trọng số.
+    - **Deep Collaborative Filtering (CF):** Xây dựng mạng nơ-ron sâu với `TensorFlow/Keras` (Embedding, Dropout, Dense) để học sâu thói quen người dùng.
+  - **Dynamic Weighting:** Thuật toán tự điều chỉnh hệ số $(\alpha, \beta)$ pha trộn giữa CF, CBF và EdgeRank tùy thuộc vào độ lớn mạng lưới và hành vi.
 
-### 🌐 2. Social Graph & Networking (Mạng lưới quan hệ)
-- **Tính năng:** Kết bạn (Gửi/Nhận/Từ chối yêu cầu), Hủy kết bạn, Quản lý danh sách bạn bè, Tạo & Quản lý Nhóm (Groups).
+### 🎥 2. WebRTC Live Streaming & Real-time Communication
+- **Tính năng:** Phát trực tiếp (Live Stream), Chat cá nhân (1-1), Chat nhóm, và Push Notifications thời gian thực.
 - **Kỹ thuật áp dụng:**
-  - **Complex Database Schema:** Thiết kế lược đồ **MongoDB** (thông qua **Mongoose**) tối ưu cho dữ liệu quan hệ chéo (Sử dụng `ref` và `populate`).
-  - **Transactional Operations:** Xử lý các nghiệp vụ cập nhật nhiều document cùng lúc.
-  - **Service Layer Pattern:** Tách biệt Business Logic khỏi Controller, giúp code dễ test và bảo trì.
+  - **Peer-to-Peer Streaming:** Triển khai **WebRTC** (`RTCPeerConnection`, `RTCIceCandidate`) kết hợp hệ thống STUN/TURN servers cho luồng video/audio độ trễ siêu thấp.
+  - **WebSocket Signaling:** Sử dụng **Socket.io** làm Signaling Server để thiết lập bắt tay WebRTC, đồng thời quản lý trạng thái Online/Offline, và broadcast tin nhắn chat/thông báo theo cơ chế `Rooms/Namespaces`.
 
-### 📝 3. Content Delivery & Interactions (Quản lý Nội dung)
-- **Tính năng:** Đăng bài (Post), Chỉnh sửa, Xóa; Bình luận đa cấp (Nested Comments); Tương tác (Like bài viết, Like comment); Chia sẻ (Share bài viết).
+### 📝 3. Core Social Features & Content Delivery
+- **Tính năng:** Đăng bài (Post đa phương tiện), Bình luận đa cấp (Nested Comments), Tương tác (Like, Thả cảm xúc), Chia sẻ bài viết, và Bình chọn (Polling).
 - **Kỹ thuật áp dụng:**
-  - **Aggregation Pipeline:** Sử dụng các truy vấn tổng hợp phức tạp của Mongoose/MongoDB để tính toán lượt Like, Comment, và join dữ liệu user trong một lần truy vấn.
-  - **Caching Strategy:** Sử dụng **Redis** làm In-memory Data Store để cache các dữ liệu tĩnh hoặc dữ liệu query nặng, tối ưu hiệu suất.
-  - **Multipart Data Handling:** Quản lý upload file và hình ảnh thông qua middleware **Multer**, xử lý buffer và lưu trữ.
-  - **Data Fetching & State Management:** Sử dụng **React Query** ở Frontend để quản lý state server, caching, và đồng bộ dữ liệu mượt mà.
+  - **Advanced Aggregation & Pagination:** Tận dụng tối đa sức mạnh của **MongoDB/Mongoose** để tính toán tổng lượt Like, số lượng Comment, và join dữ liệu người dùng chỉ trong một truy vấn duy nhất, kết hợp **Infinite Scrolling/Pagination** trên Frontend.
+  - **Data Fetching & State Management:** Sử dụng **React Query** trên Frontend để quản lý state, caching tự động, tối ưu hóa quá trình fetch dữ liệu liên tục.
+  - **Cloud Media Management:** Tích hợp middleware **Multer** và lưu trữ file/hình ảnh tĩnh thông qua **Cloudinary** để tối ưu hóa việc phân phối nội dung (CDN).
 
-### 💬 4. Real-time Communication (Giao tiếp thời gian thực)
-- **Tính năng:** Chat cá nhân (1-1), Chat nhóm (Group Chat), Thông báo (Notifications) theo thời gian thực (Push Notifications), Hiển thị trạng thái Online/Offline.
+### 📸 4. Event-Driven Stories & Group Events
+- **Tính năng:** Đăng Story (tin biến mất sau 24h), quản lý Sự kiện (Events) của Group, quản lý danh sách người tham gia (Attendees).
 - **Kỹ thuật áp dụng:**
-  - **WebSocket Protocol:** Triển khai kết nối hai chiều liên tục bằng **Socket.io** (cả Server và Client `socket.io-client`).
-  - **Event-Driven Architecture:** Kiến trúc hướng sự kiện, server chủ động push data xuống client.
-  - **Socket Rooms & Namespaces:** Quản lý luồng tin nhắn đa nhóm bằng cơ chế Room, broadcast tin nhắn chính xác.
-  - **Socket Authentication:** Xác thực JWT ngay tại bước bắt tay (handshake) để chặn các kết nối không hợp lệ.
+  - **Message Broker / Async Tasks:** Tích hợp **RabbitMQ** (Fanout Exchange) để phân phối sự kiện tạo Story đến Feed của toàn bộ bạn bè một cách bất đồng bộ mà không gây nghẽn server.
+  - **Fast Feed Retrieval:** Lưu trữ danh sách Story theo thời gian thực trên **Redis List**, giúp truy xuất cực nhanh thay vì truy vấn trực tiếp vào Database.
 
-### 🎮 5. Multiplayer Game (Trải nghiệm tương tác)
-- **Tính năng:** Tích hợp mini-game Cờ Caro (Gomoku) chơi trực tuyến giữa 2 người.
+### 👤 5. Identity, Security & Complex Graph Operations
+- **Tính năng:** Quản lý Người dùng, Đăng ký/Đăng nhập, Kết bạn (Chấp nhận/Từ chối yêu cầu), Tạo & Quản lý Phân quyền Nhóm (Groups với các tab như Posts, Connections, Media, Events).
 - **Kỹ thuật áp dụng:**
-  - **State Synchronization:** Đồng bộ hóa trạng thái bàn cờ (Game State) giữa hai client trong thời gian thực.
-  - **Concurrency Handling:** Quản lý luồng dữ liệu đồng thời khi nhiều cặp người chơi đang chơi cùng lúc.
+  - **Security:** Stateless Authentication bằng **JSON Web Tokens (JWT)**, mã hóa mật khẩu một chiều với **Bcrypt**, và bảo vệ endpoint bằng **Joi** (Payload Validation), tích hợp **CORS** và **Cookie-Parser**.
+  - **Database Design:** Xây dựng schema tối ưu cho dữ liệu quan hệ chéo (Cross-relational data) với Mongoose `ref` và xử lý **Transactional Operations** khi cập nhật trạng thái bạn bè đồng thời.
 
-### 🎨 6. User Interface & Experience (Giao diện & Trải nghiệm)
-- **Tính năng:** Giao diện Responsive (tương thích Mobile/Desktop), Client-side Routing, Thông báo người dùng (Toasts).
+### 🎮 6. Interactive Minigames & Personal Productivity
+- **Tính năng:** Chơi mini-game trực tuyến (Cờ Caro - Gomoku) và Bảng ghi chú cá nhân (Sticky Notes).
 - **Kỹ thuật áp dụng:**
-  - **UI Framework/Library:** Xây dựng bằng **React 18** kết hợp với **Vite** để tăng tốc độ build và HMR.
-  - **Styling:** Sử dụng **Tailwind CSS** (với PostCSS, Autoprefixer) để thiết kế UI nhanh chóng và hiện đại.
-  - **Routing:** Quản lý điều hướng trang ở client bằng **React Router DOM v6**.
-  - **Alerts/Toasts:** Sử dụng **React Toastify** để hiển thị thông báo thân thiện.
+  - **Game State Synchronization:** Đồng bộ trạng thái bàn cờ đồng thời giữa các clients thông qua sự kiện Socket.io.
+  - **DOM Drag & Drop:** Cung cấp trải nghiệm kéo-thả vật lý mượt mà cho Sticky Notes sử dụng React Refs và lưu trữ tọa độ qua `Local Storage`.
+
+### 🎨 7. User Interface & Experience (UI/UX)
+- **Tính năng:** Giao diện Responsive toàn diện (tương thích Mobile/Tablet/Desktop), Client-side Routing, Thông báo người dùng mượt mà.
+- **Kỹ thuật áp dụng:**
+  - **Frontend Core:** Xây dựng trên nền tảng **React 18** và **Vite** mang lại tốc độ build thần tốc và Hot-Module-Reload hoàn hảo.
+  - **Styling:** Sử dụng hệ thống tiện ích của **Tailwind CSS v4** kết hợp cùng Ant Design / MUI.
+  - **Routing & Feedback:** Sử dụng **React Router DOM v6** cho việc điều hướng và **React Toastify** cho thông báo người dùng.
 
 ---
 
 ## 🏗 System Architecture & DevOps
 
-Bên cạnh tính năng, hệ thống được thiết kế theo tiêu chuẩn sản phẩm thương mại:
+Hệ thống được thiết kế theo hướng **Microservices** và **Containerization** đáp ứng tiêu chuẩn triển khai sản phẩm thương mại thực tế:
 
-- **API Versioning (v1):** Định tuyến API RESTful rõ ràng (ví dụ: `/api/v1/`), sử dụng **Express** làm Web Framework.
-- **Containerization (Docker):** Đóng gói toàn bộ hệ thống bằng **Docker** & **Docker Compose**. Định nghĩa các services: `fb_frontend`, `fb_backend`, `mongo`, `redis`, `nginx` với hệ thống mạng nội bộ.
-- **Reverse Proxy & Load Balancing (Nginx):** 
-  - Điều phối lưu lượng cho cả Frontend và Backend.
-  - Proxy an toàn cho HTTP requests và WebSocket upgrades (`Connection: Upgrade`).
-- **Continuous Integration (GitLab CI):** 
-  - CI/CD Pipeline thiết lập qua `.gitlab-ci.yml` sử dụng `docker:dind` (Docker in Docker).
-  - Tự động hóa các stages: test, deploy.
-- **Logging:** Sử dụng **Morgan** ở backend để ghi log các HTTP request.
-- **Quality Assurance & Testing:**
-  - **Backend Testing:** Sử dụng **Mocha** làm test runner và **Chai**, **Chai-HTTP** để viết Unit/Integration Tests.
-  - **Frontend Testing:** Cấu hình **Vitest** kết hợp với **React Testing Library** và **JSDOM** để kiểm thử components. Linter với **ESLint**.
+- **API Gateway & Load Balancing:** Cấu hình **Nginx** làm Reverse Proxy (`nginx:alpine`), điều phối lưu lượng HTTP request thông thường và hỗ trợ Proxy cho WebSocket upgrades (`Connection: Upgrade`).
+- **Container Orchestration:** 
+  - Toàn bộ các mảnh ghép của hệ thống (Frontend, Core-Backend, AI-Recommend-Service, MongoDB, Redis, Nginx) được đóng gói và kết nối với nhau qua mạng ảo nội bộ (`app_network`) bằng **Docker & Docker Compose**.
+  - Thiết lập Multi-stage builds (`Dockerfile.dev`, `Dockerfile.prod`) cho các môi trường khác nhau. Tích hợp tính năng **Docker Compose Watch** phục vụ tự động đồng bộ mã nguồn khi code (Hot-reload) trong quá trình phát triển.
+- **CI/CD Pipeline:** Tự động hóa hoàn toàn với **GitLab CI/CD** (sử dụng kiến trúc Docker-in-Docker `dind`). Tự động chạy Unit/Integration Tests bằng **Mocha/Chai** (Backend) và **Vitest/React Testing Library** (Frontend) trước khi Deploy.
+- **Logging:** Ghi log HTTP Requests tập trung bằng **Morgan**.
 
 ---
 
-## 🛠 Tech Stack Overview
+## 🛠 Exhaustive Tech Stack
 
-| Layer | Technologies |
-| :--- | :--- |
-| **Frontend** | React 18, Vite, Tailwind CSS, React Query, React Router v6, React Toastify |
-| **Backend** | Node.js (ES Modules), Express, Socket.io, Multer, Morgan, Cors |
-| **Database & Cache** | MongoDB (Mongoose ORM), Redis |
-| **Security & Validation** | JWT (JSON Web Tokens), Bcrypt, Joi, Cookie-Parser |
-| **Testing** | Backend: Mocha, Chai / Frontend: Vitest, React Testing Library, JSDOM |
-| **Code Quality** | ESLint |
-| **DevOps & Infra** | Docker, Docker Compose, Nginx, GitLab CI/CD |
+| Layer                 | Core Technologies                                               |
+| :-------------------- | :-------------------------------------------------------------- |
+| **Frontend UI/UX**    | React 18, Vite, Tailwind CSS v4, Ant Design / MUI, React Toastify |
+| **State & Routing**   | React Query, React Router DOM v6, React Context                 |
+| **Core Backend**      | Node.js (ESM), Express, Socket.io, Multer, Morgan, CORS, Cookie |
+| **AI / Recommend**    | Python, Flask, TensorFlow/Keras, Scikit-learn, NetworkX, Pandas, SBERT |
+| **Databases**         | MongoDB (Mongoose ORM)                                          |
+| **Cache & Queue**     | Redis, RabbitMQ                                                 |
+| **Streaming / Media** | WebRTC, Cloudinary                                              |
+| **Security & QA**     | JWT, Bcrypt, Joi, ESLint, Mocha/Chai, Vitest                    |
+| **Infra & DevOps**    | Docker, Docker Compose, Nginx, GitLab CI/CD (dind)              |
 
 ---
 
